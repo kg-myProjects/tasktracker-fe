@@ -1,11 +1,20 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Header from "../components/Header";
+import {checkAuth} from "../features/auth/slice/authSlice.ts";
+import {useAppDispatch} from "../app/hooks.ts";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(checkAuth());
+    }, [dispatch]);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
       <Header />
