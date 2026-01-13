@@ -23,3 +23,8 @@ export interface AuthSliceState {
   user?: User;
   loginErrorMessage?: string;
 }
+
+export interface TokenResponseDto {
+    accessToken: string;
+    refreshToken: string;
+}

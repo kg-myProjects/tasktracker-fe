@@ -1,6 +1,6 @@
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {login, selectLoginError} from "../slice/authSlice";
+import {checkAuth, login, selectLoginError} from "../slice/authSlice";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {useNavigate} from "react-router-dom";
 
@@ -25,6 +25,7 @@ const LoginForm = () => {
             console.log("login");
             const dispatchResult = await dispatch(login(values));
             if (login.fulfilled.match(dispatchResult)) {
+                await dispatch(checkAuth());
                 navigate("/");
             }
         },
