@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+@layer utilities {
+    @keyframes pulse-flow {
+        0% { transform: translateX(-120%); opacity: 0; }
+        10% { opacity: 0.8; }
+        90% { opacity: 0.8; }
+        100% { transform: translateX(350%); opacity: 0; }
+    }
+
+    @keyframes flicker {
+        0%, 100% { opacity: 0.8; }
+        33% { opacity: 0.4; }
+        66% { opacity: 1; }
+        80% { opacity: 0.6; }
+    }
+
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .animate-pulse-flow {
+        animation: pulse-flow 6s linear infinite;
+    }
+
+    .animate-flicker {
+        animation: flicker 0.15s infinite;
+    }
+
+    .animate-twinkle {
+        animation: twinkle 2s ease-in-out infinite;
+    }
+
+    .text-neon {
+        text-shadow: 0 0 8px rgba(6, 182, 212, 0.6), 0 0 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .text-neon-strong {
+        text-shadow: 0 0 12px rgba(6, 182, 212, 0.9), 0 0 25px rgba(6, 182, 212, 0.6);
+    }
+}
