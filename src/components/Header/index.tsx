@@ -1,11 +1,18 @@
-import {Link} from "react-router-dom";
-import {useAppSelector} from "../../app/hooks.ts";
-import {selectIsAuthenticated, selectUser} from "../../features/auth/slice/authSlice.ts";
+import {Link, useNavigate} from "react-router-dom";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
+import {logout, selectIsAuthenticated, selectUser} from "../../features/auth/slice/authSlice.ts";
 
 export default function Header() {
 
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
     const user = useAppSelector(selectUser);
+
+    const handleLogout = async () => {
+        await dispatch(logout());
+        navigate("/login");
+    }
 
     return (
         <header className="w-full border-b bg-white shadow-sm">
@@ -43,6 +50,7 @@ export default function Header() {
                                 {user?.email}
                             </span>
                             <button
+                                onClick={handleLogout}
                                 className="rounded bg-black px-4 py-1.5 text-sm font-medium text-white hover:bg-gray-800 transition">
                                 Logout
                             </button>
