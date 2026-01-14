@@ -39,6 +39,22 @@ export const authSlice = createAppSlice({
             }
         ),
 
+        logout: create.asyncThunk(
+            async () => {
+                return api.fetchLogout();
+            },
+            {
+                fulfilled: (state) => {
+                    state.isAuthenticated = false;
+                    state.user = undefined;
+                },
+                rejected: (state) => {
+                    state.isAuthenticated = false;
+                    state.user = undefined;
+                },
+            }
+        ),
+
         register: create.asyncThunk(
             async (dto: UserRegistrationDto) => {
                 return api.fetchRegister(dto);
@@ -87,7 +103,7 @@ export const authSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const {login, register, checkAuth} = authSlice.actions;
+export const {login, register, checkAuth, logout} = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
