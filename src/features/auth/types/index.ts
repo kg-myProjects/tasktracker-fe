@@ -10,12 +10,12 @@ export interface UserRegistrationDto {
 }
 
 export type ROLE = "ROLE_USER" | "ROLE_ADMIN";
+export type CONFIRM_STATUS = "CONFIRMED" | "UNCONFIRMED" | "BANNED";
 
 export interface User {
-  id: number;
-  email: "string";
+  id?: string;
+  email: string;
   role: ROLE;
-  confirmationResent: boolean;
 }
 
 export interface AuthSliceState {
@@ -24,7 +24,15 @@ export interface AuthSliceState {
   loginErrorMessage?: string;
 }
 
-export interface TokenResponseDto {
-    accessToken: string;
-    refreshToken: string;
+export interface UserResponseDto {
+    email: string;
+    role: ROLE;
+    confirmationStatus: CONFIRM_STATUS;
+}
+
+export interface UserCreateResponseDto {
+    id: string;
+    email: string;
+    role: ROLE;
+    confirmationResent: boolean;
 }
