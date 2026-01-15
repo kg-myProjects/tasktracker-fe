@@ -16,7 +16,7 @@ export const fetchLogin = async (credentials: Credentials):Promise<void> => {
 
 export const fetchLogout = async ():Promise<void> => {
     await axiosInstance.post(LOGOUT_PATH);
-}
+};
 
 export const fetchRegister = async (dto: UserRegistrationDto):Promise<UserCreateResponseDto> => {
   const res = await axiosInstance.post(REGISTER_PATH, dto);
@@ -26,7 +26,7 @@ export const fetchRegister = async (dto: UserRegistrationDto):Promise<UserCreate
 export const fetchCurrentUser = async ():Promise<UserResponseDto> => {
     const res = await axiosInstance.get(GET_CURRENT_USER_PATH);
     return res.data;
-}
+};
 
 export const fetchRefreshToken = async ():Promise<void> => {
     await axiosInstance.post(TOKEN_REFRESH_PATH);
