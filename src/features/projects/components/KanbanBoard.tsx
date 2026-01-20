@@ -1,0 +1,171 @@
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import type { Task } from "../../tasks/types";
+import {Column} from "./Column.tsx";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { getTasksByProjectId, updateTask, createTask, selectTasks } from "../../tasks/slice/tasksSlice";
+import {getProjectById, selectCurrentProject} from "../../projects/slice/projectsSlice";
+import {getAllTaskStatuses, selectSortedTaskStatuses, createTaskStatus,updateTaskStatus} from "../../statuses/slice/taskStatusSlice";
+import { CreateStatusModal } from "./CreateStatusModal";
+import {TaskModal} from "./TaskModal.tsx";
+import type { DragEndEvent } from "@dnd-kit/core";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {SortableTask} from "./SortableTask.tsx";
+
+export default function KanbanBoard() {
+    const { projectId } = useParams<{ projectId: string }>();
+    const dispatch = useAppDispatch();
+
+
+    const tasks = useAppSelector(selectTasks);
+    const project = useAppSelector(selectCurrentProject);
+    const statuses = useAppSelector(selectSortedTaskStatuses);
+
+
+    const [modalOpen, setModalOpen] = useState(false);
+    const [currentStatusId, setCurrentStatusId] = useState<string | null>(null);
+    const [statusModalOpen, setStatusModalOpen] = useState(false);
+
+
+    useEffect(() => {
+        if (!projectId) return;
+        dispatch(getProjectById(projectId));
+        dispatch(getAllTaskStatuses(projectId));
+        dispatch(getTasksByProjectId(projectId));
+
+    }, [projectId, dispatch]);
+
+    console.log("Tasks:", tasks);
+    console.log("Statuses:", statuses);
+
+
+    const tasksByStatus = useMemo(() => {
+        return statuses.reduce<Record<string, Task[]>>((acc, status) => {
+            acc[status.id] = tasks.filter(task => task.statusId === status.id);
+            return acc;
+        }, {});
+    }, [tasks, statuses]);
+
+    // DnD sensors
+    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+
+    // Drag End
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over) return;
+
+        const taskId = String(active.id);
+        const newStatusId =
+            over.data.current?.sortable?.containerId ?? String(over.id);
+
+        const task = tasks.find(t => t.id === taskId);
+        if (!task || task.statusId === newStatusId) return;
+
+        dispatch(updateTask({ id: taskId, dto: { statusId: newStatusId } }));
+    };
+
+    // Open modal for specific status
+    const openModal = (statusId: string) => {
+        setCurrentStatusId(statusId);
+        setModalOpen(true);
+    };
+
+    const handleCreateTask = (title: string, description: string) => {
+        if (!projectId || !currentStatusId) return;
+
+        dispatch(createTask({
+            title,
+            description,
+            statusId: currentStatusId,
+            projectId
+        }));
+        setModalOpen(false);
+    };
+
+    const handleCreateStatus = (name: string, position: number) => {
+        if (!projectId) return;
+
+        const normalizedPosition = Math.max(
+            0,
+            Math.min(position, statuses.length)
+        );
+
+        // ❗ Сдвигаем существующие колонки
+        statuses
+            .filter(s => s.position >= normalizedPosition)
+            .sort((a, b) => b.position - a.position) // 👈 важно!
+            .forEach(s => {
+                dispatch(
+                    updateTaskStatus({
+                        id: s.id,
+                        position: s.position + 1,
+                    })
+                );
+            });
+
+        dispatch(
+            createTaskStatus({
+                name,
+                projectId,
+                position: normalizedPosition,
+            })
+        );
+
+        setStatusModalOpen(false);
+    };
+
+    return (
+        <div className="h-screen bg-slate-100 p-4 flex flex-col">
+            <div className="flex items-center gap-4 mb-4 text-black">
+                <h1 className="text-2xl font-bold">
+                    {project?.title ?? "Loading..."}
+                </h1>
+
+                <button
+                    onClick={() => setStatusModalOpen(true)}
+                    className="bg-green-600 text-white px-3 py-1.5 rounded text-sm hover:bg-green-700"
+                >
+                    + Добавить статус
+                </button>
+            </div>
+
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <div className="flex gap-4 overflow-x-auto">
+                    {statuses.map(status => (
+                        <Column
+                            key={status.id}
+                            status={status}
+                            onAddTask={() => openModal(status.id)}
+                        >
+                            <SortableContext
+                                items={tasksByStatus[status.id]?.map(t => t.id) ?? []}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                <div className="flex flex-col gap-2">
+                                    {tasksByStatus[status.id]?.map(task => (
+                                        <SortableTask key={task.id} task={task} />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </Column>
+                    ))}
+                </div>
+            </DndContext>
+
+            <TaskModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onCreate={handleCreateTask}
+                statusName={statuses.find(s => s.id === currentStatusId)?.name ?? ""}
+            />
+            <CreateStatusModal
+                isOpen={statusModalOpen}
+                onClose={() => setStatusModalOpen(false)}
+                onCreate={handleCreateStatus}
+                maxPosition={statuses.length}
+            />
+
+        </div>
+    );
+}
