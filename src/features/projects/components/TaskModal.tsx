@@ -23,6 +23,14 @@ export function TaskModal({
         }
     }, [isOpen]);
 
+    const handleClose = () => {
+        setTitle("");
+        setDescription("");
+        setError("");
+        onClose();
+    };
+
+
     // Close modal on Esc
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
@@ -32,7 +40,7 @@ export function TaskModal({
         };
         document.addEventListener("keydown", handleEsc);
         return () => document.removeEventListener("keydown", handleEsc);
-    }, []);
+    }, [handleClose]);
 
     if (!isOpen) return null;
 
@@ -64,12 +72,6 @@ export function TaskModal({
         setDescription("");
     };
 
-    const handleClose = () => {
-        setTitle("");
-        setDescription("");
-        setError("");
-        onClose();
-    };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
