@@ -10,7 +10,15 @@ export const fetchProjects = async () => {
   return res.data;
 };
 
+
+
 export const fetchCreateProject = async (projectDto: CreateProjectDto) => {
   const res = await axiosInstance.post(PROJECTS_BASE_PATH, projectDto);
   return res.data;
 };
+
+export const fetchProjectById = async (id: string) => {
+    const res = await axiosInstance.get(`${PROJECTS_BASE_PATH}/${id}`);
+    return res.data;
+};
+
