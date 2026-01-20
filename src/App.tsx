@@ -5,6 +5,8 @@ import Layout from "./layouts/Layout";
 import Registration from "./pages/Registration";
 import Login from "./pages/Login";
 import Projects from "./pages/Projects";
+import Profile from "./pages/Profile";
+import PrivateRoute from "./components/PrivateRoute";
 import Kanban from "./pages/Kanban";
 
 function App() {
@@ -26,6 +28,14 @@ function App() {
                         <Route path="/register" element={<Registration />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/projects" element={<Projects />} />
+                        <Route
+                            path="/profile"
+                            element={
+                                <PrivateRoute>
+                                    <Profile />
+                                </PrivateRoute>
+                            }
+                        />
                         <Route path="/project/:projectId" element={<Kanban/>}/>
                     </Routes>
                 </Layout>
