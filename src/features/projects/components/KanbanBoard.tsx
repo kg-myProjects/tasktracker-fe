@@ -9,7 +9,7 @@ import {getAllTaskStatuses, selectSortedTaskStatuses, createTaskStatus,updateTas
 import { CreateStatusModal } from "./CreateStatusModal";
 import {TaskModal} from "./TaskModal.tsx";
 import type { DragEndEvent } from "@dnd-kit/core";
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, PointerSensor, useSensor, useSensors, rectIntersection } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {SortableTask} from "./SortableTask.tsx";
 
@@ -54,15 +54,24 @@ export default function KanbanBoard() {
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         if (!over) return;
+        const activeId = String(active.id);
+        const overId = String(over.id);
 
-        const taskId = String(active.id);
-        const newStatusId =
-            over.data.current?.sortable?.containerId ?? String(over.id);
+        const task = tasks.find(t => t.id === activeId);
+        if (!task) return;
 
-        const task = tasks.find(t => t.id === taskId);
-        if (!task || task.statusId === newStatusId) return;
+        let newStatusId: string;
 
-        dispatch(updateTask({ id: taskId, dto: { statusId: newStatusId } }));
+        if (statuses.some(s => s.id === overId)) {
+            newStatusId = overId;
+        } else {
+            const overTask = tasks.find(t => t.id === overId);
+            newStatusId = overTask ? overTask.statusId : task.statusId;
+        }
+
+        if (task.statusId === newStatusId) return;
+
+        dispatch(updateTask({ id: activeId, dto: { statusId: newStatusId } }));
     };
 
     // Open modal for specific status
@@ -130,7 +139,7 @@ export default function KanbanBoard() {
                 </button>
             </div>
 
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={handleDragEnd}>
                 <div className="flex gap-4 overflow-x-auto">
                     {statuses.map(status => (
                         <Column
