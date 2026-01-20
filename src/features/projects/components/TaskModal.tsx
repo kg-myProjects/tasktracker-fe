@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 export function TaskModal({
                               isOpen,
@@ -16,20 +16,20 @@ export function TaskModal({
     const [error, setError] = useState("");
     const titleRef = useRef<HTMLInputElement>(null);
 
+    // Используем useCallback, чтобы handleClose не пересоздавалась
+    const handleClose = useCallback(() => {
+        setTitle("");
+        setDescription("");
+        setError("");
+        onClose();  // на этом месте важно, чтобы onClose был в зависимостях
+    }, [onClose]);  // onClose - зависимость, т.к. она приходит как пропс и может изменяться
+
     // Focus on title input when modal opens
     useEffect(() => {
         if (isOpen && titleRef.current) {
             titleRef.current.focus();
         }
     }, [isOpen]);
-
-    const handleClose = () => {
-        setTitle("");
-        setDescription("");
-        setError("");
-        onClose();
-    };
-
 
     // Close modal on Esc
     useEffect(() => {
@@ -40,7 +40,7 @@ export function TaskModal({
         };
         document.addEventListener("keydown", handleEsc);
         return () => document.removeEventListener("keydown", handleEsc);
-    }, [handleClose]);
+    }, [handleClose]);  // handleClose в зависимостях, чтобы использовать актуальную версию
 
     if (!isOpen) return null;
 
@@ -61,7 +61,7 @@ export function TaskModal({
         }
 
         if (!descriptionPattern.test(description)) {
-            setError("Description must start with a capital letter, contain only letters, numbers or spaces, and be 3-200 characters long..");
+            setError("Description must start with a capital letter, contain only letters, numbers or spaces, and be 3-200 characters long.");
             return;
         }
 
@@ -71,7 +71,6 @@ export function TaskModal({
         setTitle("");
         setDescription("");
     };
-
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
