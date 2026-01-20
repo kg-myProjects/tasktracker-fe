@@ -4,7 +4,7 @@ import type { Task } from "../../tasks/types";
 import {Column} from "./Column.tsx";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { getTasksByProjectId, updateTask, createTask, selectTasks } from "../../tasks/slice/tasksSlice";
-import {getProjectById, selectCurrentProject} from "../../projects/slice/projectsSlice";
+import {getProjectById, selectCurrentProject} from "../slice/projectsSlice";
 import {getAllTaskStatuses, selectSortedTaskStatuses, createTaskStatus,updateTaskStatus} from "../../statuses/slice/taskStatusSlice";
 import { CreateStatusModal } from "./CreateStatusModal";
 import {TaskModal} from "./TaskModal.tsx";
