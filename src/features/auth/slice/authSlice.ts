@@ -1,11 +1,13 @@
 import {createAppSlice} from "../../../app/createAppSlice";
-import type {AuthSliceState, Credentials, UserRegistrationDto,} from "../types";
+import type {AuthSliceState, Credentials, UserRegistrationDto} from "../types";
 import * as api from "../services/api";
 import {isAxiosError} from "axios";
 
 const initialState: AuthSliceState = {
     isAuthenticated: false,
     user: undefined,
+    loginErrorMessage: undefined,
+    registerErrorMessage: undefined,
 };
 
 export const authSlice = createAppSlice({
@@ -57,7 +59,17 @@ export const authSlice = createAppSlice({
 
         register: create.asyncThunk(
             async (dto: UserRegistrationDto) => {
-                return api.fetchRegister(dto);
+                try {
+                    return await api.fetchRegister(dto);
+                } catch (err) {
+                    if (isAxiosError(err)) {
+                        if (err.response?.status === 409) {
+                            throw new Error("A user with this email is already registered.");
+                        }
+                        throw new Error(err.response?.data?.message || "Error during registration");
+                    }
+                    throw err;
+                }
                 // The value we return becomes the `fulfilled` action payload
             },
             {
@@ -68,9 +80,10 @@ export const authSlice = createAppSlice({
                     state.isAuthenticated = true;
                     state.user = action.payload;
                 },
-                rejected: (state) => {
+                rejected: (state, action) => {
                     state.isAuthenticated = false;
                     state.user = undefined;
+                    state.registerErrorMessage = action.error.message;
                 },
             }
         ),
@@ -99,6 +112,7 @@ export const authSlice = createAppSlice({
         selectUser: (state) => state.user,
         selectRole: (state) => state.user?.role,
         selectLoginError: (state) => state?.loginErrorMessage,
+        selectRegisterError: (state) => state?.registerErrorMessage,
     },
 });
 
@@ -111,4 +125,5 @@ export const {
     selectUser,
     selectRole,
     selectLoginError,
+    selectRegisterError,
 } = authSlice.selectors;

@@ -22,6 +22,8 @@ export interface AuthSliceState {
   isAuthenticated: boolean;
   user?: User;
   loginErrorMessage?: string;
+  registerErrorMessage?: string;
+
 }
 
 export interface UserResponseDto {
