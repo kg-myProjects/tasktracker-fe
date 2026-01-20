@@ -9,6 +9,7 @@ export type CreateProjectDto = Omit<Project, "id">;
 
 export interface ProjectsSliceState {
   projects: Project[];
+  currentProject?: Project | null;
   createProjectErrorMessage?: string;
   isLoading: boolean;
 }

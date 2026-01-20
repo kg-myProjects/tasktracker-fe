@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Projects from "./pages/Projects";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
+import Kanban from "./pages/Kanban";
 
 function App() {
     return (
@@ -35,6 +36,7 @@ function App() {
                                 </PrivateRoute>
                             }
                         />
+                        <Route path="/project/:projectId" element={<Kanban/>}/>
                     </Routes>
                 </Layout>
             </div>
