@@ -8,8 +8,8 @@ import {getProjectById, inviteUser, selectCurrentProject, selectInviteUserErrorM
 import {
     getAllTaskStatuses,
     selectSortedTaskStatuses,
-    createTaskStatus,
-    updateTaskStatus
+    createTaskStatus, deleteTaskStatus,
+
 } from "../../statuses/slice/taskStatusSlice";
 import { CreateStatusModal } from "./CreateStatusModal";
 import {TaskModal} from "./TaskModal.tsx";
@@ -98,35 +98,24 @@ export default function KanbanBoard() {
         setModalOpen(false);
     };
 
-    const handleCreateStatus = (name: string, position: number) => {
+    const handleCreateStatus = async (name: string, position: number) => {
         if (!projectId) return;
 
-        const normalizedPosition = Math.max(
-            0,
-            Math.min(position, statuses.length)
-        );
+        try {
 
-        statuses
-            .filter(s => s.position >= normalizedPosition)
-            .sort((a, b) => b.position - a.position) // 👈 важно!
-            .forEach(s => {
-                dispatch(
-                    updateTaskStatus({
-                        id: s.id,
-                        position: s.position + 1,
-                    })
-                );
-            });
-
-        dispatch(
-            createTaskStatus({
+            await dispatch(createTaskStatus({
                 name,
                 projectId,
-                position: normalizedPosition,
-            })
-        );
+                position,
+            })).unwrap();
 
-        setStatusModalOpen(false);
+
+            await dispatch(getAllTaskStatuses(projectId));
+
+            setStatusModalOpen(false);
+        } catch (err) {
+            console.error("Ошибка при создании статуса:", err);
+        }
     };
 
 
@@ -179,24 +168,45 @@ export default function KanbanBoard() {
 
             <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={handleDragEnd}>
                 <div className="flex gap-4 overflow-x-auto">
-                    {statuses.map(status => (
-                        <Column
-                            key={status.id}
-                            status={status}
-                            onAddTask={() => openModal(status.id)}
-                        >
-                            <SortableContext
-                                items={tasksByStatus[status.id]?.map(t => t.id) ?? []}
-                                strategy={verticalListSortingStrategy}
+                    {statuses.map(status => {
+                        const tasksInStatus = tasksByStatus[status.id] ?? [];
+                        const canDelete = tasksInStatus.length === 0;
+
+                        const handleDeleteStatus = async () => {
+                            if (!projectId) return;
+                            if (window.confirm(`Delete column "${status.name}"?`)) {
+                                try {
+                                    await dispatch(deleteTaskStatus(status.id)).unwrap();
+                                  await  dispatch(getAllTaskStatuses(projectId!));
+                                } catch (error) {
+                                    console.error("Delete status failed:", error);
+                                    alert("Could not delete column. Maybe it still has tasks?");
+                                }
+                            }                        };
+
+                        return (
+                            <Column
+                                key={status.id}
+                                status={status}
+                                onAddTask={() => openModal(status.id)}
+                                canDelete={canDelete}
+                                onDelete={handleDeleteStatus}
                             >
-                                <div className="flex flex-col gap-2">
-                                    {tasksByStatus[status.id]?.map(task => (
-                                        <SortableTask key={task.id} task={task} />
-                                    ))}
-                                </div>
-                            </SortableContext>
-                        </Column>
-                    ))}
+                                <SortableContext
+                                    items={tasksByStatus[status.id]?.map(t => t.id) ?? []}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    <div className="flex flex-col gap-2">
+                                        {/*{tasksByStatus[status.id]?.map(task => (*/}
+                                        { tasksInStatus.map(task => (
+
+                                            <SortableTask key={task.id} task={task}/>
+                                        ))}
+                                    </div>
+                                </SortableContext>
+                            </Column>
+                        );
+                    })}
                 </div>
             </DndContext>
 

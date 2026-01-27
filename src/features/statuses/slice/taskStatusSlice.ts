@@ -96,6 +96,21 @@ export const taskStatusSlice = createAppSlice({
                 },
             }
         ),
+        deleteTaskStatus: create.asyncThunk(
+            async (id: string) => {
+                await api.fetchDeleteTaskStatus(id);
+                return id;
+            },
+            {
+                fulfilled: (state, action) => {
+                    state.taskStatuses = state.taskStatuses.filter(s => s.id !== action.payload);
+                },
+                rejected: (_state, action) => {
+                    console.error(action.error);
+                }
+            }
+        )
+
     }),
 
     // You can define your selectors here. These selectors receive the slice
@@ -117,6 +132,7 @@ export const {
     getAllTaskStatuses,
     createTaskStatus,
     updateTaskStatus,
+    deleteTaskStatus
 } = taskStatusSlice.actions;
 
 export const {
