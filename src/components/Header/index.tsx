@@ -35,7 +35,7 @@ export default function Header() {
                                 Tracker
                             </span>
                             <span className="text-cyan-400 font-black hover:text-white transition-all duration-500 ml-1">
-                                UP
+                                App
                             </span>
                         </span>
                     </Link>
