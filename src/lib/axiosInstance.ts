@@ -10,6 +10,12 @@ const axiosInstance: AxiosInstance = axios.create({
   },
 });
 
+const AUTH_EXCLUDED_PATHS: readonly string[] = [
+    "/auth/login",
+    "/auth/register",
+    "/auth/logout",
+];
+
 interface FailedRequest {
   resolve: (value?: unknown) => void;
   reject: (error: unknown) => void;
@@ -36,10 +42,15 @@ axiosInstance.interceptors.response.use(
       _retry?: boolean;
     };
 
+    const isExcluded: boolean = AUTH_EXCLUDED_PATHS.some((path: string) =>
+        (originalRequest.url ?? "").includes(path)
+    )
+
     if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes(TOKEN_REFRESH_PATH)
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !isExcluded &&
+        !originalRequest.url?.includes(TOKEN_REFRESH_PATH)
     ) {
       originalRequest._retry = true;
 
