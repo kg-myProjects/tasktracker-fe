@@ -27,7 +27,7 @@ export type FieldConfig = {
     label: string;
     placeholder?: string;
     type?: FieldType;
-    validation?: any;
+    validation?: Record<string, unknown>;
     rows?: number;
 };
 
