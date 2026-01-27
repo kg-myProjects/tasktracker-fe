@@ -1,7 +1,7 @@
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {register} from "../slice/authSlice";
-import {useAppDispatch} from "../../../app/hooks";
+import {register,selectRegisterError} from "../slice/authSlice";
+import {useAppDispatch,useAppSelector} from "../../../app/hooks";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 
@@ -36,7 +36,7 @@ const RegistrationForm = () => {
             }
         },
     });
-
+    const authError = useAppSelector(selectRegisterError);
     return (
         <div className="mx-auto max-w-sm space-y-6 p-6 rounded-lg border bg-white shadow-sm mt-10">
             <div className="space-y-2 text-center">
@@ -49,6 +49,12 @@ const RegistrationForm = () => {
             </div>
             <form onSubmit={formik.handleSubmit} className="space-y-4">
                 {/* Email Field */}
+                {authError && (
+                    <div className="p-3 text-sm text-red-500 bg-red-50 border border-red-200 rounded-md text-center">
+                        {authError}
+                    </div>
+                )}
+
                 <div className="space-y-2">
                     <label
                         htmlFor="email"
