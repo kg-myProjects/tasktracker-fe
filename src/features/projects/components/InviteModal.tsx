@@ -25,7 +25,7 @@ export function InviteModal({ isOpen, onClose, onInvite, error }: InviteModalPro
                     placeholder="User email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full border p-2 rounded mb-4 focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full border p-2 rounded mb-4 focus:ring-2 focus:ring-cyan-400 outline-none"
                 />
 
                 <select
@@ -51,7 +51,7 @@ export function InviteModal({ isOpen, onClose, onInvite, error }: InviteModalPro
                     <button
                         type="button"
                         onClick={handleInviteClick}
-                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                        className="px-4 py-2 bg-cyan-400 text-white rounded hover:bg-cyan-500 transition-colors"
                     >
                         Invite
                     </button>

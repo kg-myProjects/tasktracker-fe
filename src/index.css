@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 /* Global styles for form inputs */
-input,
-textarea,
-select {
-    color: #333333 !important;
-}
+/*input,*/
+/*textarea,*/
+/*select {*/
+/*    color: #333333 !important;*/
+/*}*/
 
 /* Fix for autofill - Chrome, Safari, Edge */
 input:-webkit-autofill,

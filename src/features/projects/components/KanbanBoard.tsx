@@ -8,8 +8,8 @@ import {getProjectById, inviteUser, selectCurrentProject, selectInviteUserErrorM
 import {
     getAllTaskStatuses,
     selectSortedTaskStatuses,
-    createTaskStatus,
-    updateTaskStatus
+    createTaskStatus, deleteTaskStatus,
+
 } from "../../statuses/slice/taskStatusSlice";
 import { CreateStatusModal } from "./CreateStatusModal";
 import {TaskModal} from "./TaskModal.tsx";
@@ -98,35 +98,24 @@ export default function KanbanBoard() {
         setModalOpen(false);
     };
 
-    const handleCreateStatus = (name: string, position: number) => {
+    const handleCreateStatus = async (name: string, position: number) => {
         if (!projectId) return;
 
-        const normalizedPosition = Math.max(
-            0,
-            Math.min(position, statuses.length)
-        );
+        try {
 
-        statuses
-            .filter(s => s.position >= normalizedPosition)
-            .sort((a, b) => b.position - a.position) // 👈 важно!
-            .forEach(s => {
-                dispatch(
-                    updateTaskStatus({
-                        id: s.id,
-                        position: s.position + 1,
-                    })
-                );
-            });
-
-        dispatch(
-            createTaskStatus({
+            await dispatch(createTaskStatus({
                 name,
                 projectId,
-                position: normalizedPosition,
-            })
-        );
+                position,
+            })).unwrap();
 
-        setStatusModalOpen(false);
+
+            await dispatch(getAllTaskStatuses(projectId));
+
+            setStatusModalOpen(false);
+        } catch (err) {
+            console.error("Ошибка при создании статуса:", err);
+        }
     };
 
 
@@ -146,21 +135,21 @@ export default function KanbanBoard() {
 
 
     return (
-        <div className="h-screen bg-slate-100 p-4 flex flex-col">
-            <div className="flex items-center gap-4 mb-4 text-black">
+        <div className="h-screen  p-4 flex flex-col bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-cyan-400/30 p-4 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
+            <div className="flex items-center gap-4 mb-4 text-neon-strong">
                 <h1 className="text-2xl font-bold">
                     {project?.title ?? "Loading..."}
                 </h1>
 
                 <button
                     onClick={() => setStatusModalOpen(true)}
-                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700"
+                    className="p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold"
                 >
                     + Add Status
                 </button>
                 <button
                     onClick={() => setIsInviteModalOpen(true)}
-                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700 transition"
+                    className="p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold"
                 >
                     + Add collaborators
                 </button>
@@ -173,30 +162,47 @@ export default function KanbanBoard() {
                 )}
 
             </div>
-
-
-
-
             <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={handleDragEnd}>
                 <div className="flex gap-4 overflow-x-auto">
-                    {statuses.map(status => (
-                        <Column
-                            key={status.id}
-                            status={status}
-                            onAddTask={() => openModal(status.id)}
-                        >
-                            <SortableContext
-                                items={tasksByStatus[status.id]?.map(t => t.id) ?? []}
-                                strategy={verticalListSortingStrategy}
+                    {statuses.map(status => {
+                        const tasksInStatus = tasksByStatus[status.id] ?? [];
+                        const canDelete = tasksInStatus.length === 0;
+
+                        const handleDeleteStatus = async () => {
+                            if (!projectId) return;
+                            if (window.confirm(`Delete column "${status.name}"?`)) {
+                                try {
+                                    await dispatch(deleteTaskStatus(status.id)).unwrap();
+                                  await  dispatch(getAllTaskStatuses(projectId!));
+                                } catch (error) {
+                                    console.error("Delete status failed:", error);
+                                    alert("Could not delete column. Maybe it still has tasks?");
+                                }
+                            }                        };
+
+                        return (
+                            <Column
+                                key={status.id}
+                                status={status}
+                                onAddTask={() => openModal(status.id)}
+                                canDelete={canDelete}
+                                onDelete={handleDeleteStatus}
                             >
-                                <div className="flex flex-col gap-2">
-                                    {tasksByStatus[status.id]?.map(task => (
-                                        <SortableTask key={task.id} task={task} />
-                                    ))}
-                                </div>
-                            </SortableContext>
-                        </Column>
-                    ))}
+                                <SortableContext
+                                    items={tasksByStatus[status.id]?.map(t => t.id) ?? []}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    <div className="flex flex-col gap-2">
+                                        {/*{tasksByStatus[status.id]?.map(task => (*/}
+                                        { tasksInStatus.map(task => (
+
+                                            <SortableTask key={task.id} task={task}/>
+                                        ))}
+                                    </div>
+                                </SortableContext>
+                            </Column>
+                        );
+                    })}
                 </div>
             </DndContext>
 

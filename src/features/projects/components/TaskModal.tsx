@@ -68,7 +68,7 @@ export function TaskModal({
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className={`w-full mb-1 border rounded px-2 py-1 ${
+                    className={`w-full px-2 py-1 text-sm text-[#0f172a] font-bold focus:outline-none bg-transparent placeholder:text-slate-400 ${
                         error ? "border-red-500" : "border-gray-300"
                     }`}
                 />
@@ -76,7 +76,7 @@ export function TaskModal({
                     placeholder="Description (optional, max 200 chars)"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className={`w-full mb-1 border rounded px-2 py-1 ${
+                    className={`w-full px-2 py-1 text-sm text-[#0f172a] font-bold focus:outline-none bg-transparent placeholder:text-slate-400 ${
                         error && description.length > 200 ? "border-red-500" : "border-gray-300"
                     }`}
                 />
@@ -90,7 +90,7 @@ export function TaskModal({
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
+                        className="flex-1 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-400 text-white text-xs font-black rounded-lg shadow-[0_4px_15px_rgba(6,182,212,0.4)] hover:brightness-110 transition-all uppercase"
                     >
                         Create
                     </button>

@@ -1,0 +1,129 @@
+import {type FormikValues, useFormik} from "formik";
+import type {FormikHelpers} from 'formik';
+import * as Yup from "yup";
+import NeonButton from "./NeonButton";
+import FormContainer from "./FormContainer";
+import type {FieldConfig} from "./types";
+import {getErrorMessage} from "../../utils/utils";
+import {useState} from "react";
+import ConfirmModal from "./ConfirmModal.tsx";
+
+type DynamicFormProps<T extends FormikValues> = {
+    title: string;
+    description?: string;
+    fields: FieldConfig[];
+    initialValues: T;
+    validationSchema: Yup.ObjectSchema<T>;
+    onSubmit: (values: T, formikHelpers: FormikHelpers<T>) => void;
+    onClose: () => void;
+    submitText?: string;
+    errorMessage?: string;
+};
+
+function DynamicForm<T extends FormikValues>({
+                                                 title,
+                                                 description,
+                                                 fields,
+                                                 initialValues,
+                                                 validationSchema,
+                                                 onSubmit,
+                                                 onClose,
+                                                 submitText = "Submit",
+                                                 errorMessage,
+                                             }: DynamicFormProps<T>) {
+    const formik = useFormik<T>({
+        initialValues,
+        validationSchema,
+        onSubmit,
+    });
+    const [showConfirm, setShowConfirm] = useState(false);
+
+    const handleClose = () => {
+        if (formik.dirty) {
+            setShowConfirm(true);
+            return;
+        }
+        onClose();
+    };
+
+    const handleConfirmDiscard = () => {
+        setShowConfirm(false);
+        onClose();
+    };
+    const handleCancelDiscard = () => {
+        setShowConfirm(false);
+    };
+
+
+        return (
+        <FormContainer
+            title={title}
+            description={description}
+            onClose={handleClose}
+            errorMessage={errorMessage}
+            submitButton={
+                <NeonButton
+                    size="lg"
+                    variant="primary"
+                    type="submit"
+                    onClick={formik.submitForm}
+                    className="w-full justify-center"
+                >
+                    {submitText}
+                </NeonButton>
+            }
+        >
+            {fields.map((field) => (
+                <div className="space-y-2" key={field.name}>
+                    <label className="block text-sm font-medium text-cyan-300 text-neon">
+                        {field.label}
+                    </label>
+
+                    {field.type === "textarea" ? (
+                        <textarea
+                            {...formik.getFieldProps(field.name)}
+                            rows={field.rows || 4}
+                            placeholder={field.placeholder}
+                            className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                                formik.touched[field.name] && formik.errors[field.name]
+                                    ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
+                                    : "border-cyan-400/30"
+                            }`}
+                        />
+                    ) : (
+                        <input
+                            {...formik.getFieldProps(field.name)}
+                            type={field.type || "text"}
+                            placeholder={field.placeholder}
+                            className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300
+  autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                                formik.touched[field.name] && formik.errors[field.name]
+                                    ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
+                                    : "border-cyan-400/30"
+                            }`}
+                        />
+                    )}
+
+                    {formik.touched[field.name] && formik.errors[field.name] && (
+                        <p className="text-sm text-red-500">
+                            {getErrorMessage(formik.errors[field.name])}
+                        </p>
+                    )}                </div>
+            ))}
+            {showConfirm && (
+                <ConfirmModal
+                    title="Discard changes?"
+                    message="You have unsaved changes. This action cannot be undone."
+                    confirmText="Discard"
+                    cancelText="Continue editing"
+                    onConfirm={handleConfirmDiscard}
+                    onCancel={handleCancelDiscard}
+                />
+            )}
+
+        </FormContainer>
+
+    );
+}
+
+export default DynamicForm;

@@ -43,7 +43,7 @@ export function CreateStatusModal({
                     ref={inputRef}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Название колонки"
+                    placeholder="Column title"
                     className="w-full border rounded px-3 py-2 mb-3"
                 />
 
@@ -65,13 +65,13 @@ export function CreateStatusModal({
                         onClick={onClose}
                         className="px-3 py-1.5 border rounded"
                     >
-                        Отмена
+                        Cancel
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className="px-3 py-1.5 bg-green-600 text-white rounded"
+                        className="px-3 py-1.5 bg-cyan-400 text-white rounded"
                     >
-                        Создать
+                        Create
                     </button>
                 </div>
             </div>

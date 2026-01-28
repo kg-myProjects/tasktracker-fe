@@ -11,11 +11,11 @@ export default function ProjectsList() {
     const projects = useAppSelector(selectProjects);
     return (
         <section>
-            <h2>List of Projects</h2>
+            <h2 className="text-cyan-300 text-2xl font-bold">List of Projects</h2>
             <ul>
                 {projects?.map((project, index) => (
                     <li key={project.id ?? index}>
-                        <Link to={`/project/${project.id}`} className="text-blue-600 hover:underline">
+                        <Link to={`/project/${project.id}`} className="text-cyan-400 hover:underline text-lg font-bold">
                             <h3>{project.title}</h3>
                         </Link>
                         <span>{project.description}</span>

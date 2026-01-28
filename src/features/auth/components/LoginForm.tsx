@@ -39,7 +39,7 @@ const LoginForm = ({emailConfirmed}: LoginFormProps) => {
             <div className="space-y-2 text-center">
                 <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
                 {emailConfirmed && (
-                    <div className="rounded-md bg-green-50 p-3 text-sm text-green-700 border border-green-200">
+                    <div className="rounded-md bg-cyan-400 p-3 text-sm text-gray-500 border border-cyan-400">
                         🎉 Your email has been confirmed! Please log in.
                     </div>
                 )}

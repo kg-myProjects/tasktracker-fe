@@ -63,7 +63,7 @@ export default function Profile() {
 
   const getStatusColor = (status: string) => {
     const colorMap: Record<string, string> = {
-      CONFIRMED: "text-green-600",
+      CONFIRMED: "text-cyan-400",
       UNCONFIRMED: "text-yellow-600",
       BANNED: "text-red-600",
     };
