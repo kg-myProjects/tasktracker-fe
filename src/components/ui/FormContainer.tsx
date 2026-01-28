@@ -19,11 +19,11 @@ const FormContainer = ({
                            errorMessage,
                        }: FormContainerProps) => {
     return (
-        <div className="relative mx-auto max-w-md p-6 mt-10 rounded-xl border border-cyan-400/40 bg-black shadow-neon">
+        <div className="relative mx-auto max-w-md p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold">
             {/* Close button */}
             <NeonButton
                 size="sm"
-                variant="danger"
+                variant="warning"
                 onClick={onClose}
                 className="absolute top-4 right-4"
             >

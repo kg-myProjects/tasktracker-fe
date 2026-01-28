@@ -36,6 +36,9 @@ export default function Home() {
 
   return (
     <>
+        <h2 className="text-cyan-300 text-2xl font-bold">Welcome to the Tracker App!</h2>
+        <h4 className="text-cyan-300 text-lg"> On this page, you can try creating columns for task statuses and adding task cards to them.</h4>
+        <h4 className="text-cyan-400 text-lg"> You can create a real project in the Projects tab. Good luck!</h4>
       <div className="flex flex-row gap-6 p-8 items-start">
         {columns.map((column) => (
           <List
@@ -53,7 +56,7 @@ export default function Home() {
             type="text"
             value={newListTitle}
             onChange={(e) => setNewListTitle(e.target.value)}
-            placeholder="Введите имя колонки..."
+            placeholder="Enter the column name (task status)..."
             className="w-full px-4 py-3 bg-white rounded-xl text-slate-800 placeholder:text-slate-400 font-bold border-2 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)] focus:outline-none transition-all mb-4"
             autoFocus
             onKeyDown={(e) => {
@@ -70,7 +73,7 @@ export default function Home() {
               onClick={handleAddList}
               className="flex-1 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-400 text-white text-xs font-black rounded-lg shadow-[0_4px_15px_rgba(6,182,212,0.4)] hover:brightness-110 transition-all uppercase"
             >
-              Добавить список
+              Add column (task status)
             </button>
             <button
               onClick={() => {
@@ -79,7 +82,7 @@ export default function Home() {
               }}
               className="px-4 py-2.5 text-slate-400 hover:text-white text-xs font-bold transition-colors"
             >
-              Отмена
+              Cancel
             </button>
           </div>
         </div>
@@ -88,7 +91,7 @@ export default function Home() {
           onClick={() => setIsAddingList(true)}
           className="w-[300px] h-fit bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5 text-center font-bold"
         >
-          + Добавить список
+          + Add column (task status)
         </button>
       )}
       </div>

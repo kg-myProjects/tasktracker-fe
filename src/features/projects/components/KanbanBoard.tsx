@@ -135,21 +135,21 @@ export default function KanbanBoard() {
 
 
     return (
-        <div className="h-screen bg-slate-100 p-4 flex flex-col">
-            <div className="flex items-center gap-4 mb-4 text-black">
+        <div className="h-screen  p-4 flex flex-col bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-cyan-400/30 p-4 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
+            <div className="flex items-center gap-4 mb-4 text-neon-strong">
                 <h1 className="text-2xl font-bold">
                     {project?.title ?? "Loading..."}
                 </h1>
 
                 <button
                     onClick={() => setStatusModalOpen(true)}
-                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700"
+                    className="p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold"
                 >
                     + Add Status
                 </button>
                 <button
                     onClick={() => setIsInviteModalOpen(true)}
-                    className="bg-blue-600 text-white px-3 py-1.5 rounded text-sm hover:bg-blue-700 transition"
+                    className="p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold"
                 >
                     + Add collaborators
                 </button>
@@ -162,10 +162,6 @@ export default function KanbanBoard() {
                 )}
 
             </div>
-
-
-
-
             <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={handleDragEnd}>
                 <div className="flex gap-4 overflow-x-auto">
                     {statuses.map(status => {

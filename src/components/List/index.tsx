@@ -62,7 +62,7 @@ export default function List({ id, title, cards, onUpdateCards, onCardClick }: L
               type="text"
               value={newCardTitle}
               onChange={(e) => setNewCardTitle(e.target.value)}
-              placeholder="Назовите карточку..."
+              placeholder="Name the card..."
               className="w-full px-2 py-1 text-sm text-[#0f172a] font-bold focus:outline-none bg-transparent placeholder:text-slate-400"
               autoFocus
               onKeyDown={(e) => {
@@ -80,7 +80,7 @@ export default function List({ id, title, cards, onUpdateCards, onCardClick }: L
             onClick={() => setIsAddingCard(true)}
             className="w-full text-center text-xs text-cyan-400 font-black py-2.5 rounded-xl border border-cyan-400/30 bg-cyan-400/5 hover:bg-cyan-400/20 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
           >
-            <span className="text-lg">+</span> Добавить карточку
+            <span className="text-lg">+</span> Add card
           </button>
         ) : (
           <div className="flex gap-2">
@@ -88,13 +88,13 @@ export default function List({ id, title, cards, onUpdateCards, onCardClick }: L
               onClick={handleAddCard}
               className="flex-1 bg-cyan-500 hover:bg-cyan-400 text-white text-[10px] font-black py-2.5 rounded-lg border border-[#0f172a] shadow-lg transition-all uppercase"
             >
-              СОХРАНИТЬ
+              SAVE
             </button>
             <button
               onClick={() => setIsAddingCard(false)}
               className="px-3 py-2 text-slate-400 hover:text-white text-[10px] font-black transition-colors uppercase"
             >
-              ОТМЕНА
+              CANCEL
             </button>
           </div>
         )}

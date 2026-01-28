@@ -44,7 +44,7 @@ export function SortableTask({ task }: { task: Task }) {
             ref={setNodeRef}
             style={style}
             // Добавили group для появления кнопки при наведении
-            className="group relative bg-white rounded p-3 shadow-sm cursor-grab hover:shadow-md transition-shadow border border-transparent hover:border-slate-200"
+            className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-[0_0_25px_rgba(255,255,255,0.2)] animate-in zoom-in-95 duration-200 cursor-grab active:cursor-grabbing"
         >
             {/* Область захвата для dnd-kit */}
             <div {...attributes} {...listeners}>

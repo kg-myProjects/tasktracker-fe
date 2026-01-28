@@ -39,7 +39,7 @@ const ConfirmModal = ({
 
                     <NeonButton
                         size="sm"
-                        variant="danger"
+                        variant="warning"
                         onClick={onConfirm}
                     >
                         {confirmText}

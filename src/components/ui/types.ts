@@ -4,7 +4,7 @@ export type NeonButtonProps = {
     type?: "button" | "submit" | "reset";
     disabled?: boolean;
     size?: "sm" | "md" | "lg";        // маленькая, средняя, большая
-    variant?: "primary" | "danger" | "success"; // цвета
+    variant?: "primary" | "warning" | "success"; // цвета
     className?: string;               // дополнительные кастомные классы
 };
 
@@ -15,9 +15,9 @@ export const sizeClasses = {
 };
 
 export const variantClasses = {
-    primary: "text-cyan-300 border-cyan-400/40 hover:text-white hover:border-cyan-300",
-    danger: "text-red-400 border-red-400/40 hover:text-white hover:border-red-400",
-    success: "text-green-400 border-green-400/40 hover:text-white hover:border-green-400",
+    primary: "text-cyan-200 border-cyan-300 hover:text-white hover:border-cyan-300",
+    warning: "text-yellow-400 border-yellow-400/40 hover:text-white hover:border-yellow-400",
+    success: "text-cyan-400 border-cyan-400/40 hover:text-white hover:border-cyan-400",
 };
 
 export type FieldType = "text" | "textarea" | "number" | "email" | "password";

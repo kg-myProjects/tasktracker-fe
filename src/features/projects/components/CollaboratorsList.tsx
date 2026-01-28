@@ -14,7 +14,7 @@ export const CollaboratorsList = ({ collaborators, onInviteClick }: Collaborator
                 {collaborators.map((member) => (
                     <div
                         key={member.userId}
-                        title={`${member.email} (${member.roles?.join(", ") ?? "No roles"})`}                        className="w-9 h-9 rounded-full bg-indigo-500 border-2 border-slate-100 flex items-center justify-center text-sm font-medium text-white cursor-help hover:z-10 transition-all hover:scale-110 shadow-sm"
+                        title={`${member.email} (${member.roles?.join(", ") ?? "No roles"})`}                        className="w-9 h-9 rounded-full bg-cyan-400 border-2 border-slate-100 flex items-center justify-center text-sm font-medium text-white cursor-help hover:z-10 transition-all hover:scale-110 shadow-sm"
                     >
                         {member.email.charAt(0).toUpperCase()}
                     </div>
