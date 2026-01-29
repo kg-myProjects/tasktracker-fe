@@ -1,124 +1,70 @@
-import {useFormik} from "formik";
 import * as Yup from "yup";
-import {checkAuth, login, selectLoginError} from "../slice/authSlice";
-import {useAppDispatch, useAppSelector} from "../../../app/hooks";
-import {useNavigate} from "react-router-dom";
+import { checkAuth, login, selectLoginError } from "../slice/authSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useNavigate } from "react-router-dom";
+import DynamicForm from "../../../components/ui/DynamicForm";
+import type { FieldConfig } from "../../../components/ui/types";
 
 type LoginFormProps = {
-    emailConfirmed?: boolean; }
+    emailConfirmed?: boolean;
+};
 
-const LoginForm = ({emailConfirmed}: LoginFormProps) => {
+const LoginForm = ({ emailConfirmed }: LoginFormProps) => {
     const dispatch = useAppDispatch();
-    const loginError = useAppSelector(selectLoginError);
     const navigate = useNavigate();
-    const formik = useFormik({
-        initialValues: {
-            email: "",
-            password: "",
+    const loginError = useAppSelector(selectLoginError);
+
+    const initialValues = {
+        email: "",
+        password: "",
+    };
+
+    const fields: FieldConfig[] = [
+        {
+            name: "email",
+            label: "Email",
+            type: "email",
+            placeholder: "you@example.com"
         },
-        validationSchema: Yup.object({
-            email: Yup.string()
-                .email("Invalid email address")
-                .required("Email is required"),
-            password: Yup.string()
-                .min(8, "Password must be at least 8 characters")
-                .required("Password is required"),
-        }),
-        onSubmit: async (values) => {
-            console.log("login");
-            const dispatchResult = await dispatch(login(values));
-            if (login.fulfilled.match(dispatchResult)) {
-                await dispatch(checkAuth());
-                navigate("/");
-            }
+        {
+            name: "password",
+            label: "Password",
+            type: "password",
+            placeholder: "••••••••"
         },
+    ];
+
+    const validationSchema = Yup.object({
+        email: Yup.string().email("Invalid email address").required("Email is required"),
+        password: Yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
     });
 
+    const handleSubmit = async (values: typeof initialValues) => {
+        const dispatchResult = await dispatch(login(values));
+        if (login.fulfilled.match(dispatchResult)) {
+            await dispatch(checkAuth());
+            navigate("/");
+        }
+    };
+
     return (
-        <div className="mx-auto max-w-sm space-y-6 p-6 rounded-lg border bg-white shadow-sm mt-10">
-            <div className="space-y-2 text-center">
-                <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-                {emailConfirmed && (
-                    <div className="rounded-md bg-cyan-400 p-3 text-sm text-gray-500 border border-cyan-400">
-                        🎉 Your email has been confirmed! Please log in.
-                    </div>
-                )}
-
-                <p className="text-sm text-muted-foreground text-gray-500">
-                    Enter your email and password to sign in
-                </p>
-                {loginError && (
-                    <div className="rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
-                        {loginError}
-                    </div>
-                )}
+        <div className="min-h-screen flex items-start justify-center bg-slate-950 p-4">
+            <div className="w-full max-w-md relative">
+                <DynamicForm
+                    title="Sign In"
+                    description={emailConfirmed
+                        ? "🎉 Email confirmed! Please log in."
+                        : "Enter your credentials to access the system"
+                    }
+                    fields={fields}
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                    onClose={() => navigate("/")}
+                    submitText="Access Granted"
+                    errorMessage={loginError}
+                />
             </div>
-            <form onSubmit={formik.handleSubmit} className="space-y-4">
-                {/* Email Field */}
-                <div className="space-y-2">
-                    <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Email
-                    </label>
-                    <input
-                        id="email"
-                        type="email"
-                        {...formik.getFieldProps("email")}
-                        className={`w-full px-3 py-2 text-sm border rounded-md shadow-sm transition placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-                            formik.touched.email && formik.errors.email
-                                ? "border-red-500 focus:ring-red-500"
-                                : "border-input"
-                        }`}
-                        placeholder="you@example.com"
-                    />
-                    {formik.touched.email && formik.errors.email && (
-                        <p className="text-sm text-red-500">{formik.errors.email}</p>
-                    )}
-                </div>
-
-                {/* Password Field */}
-                <div className="space-y-2">
-                    <label
-                        htmlFor="password"
-                        className="block text-sm font-medium text-gray-700"
-                    >
-                        Password
-                    </label>
-                    <input
-                        id="password"
-                        type="password"
-                        {...formik.getFieldProps("password")}
-                        className={`w-full px-3 py-2 text-sm border rounded-md shadow-sm transition placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring ${
-                            formik.touched.password && formik.errors.password
-                                ? "border-red-500 focus:ring-red-500"
-                                : "border-input"
-                        }`}
-                        placeholder="••••••••"
-                    />
-                    <div className="text-right">
-                        <button
-                            type="button"
-                            onClick={() => navigate('/forgot-password')}
-                            className="text-sm text-blue-500 hover:underline"
-                        >
-                            Forgot password?
-                        </button>
-                    </div>
-                    {formik.touched.password && formik.errors.password && (
-                        <p className="text-sm text-red-500">{formik.errors.password}</p>
-                    )}
-                </div>
-
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    className="w-full inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                >
-                    Sign in
-                </button>
-            </form>
         </div>
     );
 };

@@ -1,66 +1,63 @@
-import React, {useState} from 'react';
-import {fetchForgotPassword} from "../features/auth/services/api.ts";
+import * as Yup from "yup";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchForgotPassword } from "../features/auth/services/api.ts";
+import DynamicForm from "../components/ui/DynamicForm";
+import type { FieldConfig } from "../components/ui/types";
 
-const ForgotPassword = () => {
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState<string | null>(null);
+const initialValues = {
+    email: "",
+};
+
+const ForgotPasswordPage = () => {
+    const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+    const fields: FieldConfig[] = [
+        {
+            name: "email",
+            label: "Email",
+            type: "email",
+            placeholder: "you@example.com"
+        }
+    ];
+
+    const validationSchema = Yup.object({
+        email: Yup.string().email("Invalid email address").required("Required"),
+    });
+
+
+    const handleSubmit = async (values: typeof initialValues) => {
         setError(null);
-        setMessage(null);
-
+        setSuccessMessage(null);
         try {
-            await fetchForgotPassword(email);
-            setMessage(
-                "If a user with that email exists, a password reset link has been sent."
+            await fetchForgotPassword(values.email);
+            setSuccessMessage(
+                "🎉 If this email exists, a reset link has been sent!"
             );
         } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError("Something went wrong");
-            }
-        } finally {
-            setLoading(false);
+            setError(err instanceof Error ? err.message : "Something went wrong");
         }
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-            <h1 className="text-2xl font-semibold mb-4 text-center">
-                Forgot password
-            </h1>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    required
-                    className="w-full border px-3 py-2 rounded"
+        <div className="min-h-screen flex items-start justify-center bg-slate-950 p-4">
+            <div className="w-full max-w-md">
+                <DynamicForm
+                    title="Forgot Password"
+                    description={successMessage || "Enter your email to receive a recovery link"}
+                    fields={fields}
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                    onClose={() => navigate("/login")}
+                    submitText="Send Recovery Link"
+                    errorMessage={error || undefined}
                 />
-
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-black text-white py-2 rounded"
-                >
-                    {loading ? "Sending..." : "Send reset link"}
-                </button>
-            </form>
-
-            {message && (
-                <p className="mt-4 text-green-600 text-center">{message}</p>
-            )}
-            {error && (
-                <p className="mt-4 text-red-500 text-center">{error}</p>
-            )}
+            </div>
         </div>
     );
 };
-export default ForgotPassword;
+
+export default ForgotPasswordPage;

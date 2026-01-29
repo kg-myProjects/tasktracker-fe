@@ -7,6 +7,7 @@ import type {FieldConfig} from "./types";
 import {getErrorMessage} from "../../utils/utils";
 import {useState} from "react";
 import ConfirmModal from "./ConfirmModal.tsx";
+import { useNavigate } from "react-router-dom";
 
 type DynamicFormProps<T extends FormikValues> = {
     title: string;
@@ -46,7 +47,7 @@ function DynamicForm<T extends FormikValues>({
             [fieldName]: !prev[fieldName]
         }));
     };
-
+    const navigate = useNavigate();
 
     const handleClose = () => {
         if (formik.dirty) {
@@ -128,7 +129,6 @@ function DynamicForm<T extends FormikValues>({
                                 </button>
                             )}
                         </div>
-
                     )}
 
                     {formik.touched[field.name] && formik.errors[field.name] && (
@@ -136,6 +136,19 @@ function DynamicForm<T extends FormikValues>({
                             {getErrorMessage(formik.errors[field.name])}
                         </p>
                     )}
+
+                    {field.name === "password" && title === "Sign In" && (
+                        <div className="flex justify-end pr-1">
+                            <button
+                                type="button"
+                                onClick={() => navigate('/forgot-password')}
+                                className="text-[10px] text-cyan-400/50 hover:text-cyan-400 uppercase font-black tracking-tighter transition-all duration-300 hover:tracking-normal active:scale-95"
+                            >
+                                Forgot password?
+                            </button>
+                        </div>
+                    )}
+
                 </div>
             ))}
             {showConfirm && (
