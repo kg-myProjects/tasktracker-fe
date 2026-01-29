@@ -3,10 +3,17 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useAppDispatch } from "../../../app/hooks";
 import { deleteTask } from "../../tasks/slice/tasksSlice";
-import {useState} from "react";
+import React, {useState} from "react";
+
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx"; // Убедись, что экшен создан
 
-export function SortableTask({ task }: { task: Task }) {
+export const SortableTask = React.memo( function SortableTask({
+                                 task,
+                                 onOpenEdit
+                             }: {
+    task: Task;
+    onOpenEdit: () => void
+}) {
     const dispatch = useAppDispatch();
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -22,8 +29,11 @@ export function SortableTask({ task }: { task: Task }) {
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        opacity: isDragging ? 0.5 : 1, // Визуальный эффект при перетаскивании
+        opacity: isDragging ? 0.2 : 1,
+        willChange: transform ? "transform" : "auto",
     };
+
+
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -43,8 +53,10 @@ export function SortableTask({ task }: { task: Task }) {
         <div
             ref={setNodeRef}
             style={style}
+            onClick={onOpenEdit}
             // Добавили group для появления кнопки при наведении
-            className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-[0_0_25px_rgba(255,255,255,0.2)] animate-in zoom-in-95 duration-200 cursor-grab active:cursor-grabbing"
+        //   className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-[0_0_25px_rgba(255,255,255,0.2)] animate-in zoom-in-95 duration-200 cursor-grab active:cursor-grabbing"
+            className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 transition-shadow duration-200 cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:shadow-md"
         >
             {/* Область захвата для dnd-kit */}
             <div {...attributes} {...listeners}>
@@ -52,7 +64,7 @@ export function SortableTask({ task }: { task: Task }) {
                 {task.description && (
                     <div className="text-sm text-slate-600 mt-1 line-clamp-2">
                         {task.description}
-                    </div>
+                     </div>
                 )}
             </div>
 
@@ -87,4 +99,4 @@ export function SortableTask({ task }: { task: Task }) {
 
         </div>
     );
-}
+});
