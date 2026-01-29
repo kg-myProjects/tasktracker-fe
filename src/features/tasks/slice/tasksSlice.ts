@@ -83,8 +83,10 @@ export const tasksSlice = createAppSlice({
                     const { id, dto } = action.meta.arg;
 
                     const task = state.tasks.find((t) => t.id === id);
-                    if (task && dto.statusId) {
-                        task.statusId = dto.statusId;
+                    if (task) {
+                        if (dto.statusId) task.statusId = dto.statusId;
+                        if (dto.title) task.title = dto.title; // Добавь это для мгновенного обновления заголовка
+                        if (dto.description) task.description = dto.description; // И это для описания
                     }
                 },
                 fulfilled: (state, action) => {
@@ -129,6 +131,8 @@ export const tasksSlice = createAppSlice({
     // state as their first argument.
     selectors: {
         selectTasks: (state) => state.tasks,
+        selectTasksByStatus: (state, statusId: string) =>
+            state.tasks.filter(task => task.statusId === statusId),
         selectCurrentTask: state => state.currentTask,
         selectIsLoading: (state) => state.isLoading,
         selectCreateTaskErrorMessage: (state) => state.createTaskErrorMessage,
@@ -142,6 +146,7 @@ export const {createTask, getTasksByProjectId, updateTask, deleteTask} = tasksSl
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
     selectTasks,
+    selectTasksByStatus,
     selectCurrentTask,
     selectIsLoading,
     selectCreateTaskErrorMessage,

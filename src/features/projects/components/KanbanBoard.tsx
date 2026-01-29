@@ -5,6 +5,7 @@ import {Column} from "./Column.tsx";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { getTasksByProjectId, updateTask, createTask, selectTasks } from "../../tasks/slice/tasksSlice";
 import {getProjectById, inviteUser, selectCurrentProject, selectInviteUserErrorMessage} from "../slice/projectsSlice";
+import {DragOverlay, defaultDropAnimationSideEffects, type DragStartEvent} from "@dnd-kit/core";
 import {
     getAllTaskStatuses,
     selectSortedTaskStatuses,
@@ -13,15 +14,23 @@ import {
 } from "../../statuses/slice/taskStatusSlice";
 import { CreateStatusModal } from "./CreateStatusModal";
 import {TaskModal} from "./TaskModal.tsx";
+import {EditTaskModal} from "../../tasks/components/EditTaskModal";
 import type { DragEndEvent } from "@dnd-kit/core";
-import { DndContext, PointerSensor, useSensor, useSensors, rectIntersection } from "@dnd-kit/core";
+import { DndContext,closestCorners, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {SortableTask} from "./SortableTask.tsx";
 import {InviteModal} from "./InviteModal.tsx";
 import type {ProjectRole} from "../types";
 import {CollaboratorsList} from "./CollaboratorsList.tsx";
 
+const pointerSensorOptions = {
+    activationConstraint: { distance: 8 },
+};
+
+
 export default function KanbanBoard() {
+
+
     const { projectId } = useParams<{ projectId: string }>();
     const dispatch = useAppDispatch();
 
@@ -35,6 +44,8 @@ export default function KanbanBoard() {
     const [currentStatusId, setCurrentStatusId] = useState<string | null>(null);
     const [statusModalOpen, setStatusModalOpen] = useState(false);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+    const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+    const [activeTask, setActiveTask] = useState<Task | null>(null);
 
 
     useEffect(() => {
@@ -45,9 +56,6 @@ export default function KanbanBoard() {
 
     }, [projectId, dispatch]);
 
-    console.log("Tasks:", tasks);
-    console.log("Statuses:", statuses);
-
 
     const tasksByStatus = useMemo(() => {
         return statuses.reduce<Record<string, Task[]>>((acc, status) => {
@@ -56,9 +64,23 @@ export default function KanbanBoard() {
         }, {});
     }, [tasks, statuses]);
 
-    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+    const taskToEdit = useMemo(() =>
+            tasks.find(t => t.id === editingTaskId),
+        [tasks, editingTaskId]
+    );
+
+    // const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+
+    const sensors = useSensors(useSensor(PointerSensor, pointerSensorOptions));
+
+    const handleDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+        const task = tasks.find(t => t.id === active.id);
+        if (task) setActiveTask(task);
+    };
 
     const handleDragEnd = (event: DragEndEvent) => {
+        setActiveTask(null);
         const { active, over } = event;
         if (!over) return;
         const activeId = String(active.id);
@@ -135,7 +157,7 @@ export default function KanbanBoard() {
 
 
     return (
-        <div className="h-screen  p-4 flex flex-col bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-cyan-400/30 p-4 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
+        <div className="h-screen flex flex-col bg-slate-900 rounded-2xl border border-cyan-400/30 p-4 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
             <div className="flex items-center gap-4 mb-4 text-neon-strong">
                 <h1 className="text-2xl font-bold">
                     {project?.title ?? "Loading..."}
@@ -143,13 +165,13 @@ export default function KanbanBoard() {
 
                 <button
                     onClick={() => setStatusModalOpen(true)}
-                    className="p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold"
+                    className="p-6 mt-10 bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all  font-bold"
                 >
                     + Add Status
                 </button>
                 <button
                     onClick={() => setIsInviteModalOpen(true)}
-                    className="p-6 mt-10 rounded-xl bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all p-5  font-bold"
+                    className="p-6 mt-10 bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all  font-bold"
                 >
                     + Add collaborators
                 </button>
@@ -162,7 +184,10 @@ export default function KanbanBoard() {
                 )}
 
             </div>
-            <DndContext sensors={sensors} collisionDetection={rectIntersection} onDragEnd={handleDragEnd}>
+            <DndContext sensors={sensors}
+                        onDragStart={handleDragStart}
+                        collisionDetection={closestCorners}
+                        onDragEnd={handleDragEnd}>
                 <div className="flex gap-4 overflow-x-auto">
                     {statuses.map(status => {
                         const tasksInStatus = tasksByStatus[status.id] ?? [];
@@ -173,7 +198,7 @@ export default function KanbanBoard() {
                             if (window.confirm(`Delete column "${status.name}"?`)) {
                                 try {
                                     await dispatch(deleteTaskStatus(status.id)).unwrap();
-                                  await  dispatch(getAllTaskStatuses(projectId!));
+                                    await  dispatch(getAllTaskStatuses(projectId!));
                                 } catch (error) {
                                     console.error("Delete status failed:", error);
                                     alert("Could not delete column. Maybe it still has tasks?");
@@ -196,7 +221,7 @@ export default function KanbanBoard() {
                                         {/*{tasksByStatus[status.id]?.map(task => (*/}
                                         { tasksInStatus.map(task => (
 
-                                            <SortableTask key={task.id} task={task}/>
+                                            <SortableTask key={task.id} task={task} onOpenEdit={()=> setEditingTaskId(task.id) }/>
                                         ))}
                                     </div>
                                 </SortableContext>
@@ -204,6 +229,20 @@ export default function KanbanBoard() {
                         );
                     })}
                 </div>
+                <DragOverlay dropAnimation={{
+                    sideEffects: defaultDropAnimationSideEffects({
+                        styles: { active: { opacity: '0.5' } },
+                    }),
+                }}>
+                    {activeTask ? (
+                        // Рендерим простую версию карточки без хуков dnd
+                        <div className="bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-2xl rotate-3 cursor-grabbing w-[300px]">
+                            <div className="font-semibold text-black">{activeTask.title}</div>
+                            <div className="text-sm text-slate-600 mt-1 line-clamp-2">{activeTask.description}</div>
+                        </div>
+                    ) : null}
+                </DragOverlay>
+
             </DndContext>
 
             <TaskModal
@@ -225,6 +264,13 @@ export default function KanbanBoard() {
                 onInvite={handleInviteSubmit}
                 error={inviteError}
             />
+
+            {taskToEdit && (
+                <EditTaskModal
+                    card={taskToEdit}
+                    onClose={() => setEditingTaskId(null)}
+                />
+            )}
 
 
         </div>
