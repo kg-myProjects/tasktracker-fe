@@ -5,7 +5,7 @@ export interface Task {
     description: string;
     statusId: string;
     projectId: string;
-
+    executors: EmployeeDto[];
 }
 
 // дто без id
@@ -49,15 +49,17 @@ export interface TaskDto{
             } ;
         }
     }
-
+    executors: EmployeeDto[];
 }
-// tasks/types.ts
-// tasks/types.ts
+
+
+
 export interface UpdateTaskDto {
     title?: string;
     description?: string;
     statusId?: string;
     projectId?: string;
+    executorIds?: string[];
 }
 
 export interface UpdateTaskPayload {
@@ -72,4 +74,11 @@ export interface TasksSliceState {
     currentTask?: Task | null;
     createTaskErrorMessage?: string;
     isLoading: boolean;
+}
+
+export interface EmployeeDto {
+    id: string;
+    email: string;
+    name?: string;
+    avatar?: string;
 }

@@ -19,8 +19,6 @@ export const tasksSlice = createAppSlice({
                     return api
                         .fetchTasksByProjectId(id)
                         .catch((err: AxiosError<{ message: string }>) => {
-                            // раскрываем ошибку от аксиоса и получаем сообщение
-                            // бросаем новую ошибку, которая поподет в rejected case
                             throw new Error(err.response?.data?.message);
                         });
                 },
@@ -67,49 +65,49 @@ export const tasksSlice = createAppSlice({
             ),
 
 
-        updateTask: create.asyncThunk(
-            async ({id, dto}:UpdateTaskPayload) => {
-                return api.fetchUpdateTask(id, dto).catch((err) => {
-                    if (isAxiosError(err)) {
-                        throw new Error(
-                            err.response?.data?.message || "Internal Server Error"
+            updateTask: create.asyncThunk(
+                async ({id, dto}:UpdateTaskPayload) => {
+                    return api.fetchUpdateTask(id, dto).catch((err) => {
+                        if (isAxiosError(err)) {
+                            throw new Error(
+                                err.response?.data?.message || "Internal Server Error"
+                            );
+                        }
+                    });
+                    // The value we return becomes the `fulfilled` action payload
+                },
+                {
+                    pending: (state, action) => {
+                        const { id, dto } = action.meta.arg;
+
+                        const task = state.tasks.find((t) => t.id === id);
+                        if (task) {
+                            if (dto.statusId) task.statusId = dto.statusId;
+                            if (dto.title) task.title = dto.title; // Добавь это для мгновенного обновления заголовка
+                            if (dto.description) task.description = dto.description; // И это для описания
+                        }
+                    },
+                    fulfilled: (state, action) => {
+                        const updatedTaskDto = action.payload; // TaskDto
+                        const updatedTask = mapTaskFromApi(updatedTaskDto); // ✅ Task
+
+                        const index = state.tasks.findIndex(
+                            (t) => t.id === updatedTask.id
                         );
-                    }
-                });
-                // The value we return becomes the `fulfilled` action payload
-            },
-            {
-                pending: (state, action) => {
-                    const { id, dto } = action.meta.arg;
 
-                    const task = state.tasks.find((t) => t.id === id);
-                    if (task) {
-                        if (dto.statusId) task.statusId = dto.statusId;
-                        if (dto.title) task.title = dto.title; // Добавь это для мгновенного обновления заголовка
-                        if (dto.description) task.description = dto.description; // И это для описания
-                    }
-                },
-                fulfilled: (state, action) => {
-                    const updatedTaskDto = action.payload; // TaskDto
-                    const updatedTask = mapTaskFromApi(updatedTaskDto); // ✅ Task
+                        if (index !== -1) {
+                            state.tasks[index] = updatedTask;
+                        }
 
-                    const index = state.tasks.findIndex(
-                        (t) => t.id === updatedTask.id
-                    );
-
-                    if (index !== -1) {
-                        state.tasks[index] = updatedTask;
-                    }
-
-                    state.currentTask = updatedTask;
-                    state.createTaskErrorMessage = "";
-                },
-                rejected: (state, action) => {
-                    state.createTaskErrorMessage = action.error.message;
-                    state.currentTask = null;
-                },
-            }
-        ),
+                        state.currentTask = updatedTask;
+                        state.createTaskErrorMessage = "";
+                    },
+                    rejected: (state, action) => {
+                        state.createTaskErrorMessage = action.error.message;
+                        state.currentTask = null;
+                    },
+                }
+            ),
 
             deleteTask: create.asyncThunk(
                 async (id: string) => {
@@ -121,27 +119,53 @@ export const tasksSlice = createAppSlice({
                         state.tasks = state.tasks.filter(t => t.id !== action.payload);
                     }
                 }
-            )
+            ),
+
+            addExecutorToTask: create.asyncThunk(
+                async ({ collaboratorId, taskId }: { collaboratorId: string; taskId: string }) => {
+                    return api.fetchAddExecutorToTask(collaboratorId, taskId).catch((err) => {
+                        if (isAxiosError(err)) {
+                            throw new Error(err.response?.data?.message || "Error assigning executor");
+                        }
+                        throw err;
+                    });
+                },
+                {
+                    fulfilled: (state, action) => {
+                        const updatedTask = mapTaskFromApi(action.payload as TaskDto);
+                        const index = state.tasks.findIndex(t => t.id === updatedTask.id);
+                        if (index !== -1) {
+                            state.tasks[index] = updatedTask;
+                        }
+                        if (state.currentTask?.id === updatedTask.id) {
+                            state.currentTask = updatedTask;
+                        }
+                    },
+                    rejected: (_state, action) => {
+                        console.error("Failed to add executor:", action.error.message);
+                    }
+                }
+            ),
 
 
-    }),
+        }),
 
 
-    // You can define your selectors here. These selectors receive the slice
-    // state as their first argument.
-    selectors: {
-        selectTasks: (state) => state.tasks,
-        selectTasksByStatus: (state, statusId: string) =>
-            state.tasks.filter(task => task.statusId === statusId),
-        selectCurrentTask: state => state.currentTask,
-        selectIsLoading: (state) => state.isLoading,
-        selectCreateTaskErrorMessage: (state) => state.createTaskErrorMessage,
-    },
+        // You can define your selectors here. These selectors receive the slice
+        // state as their first argument.
+        selectors: {
+            selectTasks: (state) => state.tasks,
+            selectTasksByStatus: (state, statusId: string) =>
+                state.tasks.filter(task => task.statusId === statusId),
+            selectCurrentTask: state => state.currentTask,
+            selectIsLoading: (state) => state.isLoading,
+            selectCreateTaskErrorMessage: (state) => state.createTaskErrorMessage,
+        },
     }
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask, getTasksByProjectId, updateTask, deleteTask} = tasksSlice.actions;
+export const {createTask, getTasksByProjectId, updateTask, deleteTask, addExecutorToTask} = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

@@ -1,17 +1,48 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { fetchResetPassword } from "../services/api";
+import * as Yup from "yup";
 import axiosInstance from "../../../lib/axiosInstance.ts";
+import { fetchResetPassword } from "../services/api";
+import DynamicForm from "../../../components/ui/DynamicForm";
+import type { FieldConfig } from "../../../components/ui/types";
+
+const initialValues = {
+    newPassword: "",
+    confirmPassword: "",
+};
 
 const ResetPasswordForm = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const token = searchParams.get("token");
 
-    const [newPassword, setNewPassword] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+
+    const fields: FieldConfig[] = [
+        {
+            name: "newPassword",
+            label: "New Password",
+            type: "password",
+            placeholder: "••••••••"
+        },
+        {
+            name: "confirmPassword",
+            label: "Confirm New Password",
+            type: "password",
+            placeholder: "••••••••"
+        }
+    ];
+
+    const validationSchema = Yup.object({
+        newPassword: Yup.string()
+            .min(8, "Password must be at least 8 characters")
+            .required("Required"),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref("newPassword")], "Passwords must match")
+            .required("Required"),
+    });
 
     useEffect(() => {
         if (!token) {
@@ -32,67 +63,51 @@ const ResetPasswordForm = () => {
             }
         };
 
-        validateToken();
+        void validateToken();
     }, [token]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (values: typeof initialValues) => {
         setError(null);
-
         try {
-            await fetchResetPassword({ token: token!, newPassword });
+            await fetchResetPassword({
+                token: token!,
+                newPassword: values.newPassword
+            });
             setSuccess(true);
-
-            setTimeout(() => {
-                navigate("/login");
-            }, 3000);
+            setTimeout(() => navigate("/login"), 3000);
         } catch {
             setError("Failed to reset password");
         }
     };
 
     if (loading) {
-        return <p className="text-center mt-10">Checking reset link...</p>;
-    }
-
-    if (error) {
-        return <p className="text-center mt-10 text-red-500">{error}</p>;
-    }
-
-    if (success) {
         return (
-            <p className="text-center mt-10 text-green-600 font-semibold">
-                ✅ Your password has been successfully updated!
-            </p>
+            <div className="min-h-screen flex items-center justify-center bg-slate-950 text-cyan-400 font-black uppercase tracking-widest animate-pulse">
+                Checking reset link...
+            </div>
         );
     }
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-            <h1 className="text-2xl font-semibold mb-4 text-center">
-                Reset password
-            </h1>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    id="newPassword"
-                    name="newPassword"
-                    type="password"
-                    placeholder="New password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    className="w-full border px-3 py-2 rounded"
+        <div className="min-h-screen flex items-start justify-center bg-slate-950 p-4">
+            <div className="w-full max-w-md">
+                <DynamicForm
+                    title="Reset Password"
+                    description={success
+                        ? "✅ Password updated! Redirecting to login..."
+                        : "Enter your new secret sequence"
+                    }
+                    fields={fields}
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                    onClose={() => navigate("/login")}
+                    submitText="Update Password"
+                    errorMessage={error || undefined}
                 />
-
-                <button
-                    type="submit"
-                    className="w-full bg-black text-white py-2 rounded"
-                >
-                    Reset password
-                </button>
-            </form>
+            </div>
         </div>
     );
 };
+
 export default ResetPasswordForm;

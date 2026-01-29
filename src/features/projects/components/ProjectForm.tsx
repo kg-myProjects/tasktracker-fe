@@ -12,9 +12,20 @@ type ProjectFormProps = {
 
 const NAME_REGEX = /^[A-Z][a-zA-Z0-9 ]{2,49}$/;
 
-const ProjectForm = ({ onClose }:ProjectFormProps) => {
+const ProjectForm = ({ onClose }: ProjectFormProps) => {
     const dispatch = useAppDispatch();
     const projectError = useAppSelector(selectCreateProjectErrorMessage);
+
+    const handleSubmit = async (values: { title: string; description: string }) => {
+        try {
+            await dispatch(createProject(values)).unwrap();
+
+            onClose();
+        } catch (error) {
+            console.error("Failed to create project:", error);
+        }
+    };
+
     return (
         <DynamicForm
             title="New Project"
@@ -33,7 +44,7 @@ const ProjectForm = ({ onClose }:ProjectFormProps) => {
                 { name: "title", label: "Title", placeholder: "New Website Development" },
                 { name: "description", label: "Description", type: "textarea", placeholder: "A Project to develop a new company website", rows: 4 },
             ]}
-            onSubmit={(values) => dispatch(createProject(values))}
+            onSubmit={handleSubmit}
             onClose={onClose}
             submitText="Create Project"
             errorMessage={projectError || undefined}
