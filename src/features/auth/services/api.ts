@@ -10,6 +10,18 @@ const GET_CURRENT_USER_PATH = "/auth/me";
 const LOGOUT_PATH = "/auth/logout";
 export const TOKEN_REFRESH_PATH = "/api/v1/auth/refresh-token";
 
+interface ResetPasswordData {
+    token: string;
+    newPassword: string;
+}
+
+interface ApiError extends Error {
+    response?: {
+        data?: {
+            message?: string;
+        };
+    };
+}
 
 export const fetchLogin = async (credentials: Credentials):Promise<void> => {
   await axiosInstance.post(LOGIN_PATH, credentials);
@@ -27,6 +39,20 @@ export const fetchRegister = async (dto: UserRegistrationDto):Promise<UserCreate
 export const fetchCurrentUser = async ():Promise<UserResponseDto> => {
     const res = await axiosInstance.get(GET_CURRENT_USER_PATH);
     return res.data;
+};
+
+export const fetchForgotPassword = async (email: string) => {
+    await axiosInstance.post("/auth/forgot-password", { email });
+};
+
+export const fetchResetPassword = async (data: ResetPasswordData) => {
+    try {
+        await axiosInstance.post("/auth/reset-password", data);
+    } catch (err) {
+        const error = err as ApiError;
+        const message = error.response?.data?.message ?? "Reset password failed";
+        throw new Error(message);
+    }
 };
 
 export const fetchRefreshToken = async ():Promise<void> => {

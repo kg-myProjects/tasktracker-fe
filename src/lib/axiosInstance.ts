@@ -14,6 +14,9 @@ const AUTH_EXCLUDED_PATHS: readonly string[] = [
     "/auth/login",
     "/auth/register",
     "/auth/logout",
+    "/auth/forgot-password",
+    "/auth/reset-password",
+    "/auth/reset-password/validate",
 ];
 
 interface FailedRequest {
