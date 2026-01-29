@@ -38,6 +38,16 @@ function DynamicForm<T extends FormikValues>({
     });
     const [showConfirm, setShowConfirm] = useState(false);
 
+    const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
+
+    const togglePassword = (fieldName: string) => {
+        setPasswordVisibility(prev => ({
+            ...prev,
+            [fieldName]: !prev[fieldName]
+        }));
+    };
+
+
     const handleClose = () => {
         if (formik.dirty) {
             setShowConfirm(true);
@@ -91,9 +101,15 @@ function DynamicForm<T extends FormikValues>({
                             }`}
                         />
                     ) : (
+                        <div className="relative">
                         <input
                             {...formik.getFieldProps(field.name)}
-                            type={field.type || "text"}
+
+                            type={
+                                field.type === "password"
+                                    ? (passwordVisibility[field.name] ? "text" : "password")
+                                    : field.type || "text"
+                            }
                             placeholder={field.placeholder}
                             className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300
   autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
@@ -102,13 +118,25 @@ function DynamicForm<T extends FormikValues>({
                                     : "border-cyan-400/30"
                             }`}
                         />
+                            {field.type === "password" && (
+                                <button
+                                    type="button"
+                                    onClick={() => togglePassword(field.name)}
+                                    className="absolute inset-y-0 right-3 flex items-center text-cyan-400/60 hover:text-cyan-400 transition-colors"
+                                >
+                                    {passwordVisibility[field.name] ? "🔒" : "👁️"}
+                                </button>
+                            )}
+                        </div>
+
                     )}
 
                     {formik.touched[field.name] && formik.errors[field.name] && (
                         <p className="text-sm text-red-500">
                             {getErrorMessage(formik.errors[field.name])}
                         </p>
-                    )}                </div>
+                    )}
+                </div>
             ))}
             {showConfirm && (
                 <ConfirmModal

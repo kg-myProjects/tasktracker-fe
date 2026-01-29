@@ -7,5 +7,6 @@ export function mapTaskFromApi(data: TaskDto): Task {
         description: data.description,
         statusId: data.status?.id ?? '',
         projectId: data.project?.id ?? '',
+        executors: data.executors || [],
     };
 }

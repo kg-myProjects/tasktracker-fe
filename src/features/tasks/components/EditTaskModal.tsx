@@ -1,11 +1,14 @@
 import {useState} from "react";
-import {useAppDispatch} from "../../../app/hooks.ts";
-import {updateTask} from "../slice/tasksSlice.ts";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
+import {addExecutorToTask, updateTask} from "../slice/tasksSlice.ts";
+
+import type { Task } from "../types";
 
 interface TaskEditModalProps {
-    card: { id: string; title: string; description: string };
+    card: Task;
     onClose: () => void;
 }
+
 
 export function EditTaskModal({card, onClose}: TaskEditModalProps) {
     const [showLabels, setShowLabels] = useState(false);
@@ -19,12 +22,16 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
     const [newItemText, setNewItemText] = useState("");
     const [description, setDescription] = useState(card.description || "");
     const [title, setTitle] = useState(card.title || "");
+    const [showMembers, setShowMembers] = useState(false);
+
+    const project = useAppSelector((state) => state.projects.currentProject);
+    const projectMembers = project?.projectTeam || [];
 
     const availableLabels = [
-        {id: "frontend", color: "bg-cyan-500", text: "Фронтенд"},
-        {id: "backend", color: "bg-slate-900", text: "Бэкенд"},
-        {id: "esoteric", color: "bg-purple-600", text: "Эзотерика"},
-        {id: "urgent", color: "bg-rose-500", text: "Срочно"},
+        {id: "frontend", color: "bg-cyan-500", text: "Frontend"},
+        {id: "backend", color: "bg-slate-900", text: "Backend"},
+        {id: "esoteric", color: "bg-purple-600", text: "Esoteric"},
+        {id: "urgent", color: "bg-rose-500", text: "Urgent"},
     ];
 
     const toggleLabel = (id: string) => {
@@ -62,9 +69,9 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
         ? Math.round((activeChecklist.items.filter(i => i.completed).length / activeChecklist.items.length) * 100)
         : 0;
 
-    // Массив для кнопок меню «Добавить на карточку»
+
     const actionButtons = [
-        {id: 'members', label: 'Collaborators', icon: '👤'},
+        {id: 'members', label: 'Collaborators', icon: '👤', action: () => setShowMembers(!showMembers)},
         {id: 'labels', label: 'Markers', icon: '🏷', action: () => setShowLabels(!showLabels)},
         {id: 'checklist', label: 'Checklist', icon: '✅', action: () => setIsCreatingChecklist(!isCreatingChecklist)},
         {id: 'dates', label: 'Dates', icon: '📅'},
@@ -81,7 +88,12 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                 description: description,
             }
         }));
-        onClose(); // Закрываем после сохранения
+        onClose();
+    };
+
+    const handleAddExecutor = (collaboratorId: string) => {
+        dispatch(addExecutorToTask({ collaboratorId, taskId: card.id }));
+        setShowMembers(false);
     };
 
 
@@ -126,6 +138,34 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                 ))}
                             </div>
                         )}
+
+                        {card.executors && card.executors.length > 0 && (
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">
+                                    Members
+                                </label>
+                                <div className="flex -space-x-2">
+                                    {card.executors.map((ex) => (
+                                        <div
+                                            key={ex.id}
+                                            title={ex.email}
+                                            className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-600 border-2 border-white flex items-center justify-center text-white text-[11px] font-black uppercase shadow-sm hover:scale-110 transition-transform cursor-help"
+                                        >
+                                            {ex.email ? ex.email.charAt(0).toUpperCase() : '?'}
+                                        </div>
+                                    ))}
+
+                                    <button
+                                        onClick={() => setShowMembers(!showMembers)}
+                                        className="w-9 h-9 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-slate-500 text-lg hover:bg-slate-300 transition-colors ml-2"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+
 
                         {/* Описание */}
                         <div className="space-y-2">
@@ -215,50 +255,96 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                     {/* Окно Метки */}
                                     {btn.id === 'labels' && showLabels && (
                                         <>
-                                        {/* 1. Добавляем невидимый слой на весь экран */}
-                                        <div
-                                            className="fixed inset-0 z-30 cursor-default"
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Чтобы клик не прошел к самой модалке
-                                                setShowLabels(false);
-                                            }}
-                                        />
+                                            {/* 1. Добавляем невидимый слой на весь экран */}
+                                            <div
+                                                className="fixed inset-0 z-30 cursor-default"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setShowLabels(false);
+                                                }}
+                                            />
 
-                                        <div
-                                            className="absolute left-0 top-full mt-2 w-full bg-white border-2 border-cyan-400 rounded-2xl shadow-2xl p-3 z-40 animate-in zoom-in-95">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase mb-3 px-1">Markers</p>
-                                            {availableLabels.map(l => (
-                                                <button key={l.id} onClick={() => toggleLabel(l.id)}
-                                                        className={`w-full h-9 mb-1.5 rounded-lg flex items-center px-3 text-[10px] font-black text-white uppercase transition-all hover:scale-105 ${l.color} ${selectedLabels.includes(l.id) ? 'ring-2 ring-slate-900 ring-offset-2' : ''}`}>{l.text}</button>
-                                            ))}
-                                        </div>
-                                    </>
-                                        )}
+                                            <div
+                                                className="absolute left-0 top-full mt-2 w-full bg-white border-2 border-cyan-400 rounded-2xl shadow-2xl p-3 z-40 animate-in zoom-in-95">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase mb-3 px-1">Markers</p>
+                                                {availableLabels.map(l => (
+                                                    <button key={l.id} onClick={() => toggleLabel(l.id)}
+                                                            className={`w-full h-9 mb-1.5 rounded-lg flex items-center px-3 text-[10px] font-black text-white uppercase transition-all hover:scale-105 ${l.color} ${selectedLabels.includes(l.id) ? 'ring-2 ring-slate-900 ring-offset-2' : ''}`}>{l.text}</button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
 
                                     {/* Окно Чек-лист */}
                                     {btn.id === 'checklist' && isCreatingChecklist && (
                                         <>
-                                        <div
-                                            className="fixed inset-0 z-30"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setIsCreatingChecklist(false);
-                                            }}
-                                        />
-                                        <div
-                                            className="absolute left-0 top-full mt-2 w-full bg-white border-2 border-cyan-400 rounded-2xl shadow-2xl p-4 z-40 animate-in slide-in-from-top-2">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase mb-3 italic">Создать
-                                                checklist</p>
-                                            <input
-                                                className="w-full border-2 border-slate-200 rounded-lg p-2.5 text-xs mb-3 outline-none focus:border-cyan-400 shadow-inner"
-                                                placeholder="Заголовок..." value={checklistTitle}
-                                                onChange={(e) => setChecklistTitle(e.target.value)} autoFocus/>
-                                            <button onClick={createChecklist}
-                                                    className="w-full bg-cyan-500 text-white py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-cyan-400 transition-all">Add
-                                            </button>
-                                        </div>
+                                            <div
+                                                className="fixed inset-0 z-30"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setIsCreatingChecklist(false);
+                                                }}
+                                            />
+                                            <div
+                                                className="absolute left-0 top-full mt-2 w-full bg-white border-2 border-cyan-400 rounded-2xl shadow-2xl p-4 z-40 animate-in slide-in-from-top-2">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase mb-3 italic">Создать
+                                                    checklist</p>
+                                                <input
+                                                    className="w-full border-2 border-slate-200 rounded-lg p-2.5 text-xs mb-3 outline-none focus:border-cyan-400 shadow-inner"
+                                                    placeholder="Заголовок..." value={checklistTitle}
+                                                    onChange={(e) => setChecklistTitle(e.target.value)} autoFocus/>
+                                                <button onClick={createChecklist}
+                                                        className="w-full bg-cyan-500 text-white py-2.5 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-cyan-400 transition-all">Add
+                                                </button>
+                                            </div>
                                         </>
                                     )}
+
+                                    {/* Окно Участники (Collaborators) */}
+                                    {btn.id === 'members' && showMembers && (
+                                        <>
+                                            <div
+                                                className="fixed inset-0 z-30"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setShowMembers(false);
+                                                }}
+                                            />
+                                            <div className="absolute left-0 top-full mt-2 w-full bg-white border-2 border-cyan-400 rounded-2xl shadow-2xl p-3 z-40 animate-in zoom-in-95">
+                                                <p className="text-[9px] font-black text-slate-400 uppercase mb-3 px-1 italic text-center">
+                                                    Project Team
+                                                </p>
+                                                <div className="max-h-48 overflow-y-auto space-y-1 custom-scrollbar">
+                                                    {projectMembers?.map((member) => {
+                                                        console.log("Member object:", member);
+                                                        return (
+                                                            <button
+                                                                key={member.userId}
+                                                                onClick={() => handleAddExecutor(member.userId)}
+                                                                className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-cyan-50 border-2 border-transparent hover:border-cyan-100 transition-all group text-left"
+                                                            >
+                                                                <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-black text-slate-600 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+                                                                    {member.email.charAt(0).toUpperCase()}
+                                                                </div>
+                                                                <div className="flex flex-col min-w-0">
+                            <span className="text-[10px] font-bold text-slate-700 truncate">
+                                {member.email}
+                            </span>
+                                                                </div>
+                                                                {/* Галочка, если уже добавлен */}
+                                                                {card.executors?.some(ex => ex.id === member.userId) && (
+                                                                    <span className="ml-auto text-cyan-500 font-bold text-xs">✓</span>
+                                                                )}
+                                                            </button>
+                                                        )  })}
+                                                    {(!projectMembers || projectMembers.length === 0) && (
+                                                        <p className="text-[9px] text-slate-400 text-center py-2">No members found</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+
                                 </div>
 
                             ))}
