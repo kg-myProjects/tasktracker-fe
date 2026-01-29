@@ -8,6 +8,8 @@ import Projects from "./pages/Projects";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import Kanban from "./pages/Kanban";
+import ResetPassword from "./pages/ResetPassword.tsx";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
 
 function App() {
     return (
@@ -28,6 +30,8 @@ function App() {
                         <Route path="/register" element={<Registration />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/projects" element={<Projects />} />
+                        <Route path="/forgot-password" element={<ForgotPassword/>}/>
+                        <Route path="/reset-password" element={<ResetPassword/>}/>
                         <Route
                             path="/profile"
                             element={
