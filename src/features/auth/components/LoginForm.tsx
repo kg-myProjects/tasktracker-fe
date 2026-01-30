@@ -61,7 +61,7 @@ const LoginForm = ({ emailConfirmed }: LoginFormProps) => {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                     onClose={() => navigate("/")}
-                    submitText="Access Granted"
+                    submitText="Login"
                     errorMessage={loginError}
                 />
             </div>

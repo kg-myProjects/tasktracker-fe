@@ -74,14 +74,27 @@ select:-moz-autofill {
         background-size: 200% auto;
     }
     
+    /*.logo-wave-text:hover {*/
+    /*    background-image: linear-gradient(to right, white, rgb(34, 211, 238), white);*/
+    /*    -webkit-background-clip: text;*/
+    /*    background-clip: text;*/
+    /*    -webkit-text-fill-color: transparent;*/
+    /*    color: transparent;*/
+    /*    animation: wave-gradient 3s ease-in-out infinite;*/
+    /*}*/
     .logo-wave-text:hover {
-        background-image: linear-gradient(to right, white, rgb(34, 211, 238), white);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-        animation: wave-gradient 3s ease-in-out infinite;
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+
+        text-shadow:
+                0 0 10px rgba(6, 182, 212, 1),
+                0 0 20px rgba(6, 182, 212, 0.8),
+                0 0 30px rgba(6, 182, 212, 0.4);
+
+        filter: brightness(1.5);
+        transition: all 0.3s ease;
     }
+
 
     .text-neon {
         text-shadow: 0 0 8px rgba(6, 182, 212, 0.6), 0 0 15px rgba(6, 182, 212, 0.3);

@@ -1,4 +1,7 @@
-export type NeonButtonProps = {
+import React from "react";
+
+export interface NeonButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    isLoading?: boolean;
     children: React.ReactNode;
     onClick?: () => void;
     type?: "button" | "submit" | "reset";
@@ -6,7 +9,7 @@ export type NeonButtonProps = {
     size?: "sm" | "md" | "lg";        // маленькая, средняя, большая
     variant?: "primary" | "warning" | "success"; // цвета
     className?: string;               // дополнительные кастомные классы
-};
+}
 
 export const sizeClasses = {
     sm: "px-3 py-1 text-sm rounded-md",

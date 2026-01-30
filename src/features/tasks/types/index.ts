@@ -6,10 +6,15 @@ export interface Task {
     statusId: string;
     projectId: string;
     executors: EmployeeDto[];
+    markers: MarkerDto[];
 }
 
-// дто без id
-export type CreateTaskDto = Omit<Task, "id">;
+export interface CreateTaskDto {
+    title: string;
+    description: string;
+    statusId: string;
+    projectId: string;
+}
 
 export interface TaskDto{
     id: string;
@@ -50,6 +55,7 @@ export interface TaskDto{
         }
     }
     executors: EmployeeDto[];
+    markers: MarkerDto[];
 }
 
 
@@ -60,6 +66,7 @@ export interface UpdateTaskDto {
     statusId?: string;
     projectId?: string;
     executorIds?: string[];
+    markerIds?: string[];
 }
 
 export interface UpdateTaskPayload {
@@ -81,4 +88,10 @@ export interface EmployeeDto {
     email: string;
     name?: string;
     avatar?: string;
+}
+
+export interface MarkerDto {
+    id: string;
+    name: string;
+    color: string;
 }

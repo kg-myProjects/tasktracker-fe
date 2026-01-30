@@ -7,7 +7,7 @@ import type {FieldConfig} from "./types";
 import {getErrorMessage} from "../../utils/utils";
 import {useState} from "react";
 import ConfirmModal from "./ConfirmModal.tsx";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 type DynamicFormProps<T extends FormikValues> = {
     title: string;
@@ -19,6 +19,7 @@ type DynamicFormProps<T extends FormikValues> = {
     onClose: () => void;
     submitText?: string;
     errorMessage?: string;
+    isLoading?: boolean;
 };
 
 function DynamicForm<T extends FormikValues>({
@@ -31,6 +32,7 @@ function DynamicForm<T extends FormikValues>({
                                                  onClose,
                                                  submitText = "Submit",
                                                  errorMessage,
+                                                 isLoading,
                                              }: DynamicFormProps<T>) {
     const formik = useFormik<T>({
         initialValues,
@@ -66,7 +68,7 @@ function DynamicForm<T extends FormikValues>({
     };
 
 
-        return (
+    return (
         <FormContainer
             title={title}
             description={description}
@@ -74,6 +76,7 @@ function DynamicForm<T extends FormikValues>({
             errorMessage={errorMessage}
             submitButton={
                 <NeonButton
+                    isLoading={isLoading}
                     size="lg"
                     variant="primary"
                     type="submit"
@@ -103,22 +106,22 @@ function DynamicForm<T extends FormikValues>({
                         />
                     ) : (
                         <div className="relative">
-                        <input
-                            {...formik.getFieldProps(field.name)}
+                            <input
+                                {...formik.getFieldProps(field.name)}
 
-                            type={
-                                field.type === "password"
-                                    ? (passwordVisibility[field.name] ? "text" : "password")
-                                    : field.type || "text"
-                            }
-                            placeholder={field.placeholder}
-                            className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300
+                                type={
+                                    field.type === "password"
+                                        ? (passwordVisibility[field.name] ? "text" : "password")
+                                        : field.type || "text"
+                                }
+                                placeholder={field.placeholder}
+                                className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300
   autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
-                                formik.touched[field.name] && formik.errors[field.name]
-                                    ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
-                                    : "border-cyan-400/30"
-                            }`}
-                        />
+                                    formik.touched[field.name] && formik.errors[field.name]
+                                        ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
+                                        : "border-cyan-400/30"
+                                }`}
+                            />
                             {field.type === "password" && (
                                 <button
                                     type="button"
