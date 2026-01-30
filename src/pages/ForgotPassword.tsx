@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { fetchForgotPassword } from "../features/auth/services/api.ts";
 import DynamicForm from "../components/ui/DynamicForm";
 import type { FieldConfig } from "../components/ui/types";
+import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 
 const initialValues = {
     email: "",
 };
 
 const ForgotPasswordPage = () => {
+    usePageTitle("TrackerApp | Password recovery");
     const navigate = useNavigate();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);

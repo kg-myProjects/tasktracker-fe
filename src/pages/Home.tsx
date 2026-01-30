@@ -1,6 +1,7 @@
 import { useState } from "react";
 import List from "../components/List";
 import CardModal from "../components/List/CardModal";
+import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 
 interface Column {
   id: string;
@@ -9,6 +10,7 @@ interface Column {
 }
 
 export default function Home() {
+    usePageTitle("TrackerApp");
   const [columns, setColumns] = useState<Column[]>([
     { id: "1", title: "To Do", cards: [] },
   ]);

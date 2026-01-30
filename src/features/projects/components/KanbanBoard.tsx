@@ -22,6 +22,7 @@ import {SortableTask} from "./SortableTask.tsx";
 import {InviteModal} from "./InviteModal.tsx";
 import type {ProjectRole} from "../types";
 import {CollaboratorsList} from "./CollaboratorsList.tsx";
+import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 
 const pointerSensorOptions = {
     activationConstraint: { distance: 8 },
@@ -47,6 +48,7 @@ export default function KanbanBoard() {
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [activeTask, setActiveTask] = useState<Task | null>(null);
 
+    usePageTitle(project ? `TrackerApp | ${project.title}` : "TrackerApp | Kanban-board");
 
     useEffect(() => {
         if (!projectId) return;
