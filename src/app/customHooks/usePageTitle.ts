@@ -1,13 +1,3 @@
-// import {useEffect} from "react";
-//
-// export const usePageTitle = (title: string, defaulttitle = "TrackerApp") => {
-//     useEffect(() => {
-//         document.title = title;
-//         return () => {
-//             document.title = defaulttitle;
-//         };
-//     }, [title, defaulttitle]);
-// };
 import {useEffect} from "react";
 
 export const usePageTitle = (title: string) => {
