@@ -5,6 +5,7 @@ import {
     createProject,
     selectCreateProjectErrorMessage,
 } from "../slice/projectsSlice";
+import {useState} from "react";
 
 type ProjectFormProps = {
     onClose: () => void;
@@ -13,17 +14,22 @@ type ProjectFormProps = {
 const NAME_REGEX = /^[A-Z][a-zA-Z0-9 ]{2,49}$/;
 
 const ProjectForm = ({ onClose }: ProjectFormProps) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const dispatch = useAppDispatch();
     const projectError = useAppSelector(selectCreateProjectErrorMessage);
 
     const handleSubmit = async (values: { title: string; description: string }) => {
+        setIsSubmitting(true);
         try {
             await dispatch(createProject(values)).unwrap();
 
             onClose();
         } catch (error) {
             console.error("Failed to create project:", error);
+        }finally {
+            setIsSubmitting(false);
         }
+
     };
 
     return (
@@ -45,6 +51,7 @@ const ProjectForm = ({ onClose }: ProjectFormProps) => {
                 { name: "description", label: "Description", type: "textarea", placeholder: "A Project to develop a new company website", rows: 4 },
             ]}
             onSubmit={handleSubmit}
+            isLoading={isSubmitting}
             onClose={onClose}
             submitText="Create Project"
             errorMessage={projectError || undefined}
