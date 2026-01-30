@@ -6,6 +6,7 @@ import {
     selectCreateProjectErrorMessage,
 } from "../slice/projectsSlice";
 import {useState} from "react";
+import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 
 type ProjectFormProps = {
     onClose: () => void;
@@ -14,6 +15,7 @@ type ProjectFormProps = {
 const NAME_REGEX = /^[A-Z][a-zA-Z0-9 ]{2,49}$/;
 
 const ProjectForm = ({ onClose }: ProjectFormProps) => {
+    usePageTitle("TrackerApp | New project");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const dispatch = useAppDispatch();
     const projectError = useAppSelector(selectCreateProjectErrorMessage);
