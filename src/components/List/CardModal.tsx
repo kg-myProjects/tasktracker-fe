@@ -17,10 +17,10 @@ export default function CardModal({ card, onClose }: CardModalProps) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDate, setStartDate] = useState<number | null>(20);
   const [dueDate, setDueDate] = useState<number | null>(31);
-  const [tempTime, setTempTime] = useState("11:13");
+  const [tempTime] = useState("11:13");
   const [selectedFullDate, setSelectedFullDate] = useState<{range: string, time: string, reminder: string} | null>(null);
-  const [hasStartDate, setHasStartDate] = useState(true);
-  const [hasDueDate, setHasDueDate] = useState(true);
+  const [hasStartDate] = useState(true);
+  const [hasDueDate] = useState(true);
   const [reminder] = useState("1 day before");
 
   const availableLabels = [
@@ -31,13 +31,6 @@ export default function CardModal({ card, onClose }: CardModalProps) {
   ];
 
   const handleSave = () => {
-    console.log("Saving card data:", {
-      id: card.id,
-      description: description,
-      labels: selectedLabels,
-      dates: selectedFullDate,
-      checklist: activeChecklist
-    });
     onClose();
   };
 
@@ -159,7 +152,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
                 <div className="space-y-2">
                   {activeChecklist.items.map(item => (
                     <div key={item.id} className="flex items-center gap-3 cursor-pointer group" onClick={() => toggleItem(item.id)}>
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${item.completed ? 'bg-cyan-500 border-cyan-500' : 'bg-white border-slate-200 group-hover:border-cyan-400'}`}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${item.completed ? 'bg-cyan-500 border-cyan-500 shadow-sm' : 'bg-white border-slate-200 group-hover:border-cyan-400'}`}>
                         {item.completed && <span className="text-white text-[10px]">✓</span>}
                       </div>
                       <span className={`text-sm font-bold ${item.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{item.text}</span>
@@ -236,7 +229,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
                              {hasDueDate && (
                                <div className="flex gap-2">
                                   <input type="text" value={dueDate ? `${dueDate < 10 ? '0'+dueDate : dueDate}.01.2026` : ""} readOnly className="bg-slate-50 border-2 border-transparent text-[11px] text-slate-800 font-black px-3 py-2 rounded-lg flex-1 outline-none focus:border-cyan-400 transition-all" />
-                                  <input type="text" value={tempTime} onChange={(e) => setTempTime(e.target.value)} className="bg-slate-50 border-2 border-transparent text-[11px] text-slate-800 font-black px-2 py-2 rounded-lg w-16 outline-none text-center focus:border-cyan-400 transition-all" />
+                                  <input type="text" value={tempTime} readOnly className="bg-slate-50 border-2 border-transparent text-[11px] text-slate-800 font-black px-2 py-2 rounded-lg w-16 outline-none text-center focus:border-cyan-400 transition-all" />
                                </div>
                              )}
                           </div>
