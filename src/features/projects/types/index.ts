@@ -1,16 +1,19 @@
+import type {MarkerDto} from "../../tasks/types";
+
 export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  owner: EmployeeDto;
-  projectTeam: CollaboratorDto[];
+    id: string;
+    title: string;
+    description: string;
+    owner: EmployeeDto;
+    projectTeam: CollaboratorDto[];
+    markers: MarkerDto[];
 }
 
 // дто без id
 export type CreateProjectDto = Omit<Project, "id" | "owner" | "projectTeam">;
 
 export interface CollaboratorDto {
-    userId: string;
+    id: string;
     email: string;
     roles: ProjectRole[];
 }
@@ -22,11 +25,11 @@ export interface EmployeeDto {
 
 
 export interface ProjectsSliceState {
-  projects: Project[];
-  currentProject?: Project | null;
-  createProjectErrorMessage?: string;
-  inviteUserErrorMessage?: string;
-  isLoading: boolean;
+    projects: Project[];
+    currentProject?: Project | null;
+    createProjectErrorMessage?: string;
+    inviteUserErrorMessage?: string;
+    isLoading: boolean;
 }
 
 export type ProjectRole = "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
@@ -35,7 +38,6 @@ export interface InviteRequestDto {
     email: string;
     role: ProjectRole;
 }
-
 
 
 export interface InviteModalProps {

@@ -54,18 +54,57 @@ export const SortableTask = React.memo( function SortableTask({
             ref={setNodeRef}
             style={style}
             onClick={onOpenEdit}
-            // Добавили group для появления кнопки при наведении
-        //   className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-[0_0_25px_rgba(255,255,255,0.2)] animate-in zoom-in-95 duration-200 cursor-grab active:cursor-grabbing"
             className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 transition-shadow duration-200 cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:shadow-md"
         >
             {/* Область захвата для dnd-kit */}
             <div {...attributes} {...listeners}>
+
+                {task.markers && task.markers.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                        {task.markers.map(marker => (
+                            <div
+                                key={marker.id}
+                                className={`h-1.5 w-6 rounded-full ${marker.color} shadow-sm transition-all group-hover:w-8`}
+                                title={marker.name}
+                            />
+                        ))}
+                    </div>
+                )}
+
                 <div className="font-semibold text-black pr-6">{task.title}</div>
+
                 {task.description && (
                     <div className="text-sm text-slate-600 mt-1 line-clamp-2">
                         {task.description}
                      </div>
                 )}
+
+                <div className="mt-3 flex items-center justify-between">
+
+                    {/* Прогрес чек-ліста */}
+                    {task.checklist && task.checklist.length > 0 && (
+                        <div className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                            <span className={task.checklist.every(i => i.completed) ? "text-emerald-500" : ""}>
+                                ✅ {task.checklist.filter(i => i.completed).length}/{task.checklist.length}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Іконки виконавців (аватари) */}
+                    {task.executors && task.executors.length > 0 && (
+                        <div className="flex -space-x-1.5 ml-auto">
+                            {task.executors.map(ex => (
+                                <div
+                                    key={ex.id}
+                                    className="w-5 h-5 rounded-full bg-cyan-500 border border-white flex items-center justify-center text-[8px] font-bold text-white uppercase"
+                                    title={ex.email}
+                                >
+                                    {ex.email.charAt(0).toUpperCase()}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Кнопка удаления в стиле Trello (появляется при hover) */}

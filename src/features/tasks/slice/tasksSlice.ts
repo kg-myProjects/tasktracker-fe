@@ -121,32 +121,6 @@ export const tasksSlice = createAppSlice({
                 }
             ),
 
-            addExecutorToTask: create.asyncThunk(
-                async ({ collaboratorId, taskId }: { collaboratorId: string; taskId: string }) => {
-                    return api.fetchAddExecutorToTask(collaboratorId, taskId).catch((err) => {
-                        if (isAxiosError(err)) {
-                            throw new Error(err.response?.data?.message || "Error assigning executor");
-                        }
-                        throw err;
-                    });
-                },
-                {
-                    fulfilled: (state, action) => {
-                        const updatedTask = mapTaskFromApi(action.payload as TaskDto);
-                        const index = state.tasks.findIndex(t => t.id === updatedTask.id);
-                        if (index !== -1) {
-                            state.tasks[index] = updatedTask;
-                        }
-                        if (state.currentTask?.id === updatedTask.id) {
-                            state.currentTask = updatedTask;
-                        }
-                    },
-                    rejected: (_state, action) => {
-                        console.error("Failed to add executor:", action.error.message);
-                    }
-                }
-            ),
-
 
         }),
 
@@ -165,7 +139,7 @@ export const tasksSlice = createAppSlice({
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask, getTasksByProjectId, updateTask, deleteTask, addExecutorToTask} = tasksSlice.actions;
+export const {createTask, getTasksByProjectId, updateTask, deleteTask} = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

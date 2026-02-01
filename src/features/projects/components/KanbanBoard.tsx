@@ -1,37 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import type { Task } from "../../tasks/types";
-import {Column} from "./Column.tsx";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getTasksByProjectId, updateTask, createTask, selectTasks } from "../../tasks/slice/tasksSlice";
-import {getProjectById, inviteUser, selectCurrentProject, selectInviteUserErrorMessage} from "../slice/projectsSlice";
-import {DragOverlay, defaultDropAnimationSideEffects, type DragStartEvent} from "@dnd-kit/core";
-import {
-    getAllTaskStatuses,
-    selectSortedTaskStatuses,
-    createTaskStatus, deleteTaskStatus,
-
-} from "../../statuses/slice/taskStatusSlice";
-import { CreateStatusModal } from "./CreateStatusModal";
-import {TaskModal} from "./TaskModal.tsx";
-import {EditTaskModal} from "../../tasks/components/EditTaskModal";
-import type { DragEndEvent } from "@dnd-kit/core";
-import { DndContext,closestCorners, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import {SortableTask} from "./SortableTask.tsx";
-import {InviteModal} from "./InviteModal.tsx";
-import type {ProjectRole} from "../types";
-import {CollaboratorsList} from "./CollaboratorsList.tsx";
-import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 
-const pointerSensorOptions = {
-    activationConstraint: { distance: 8 },
-};
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { selectTasks, getTasksByProjectId } from "../../tasks/slice/tasksSlice";
+import { getProjectById, selectCurrentProject, selectInviteUserErrorMessage } from "../slice/projectsSlice";
+import { getAllTaskStatuses, selectSortedTaskStatuses } from "../../statuses/slice/taskStatusSlice";
 
+import { Column } from "./Column.tsx";
+import { SortableTask } from "./SortableTask.tsx";
+import { BoardHeader } from "./BoardHeader.tsx";
+import { BoardModals } from "./BoardModals.tsx";
+
+import { useKanbanDnd } from "../hooks/useKanbanDnd";
+import { useKanbanActions } from "../hooks/useKanbanActions";
+import { usePageTitle } from "../../../app/customHooks/usePageTitle.ts";
 
 export default function KanbanBoard() {
-
-
     const { projectId } = useParams<{ projectId: string }>();
     const dispatch = useAppDispatch();
 
@@ -46,184 +32,74 @@ export default function KanbanBoard() {
     const [statusModalOpen, setStatusModalOpen] = useState(false);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-    const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-    usePageTitle(project ? `TrackerApp | ${project.title}` : "TrackerApp | Kanban-board");
+    const {
+        sensors, activeTask, handleDragStart, handleDragEnd,
+        collisionDetection, dropAnimation
+    } = useKanbanDnd(tasks, statuses);
+
+    const {
+        handleCreateTask, handleCreateStatus,
+        handleDeleteStatus, handleInvite
+    } = useKanbanActions(projectId);
+
+    usePageTitle(project ? `TrackerApp | ${project.title}` : "Loading...");
 
     useEffect(() => {
-        if (!projectId) return;
-        dispatch(getProjectById(projectId));
-        dispatch(getAllTaskStatuses(projectId));
-        dispatch(getTasksByProjectId(projectId));
-
+        if (projectId) {
+            dispatch(getProjectById(projectId));
+            dispatch(getAllTaskStatuses(projectId));
+            dispatch(getTasksByProjectId(projectId));
+        }
     }, [projectId, dispatch]);
 
-
     const tasksByStatus = useMemo(() => {
-        return statuses.reduce<Record<string, Task[]>>((acc, status) => {
-            acc[status.id] = tasks.filter(task => task.statusId === status.id);
-            return acc;
-        }, {});
+        return statuses.reduce((acc, status) => ({
+            ...acc,
+            [status.id]: tasks.filter(t => t.statusId === status.id)
+        }), {} as Record<string, typeof tasks>);
     }, [tasks, statuses]);
 
-    const taskToEdit = useMemo(() =>
-            tasks.find(t => t.id === editingTaskId),
-        [tasks, editingTaskId]
-    );
-
-    // const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
-
-    const sensors = useSensors(useSensor(PointerSensor, pointerSensorOptions));
-
-    const handleDragStart = (event: DragStartEvent) => {
-        const { active } = event;
-        const task = tasks.find(t => t.id === active.id);
-        if (task) setActiveTask(task);
-    };
-
-    const handleDragEnd = (event: DragEndEvent) => {
-        setActiveTask(null);
-        const { active, over } = event;
-        if (!over) return;
-        const activeId = String(active.id);
-        const overId = String(over.id);
-
-        const task = tasks.find(t => t.id === activeId);
-        if (!task) return;
-
-        let newStatusId: string;
-
-        if (statuses.some(s => s.id === overId)) {
-            newStatusId = overId;
-        } else {
-            const overTask = tasks.find(t => t.id === overId);
-            newStatusId = overTask ? overTask.statusId : task.statusId;
-        }
-
-        if (task.statusId === newStatusId) return;
-
-        dispatch(updateTask({ id: activeId, dto: { statusId: newStatusId } }));
-    };
-
-    const openModal = (statusId: string) => {
-        setCurrentStatusId(statusId);
-        setModalOpen(true);
-    };
-
-    const handleCreateTask = (title: string, description: string) => {
-        if (!projectId || !currentStatusId) return;
-
-        dispatch(createTask({
-            title,
-            description,
-            statusId: currentStatusId,
-            projectId
-        }));
-        setModalOpen(false);
-    };
-
-    const handleCreateStatus = async (name: string, position: number) => {
-        if (!projectId) return;
-
-        try {
-
-            await dispatch(createTaskStatus({
-                name,
-                projectId,
-                position,
-            })).unwrap();
-
-
-            await dispatch(getAllTaskStatuses(projectId));
-
-            setStatusModalOpen(false);
-        } catch (err) {
-            console.error("Ошибка при создании статуса:", err);
-        }
-    };
-
-
-    const handleInviteSubmit = async (email: string, role: ProjectRole) => {
-        if (project?.id) {
-            const result = await dispatch(inviteUser({
-                id: project.id,
-                dto: { email, role}
-            }));
-
-            if (inviteUser.fulfilled.match(result)) {
-                setIsInviteModalOpen(false);
-            }
-        }
-    };
-
-
-
     return (
-        <div className="h-screen flex flex-col bg-slate-900 rounded-2xl border border-cyan-400/30 p-4 shadow-[0_0_30px_rgba(6,182,212,0.2)]">
-            <div className="flex items-center gap-4 mb-4 text-neon-strong">
-                <h1 className="text-2xl font-bold">
-                    {project?.title ?? "Loading..."}
-                </h1>
+        <div className="h-screen flex flex-col bg-slate-900 p-4 overflow-hidden">
+            <BoardHeader
+                title={project?.title}
+                onAddStatus={() => setStatusModalOpen(true)}
+                onAddCollab={() => setIsInviteModalOpen(true)}
+                collaborators={project?.projectTeam}
+            />
 
-                <button
-                    onClick={() => setStatusModalOpen(true)}
-                    className="p-6 mt-10 bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all  font-bold"
-                >
-                    + Add Status
-                </button>
-                <button
-                    onClick={() => setIsInviteModalOpen(true)}
-                    className="p-6 mt-10 bg-white/5 backdrop-blur-md rounded-2xl border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all  font-bold"
-                >
-                    + Add collaborators
-                </button>
-
-                {project && (
-                    <CollaboratorsList
-                        collaborators={project.projectTeam}
-                        onInviteClick={() => setIsInviteModalOpen(true)}
-                    />
-                )}
-
-            </div>
-            <DndContext sensors={sensors}
-                        onDragStart={handleDragStart}
-                        collisionDetection={closestCorners}
-                        onDragEnd={handleDragEnd}>
-                <div className="flex gap-4 overflow-x-auto">
+            <DndContext
+                sensors={sensors}
+                collisionDetection={collisionDetection}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+            >
+                <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
                     {statuses.map(status => {
-                        const tasksInStatus = tasksByStatus[status.id] ?? [];
-                        const canDelete = tasksInStatus.length === 0;
-
-                        const handleDeleteStatus = async () => {
-                            if (!projectId) return;
-                            if (window.confirm(`Delete column "${status.name}"?`)) {
-                                try {
-                                    await dispatch(deleteTaskStatus(status.id)).unwrap();
-                                    await  dispatch(getAllTaskStatuses(projectId!));
-                                } catch (error) {
-                                    console.error("Delete status failed:", error);
-                                    alert("Could not delete column. Maybe it still has tasks?");
-                                }
-                            }                        };
-
+                        const tasksInStatus = tasksByStatus[status.id] || [];
                         return (
                             <Column
                                 key={status.id}
                                 status={status}
-                                onAddTask={() => openModal(status.id)}
-                                canDelete={canDelete}
-                                onDelete={handleDeleteStatus}
+                                onAddTask={() => {
+                                    setCurrentStatusId(status.id);
+                                    setModalOpen(true);
+                                }}
+                                canDelete={tasksInStatus.length === 0}
+                                onDelete={() => handleDeleteStatus(status.id, status.name)}
                             >
                                 <SortableContext
-                                    items={tasksByStatus[status.id]?.map(t => t.id) ?? []}
+                                    items={tasksInStatus.map(t => t.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
                                     <div className="flex flex-col gap-2">
-                                        {/*{tasksByStatus[status.id]?.map(task => (*/}
-                                        { tasksInStatus.map(task => (
-
-                                            <SortableTask key={task.id} task={task} onOpenEdit={()=> setEditingTaskId(task.id) }/>
+                                        {tasksInStatus.map(task => (
+                                            <SortableTask
+                                                key={task.id}
+                                                task={task}
+                                                onOpenEdit={() => setEditingTaskId(task.id)}
+                                            />
                                         ))}
                                     </div>
                                 </SortableContext>
@@ -231,50 +107,55 @@ export default function KanbanBoard() {
                         );
                     })}
                 </div>
-                <DragOverlay dropAnimation={{
-                    sideEffects: defaultDropAnimationSideEffects({
-                        styles: { active: { opacity: '0.5' } },
-                    }),
-                }}>
-                    {activeTask ? (
-                        // Рендерим простую версию карточки без хуков dnd
-                        <div className="bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-2xl rotate-3 cursor-grabbing w-[300px]">
-                            <div className="font-semibold text-black">{activeTask.title}</div>
-                            <div className="text-sm text-slate-600 mt-1 line-clamp-2">{activeTask.description}</div>
-                        </div>
-                    ) : null}
-                </DragOverlay>
 
+                <DragOverlay dropAnimation={dropAnimation}>
+                    {activeTask && (
+                        <div className="bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-2xl rotate-3 w-[300px] cursor-grabbing">
+                            <div className="font-semibold text-black">{activeTask.title}</div>
+                        </div>
+                    )}
+                </DragOverlay>
             </DndContext>
 
-            <TaskModal
-                isOpen={modalOpen}
-                onClose={() => setModalOpen(false)}
-                onCreate={handleCreateTask}
-                statusName={statuses.find(s => s.id === currentStatusId)?.name ?? ""}
+            <BoardModals
+                modals={{
+                    task: {
+                        isOpen: modalOpen,
+                        statusId: currentStatusId,
+                        statusName: statuses.find(s => s.id === currentStatusId)?.name || "",
+                        onClose: () => setModalOpen(false)
+                    },
+                    status: {
+                        isOpen: statusModalOpen,
+                        onClose: () => setStatusModalOpen(false),
+                        maxPosition: statuses.length
+                    },
+                    invite: {
+                        isOpen: isInviteModalOpen,
+                        onClose: () => setIsInviteModalOpen(false),
+                        error: inviteError
+                    },
+                    edit: {
+                        taskId: editingTaskId,
+                        task: tasks.find(t => t.id === editingTaskId),
+                        onClose: () => setEditingTaskId(null)
+                    }
+                }}
+                actions={{
+                    onCreateTask: async (title, desc) => {
+                        await  handleCreateTask(title, desc, currentStatusId!);
+                        setModalOpen(false); },
+                    onCreateStatus: async (name, pos) => {
+                        await   handleCreateStatus(name, pos);
+                        setStatusModalOpen(false);
+                    },
+                    onInvite: (email, role) => {
+                        handleInvite(projectId!, email, role).then(res => {
+                            if(res.meta.requestStatus === 'fulfilled') setIsInviteModalOpen(false);
+                        });
+                    }
+                }}
             />
-            <CreateStatusModal
-                isOpen={statusModalOpen}
-                onClose={() => setStatusModalOpen(false)}
-                onCreate={handleCreateStatus}
-                maxPosition={statuses.length}
-            />
-
-            <InviteModal
-                isOpen={isInviteModalOpen}
-                onClose={() => setIsInviteModalOpen(false)}
-                onInvite={handleInviteSubmit}
-                error={inviteError}
-            />
-
-            {taskToEdit && (
-                <EditTaskModal
-                    card={taskToEdit}
-                    onClose={() => setEditingTaskId(null)}
-                />
-            )}
-
-
         </div>
     );
 }
