@@ -1,7 +1,10 @@
 import {createAppSlice} from "../../../app/createAppSlice";
-import type {AuthSliceState, Credentials, UserRegistrationDto} from "../types";
+import type {AuthSliceState, Credentials, UserRegistrationDto, UserResponseDto } from "../types";
 import * as api from "../services/api";
 import {isAxiosError} from "axios";
+import type { PayloadAction } from "@reduxjs/toolkit";
+
+
 
 const initialState: AuthSliceState = {
     isAuthenticated: false,
@@ -12,9 +15,13 @@ const initialState: AuthSliceState = {
 };
 
 export const authSlice = createAppSlice({
-    name: "auth",
-    initialState,
-    reducers: (create) => ({
+        name: "auth",
+        initialState,
+        reducers: (create) => ({
+            setUser: create.reducer((state, action: PayloadAction<UserResponseDto | undefined>) =>{
+                state.user = action.payload;
+        }),
+
         login: create.asyncThunk(
             async (credentials: Credentials) => {
                 return api.fetchLogin(credentials).catch((err) => {
@@ -76,10 +83,11 @@ export const authSlice = createAppSlice({
             {
                 pending: (state) => {
                     state.isAuthenticated = false;
+                    state.registerErrorMessage = undefined;
                 },
-                fulfilled: (state, action) => {
-                    state.isAuthenticated = true;
-                    state.user = action.payload;
+                fulfilled: (state) => {
+                    state.isAuthenticated = false;
+                    //state.user = action.payload;
                 },
                 rejected: (state, action) => {
                     state.isAuthenticated = false;
@@ -118,10 +126,12 @@ export const authSlice = createAppSlice({
         selectLoginError: (state) => state?.loginErrorMessage,
         selectRegisterError: (state) => state?.registerErrorMessage,
     },
-});
+    }
+)
+;
 
 // // Action creators are generated for each case reducer function.
-export const {login, register, checkAuth, logout} = authSlice.actions;
+export const {login, register, checkAuth, logout, setUser} = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

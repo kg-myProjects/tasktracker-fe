@@ -1,14 +1,22 @@
 import axiosInstance from "../../../lib/axiosInstance";
 import type {Credentials, UserCreateResponseDto, UserRegistrationDto, UserResponseDto} from "../types";
-import axios from "axios";
+//import axios from "axios";
 
 // we already added  prefix /api in axios config
 
 const LOGIN_PATH = "/auth/login";
 const REGISTER_PATH = "/users/register";
-const GET_CURRENT_USER_PATH = "/auth/me";
+const GET_CURRENT_USER_PATH = "/users/me";
 const LOGOUT_PATH = "/auth/logout";
-export const TOKEN_REFRESH_PATH = "/api/v1/auth/refresh-token";
+const UPDATE_USER_PATH = "/users/me";
+export const TOKEN_REFRESH_PATH = "/auth/refresh-token";
+
+
+
+export const updateUserData = async (nickname: string): Promise<UserResponseDto> => {
+    const response = await axiosInstance.put(UPDATE_USER_PATH, {nickname});
+    return response.data;
+};
 
 interface ResetPasswordData {
     token: string;
@@ -56,5 +64,10 @@ export const fetchResetPassword = async (data: ResetPasswordData) => {
 };
 
 export const fetchRefreshToken = async ():Promise<void> => {
-    await axios.post(TOKEN_REFRESH_PATH, {}, {withCredentials: true});
+    await axiosInstance.post(TOKEN_REFRESH_PATH);
 };
+
+export const uploadAvatar =async (formData: FormData): Promise<UserResponseDto> => {
+    const res = await axiosInstance.post("/users/avatar", formData);
+        return res.data;
+}
