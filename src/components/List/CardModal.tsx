@@ -6,8 +6,7 @@ interface CardModalProps {
 }
 
 export default function CardModal({ card, onClose }: CardModalProps) {
-  // --- СОСТОЯНИЯ ---
-  const [description, setDescription] = useState(card.description); // Добавили стейт для описания
+  const [description, setDescription] = useState(card.description);
   const [showLabels, setShowLabels] = useState(false);
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [checklistTitle, setChecklistTitle] = useState("");
@@ -22,7 +21,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
   const [selectedFullDate, setSelectedFullDate] = useState<{range: string, time: string, reminder: string} | null>(null);
   const [hasStartDate, setHasStartDate] = useState(true);
   const [hasDueDate, setHasDueDate] = useState(true);
-  const [reminder, setReminder] = useState("1 day before");
+  const [reminder] = useState("1 day before");
 
   const availableLabels = [
     { id: "fe", color: "bg-cyan-500", text: "FE" },
@@ -31,9 +30,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
     { id: "design", color: "bg-blue-600", text: "DESIGN" },
   ];
 
-  // --- ЛОГИКА ---
   const handleSave = () => {
-    // В задаче №77 мы добавим сюда отправку на бэкенд
     console.log("Saving card data:", {
       id: card.id,
       description: description,
@@ -41,7 +38,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
       dates: selectedFullDate,
       checklist: activeChecklist
     });
-    onClose(); // Закрываем после сохранения
+    onClose();
   };
 
   const handleDateClick = (day: number) => {
@@ -152,7 +149,6 @@ export default function CardModal({ card, onClose }: CardModalProps) {
 
             {activeChecklist && (
               <div className="space-y-4 pt-4 border-t border-slate-100 animate-in slide-in-from-left-4">
-                {/* ... Checklist UI ... */}
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-black text-slate-800 uppercase tracking-widest px-1">✅ {activeChecklist.title}</label>
                   <button onClick={() => setActiveChecklist(null)} className="text-[9px] text-rose-500 hover:bg-rose-500 hover:text-white px-3 py-1 rounded-lg font-black transition-all uppercase">Delete</button>
@@ -225,7 +221,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
                        <div className="space-y-4 mb-6">
                           <div className="flex flex-col gap-2">
                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" checked={hasStartDate} onChange={() => setHasStartDate(!hasStartDate)} className="accent-cyan-500 w-4 h-4 rounded" />
+                                <input type="checkbox" checked={hasStartDate} className="accent-cyan-500 w-4 h-4 rounded" readOnly />
                                 <span className="text-[9px] font-black text-slate-500 uppercase">Start Date</span>
                              </label>
                              {hasStartDate && (
@@ -234,7 +230,7 @@ export default function CardModal({ card, onClose }: CardModalProps) {
                           </div>
                           <div className="flex flex-col gap-2">
                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" checked={hasDueDate} onChange={() => setHasDueDate(!hasDueDate)} className="accent-cyan-500 w-4 h-4 rounded" />
+                                <input type="checkbox" checked={hasDueDate} className="accent-cyan-500 w-4 h-4 rounded" readOnly />
                                 <span className="text-[9px] font-black text-slate-500 uppercase">Due Date</span>
                              </label>
                              {hasDueDate && (
@@ -247,12 +243,11 @@ export default function CardModal({ card, onClose }: CardModalProps) {
                        </div>
                        <div className="flex flex-col gap-2">
                           <button onClick={() => { const range = `${startDate ? startDate+' Jan' : ''}${startDate && dueDate ? ' - ' : ''}${dueDate ? dueDate+' Jan' : ''}`; setSelectedFullDate({range, time: tempTime, reminder}); setShowDatePicker(false); }} className="w-full bg-cyan-500 hover:bg-cyan-400 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-lg transition-all active:scale-95">Save</button>
-                          <button onClick={() => { setSelectedFullDate(null); setStartDate(null); setDueDate(null); setShowDatePicker(false); }} className="w-full bg-slate-100 text-slate-400 py-3 rounded-xl text-[10px] font-black uppercase hover:text-rose-500 transition-all">Remove</button>
+                          <button onClick={() => { setSelectedFullDate(null); setShowDatePicker(false); }} className="w-full bg-slate-100 text-slate-400 py-3 rounded-xl text-[10px] font-black uppercase hover:text-rose-500 transition-all">Remove</button>
                        </div>
                     </div>
                   )}
 
-                  {/* ... Labels & Checklist Popups ... */}
                   {btn.id === 'labels' && showLabels && (
                     <div className="absolute left-0 top-full mt-2 w-full bg-white border-2 border-cyan-400 rounded-2xl shadow-2xl p-3 z-40 animate-in zoom-in-95">
                        <p className="text-[9px] font-black text-slate-400 uppercase mb-3 px-1 text-left">Labels</p>
