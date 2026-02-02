@@ -1,8 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import {logout, selectInitialized, selectIsAuthenticated, selectUser} from "../../features/auth/slice/authSlice.ts";
-import {generateAvatar} from "../../utils/avatar";
-import {useState} from "react";
 
 export default function Header() {
     const dispatch = useAppDispatch();
@@ -11,23 +9,11 @@ export default function Header() {
     const user = useAppSelector(selectUser);
     const initialized = useAppSelector(selectInitialized);
 
-    const[isMenuOpen, setIsMenuOpen] = useState(false);
-
     const handleLogout = async () => {
         await dispatch(logout());
         navigate("/login");
     }
 
-
-
-    const getUserName = ()=>{
-        if (user?.nickname) {
-            return user.nickname;
-        }else if (user?.email) {
-            return user.email;
-        }
-        return "No name";
-    };
     return (
         <header className="w-full sticky top-0 z-50 px-6 py-6">
             <div className="mx-auto max-w-7xl relative group">
@@ -56,94 +42,64 @@ export default function Header() {
                     </Link>
 
                     <nav className="flex items-center space-x-8">
-                        <Link
-                            to="/"
+                        <Link 
+                            to="/" 
                             className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.35] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             Home
                         </Link>
-                        <Link
-                            to="/about"
+                        <Link 
+                            to="/about" 
                             className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.35] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             About
                         </Link>
-                        <Link
-                            to="/projects"
+                        <Link 
+                            to="/projects" 
                             className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.35] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             Projects
                         </Link>
 
-
-                        {initialized ? (
-                            isAuthenticated ? (
-                                <div className="relative ml-6">
-                                    <img
-
-                                        src={
-                                            user?.avatarUrl ||
-                                            (user?.email ? generateAvatar(user.email) : "default-avatar-url")
-                                        }
-                                        alt="Profile Avatar"
-
-                                        className="w-12 h-12 rounded-full cursor-pointer"
-                                        onClick={() => setIsMenuOpen((v) => !v)}
-                                    />
-
-
-                                    {isMenuOpen && (
-                                        <div className="absolute top-14 right-0 w-64 rounded-2xl border border-cyan-400/50 bg-slate-950/95 backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.8), 0_0_25px_rgba(6,128,212,0.35)] p-4">
-
-                                            <div className="text-center mb-3">
-                        <span className="text-sm font-bold text-cyan-400">
-                          {getUserName()}
-                        </span>
-                                            </div>
-
-
-                                            <button
-                                                onClick={() => {
-                                                    setIsMenuOpen(false);
-                                                    navigate("/profile");
-                                                }}
-                                                className="w-full text-left text-cyan-700 hover:text-cyan-500 font-semibold"
-                                            >
-                                                Personal account
-                                            </button>
-
-
-                                            <button
-                                                onClick={handleLogout}
-                                                className="w-full text-left mt-2 text-red-600 hover:text-red-400 font-semibold"
-                                            >
-                                                Logout
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
+                        <div
+                            className="flex items-center space-x-4 ml-6 min-w-[350px] flex-shrink-0 transition-all duration-300"
+                        >
+                            {initialized ? (
+                                isAuthenticated ? (
+                                    <>
+                                        <span className="text-sm font-bold text-cyan-400/80 italic">
+                                            {user?.email}
+                                        </span>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:scale-[1.35] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] hover:text-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all duration-300 ease-in-out"
+                                        >
+                                            Logout
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link
+                                            to="/register"
+                                            className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.35] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
+                                        >
+                                            Sign up
+                                        </Link>
+                                        <Link
+                                            to="/login"
+                                            className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:scale-[1.35] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] hover:text-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all duration-300 ease-in-out"
+                                        >
+                                            Sign in
+                                        </Link>
+                                    </>
+                                )
                             ) : (
                                 <>
-                                    <Link
-                                        to="/register"
-                                        className="ml-6 text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.35] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
-                                    >
-                                        Sign up
-                                    </Link>
-                                    <Link
-                                        to="/login"
-                                        className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:scale-[1.35] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                                    >
-                                        Sign in
-                                    </Link>
+                                    <div className="h-5 w-24 bg-slate-950/90 rounded animate-pulse"></div>
+                                    <div className="h-10 w-20 bg-slate-950/90 rounded animate-pulse"></div>
                                 </>
-                            )
-                        ) : (
-                            <>
-
-                                <div className="ml-6 h-12 w-12 bg-slate-950/90 rounded-full animate-pulse"></div>
-                            </>
-                        )}
+                            )}
+                        </div>
                     </nav>
                 </div>
             </div>
