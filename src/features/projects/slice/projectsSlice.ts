@@ -2,6 +2,8 @@ import { createAppSlice } from "../../../app/createAppSlice";
 import type {CreateProjectDto, Project, InviteRequestDto, ProjectsSliceState} from "../types";
 import * as api from "../services/api";
 import { isAxiosError, type AxiosError } from "axios";
+import type {PayloadAction} from "@reduxjs/toolkit";
+import type {MarkerDto} from "../../tasks/types";
 
 const initialState: ProjectsSliceState = {
   projects: [],
@@ -120,7 +122,24 @@ export const projectsSlice = createAppSlice({
               },
           }
       ),
+      addMarkerToCurrentProject: create.reducer(
+          (state, action: PayloadAction<MarkerDto>) => {
+              const newMarker = action.payload;
 
+              if (state.currentProject) {
+                  if (!state.currentProject.markers) state.currentProject.markers = [];
+                  state.currentProject.markers.push(newMarker);
+              }
+
+              const projectInList = state.projects.find(
+                  (p) => p.id === state.currentProject?.id
+              );
+              if (projectInList) {
+                  if (!projectInList.markers) projectInList.markers = [];
+                  projectInList.markers.push(newMarker);
+              }
+          }
+      ),
 
 
 
@@ -138,7 +157,7 @@ export const projectsSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { createProject, getAllProjects, getProjectById, inviteUser } = projectsSlice.actions;
+export const { createProject, getAllProjects, getProjectById, inviteUser, addMarkerToCurrentProject  } = projectsSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

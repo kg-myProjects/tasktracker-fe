@@ -1,3 +1,4 @@
+import type {CollaboratorDto} from "../../projects/types";
 
 export interface Task {
     id: string;
@@ -5,8 +6,10 @@ export interface Task {
     description: string;
     statusId: string;
     projectId: string;
-    executors: EmployeeDto[];
+    executors: CollaboratorDto[];
     markers: MarkerDto[];
+    checklist: ChecklistItem[];
+
 }
 
 export interface CreateTaskDto {
@@ -54,8 +57,10 @@ export interface TaskDto{
             } ;
         }
     }
-    executors: EmployeeDto[];
+    executors: CollaboratorDto[];
     markers: MarkerDto[];
+    checklist: ChecklistItem[];
+
 }
 
 
@@ -67,6 +72,7 @@ export interface UpdateTaskDto {
     projectId?: string;
     executorIds?: string[];
     markerIds?: string[];
+    checklist?: ChecklistItem[];
 }
 
 export interface UpdateTaskPayload {
@@ -94,4 +100,9 @@ export interface MarkerDto {
     id: string;
     name: string;
     color: string;
+}
+export interface ChecklistItem {
+    id?: string;
+    text: string;
+    completed: boolean;
 }
