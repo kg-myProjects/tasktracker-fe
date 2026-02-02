@@ -141,6 +141,35 @@ export const projectsSlice = createAppSlice({
           }
       ),
 
+      deleteProject: create.asyncThunk(
+          async (id: string) => {
+              try {
+                  await api.fetchDeleteProject(id);
+                  return id;
+              } catch (err) {
+                  if (isAxiosError(err)) {
+                      throw new Error(err.response?.data?.message || "Failed to delete project");
+                  }
+                  throw err;
+              }
+          },
+          {
+              pending: (state) => {
+                  state.isLoading = true;
+              },
+              fulfilled: (state, action) => {
+                  state.isLoading = false;
+                  state.projects = state.projects.filter((p) => p.id !== action.payload);
+                  if (state.currentProject?.id === action.payload) {
+                      state.currentProject = null;
+                  }
+              },
+              rejected: (state) => {
+                  state.isLoading = false;
+              },
+          }
+      ),
+
 
 
   }),
@@ -157,7 +186,7 @@ export const projectsSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { createProject, getAllProjects, getProjectById, inviteUser, addMarkerToCurrentProject  } = projectsSlice.actions;
+export const { createProject, getAllProjects, getProjectById, inviteUser, addMarkerToCurrentProject, deleteProject  } = projectsSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

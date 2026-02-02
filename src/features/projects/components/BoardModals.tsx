@@ -1,9 +1,10 @@
-import { TaskModal } from "./TaskModal.tsx";
-import { CreateStatusModal } from "./CreateStatusModal";
-import { InviteModal } from "./InviteModal.tsx";
-import { EditTaskModal } from "../../tasks/components/EditTaskModal";
-import type {ProjectRole } from "../types";
-import type { Task} from "../../tasks/types";
+import {TaskModal} from "./TaskModal.tsx";
+import {CreateStatusModal} from "./CreateStatusModal";
+import {InviteModal} from "./InviteModal.tsx";
+import {EditTaskModal} from "../../tasks/components/EditTaskModal";
+import type {ProjectRole} from "../types";
+import type {Task} from "../../tasks/types";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 
 interface BoardModalsProps {
     modals: {
@@ -28,15 +29,21 @@ interface BoardModalsProps {
             task: Task | undefined;
             onClose: () => void
         };
+        deleteStatus: {
+            status: { id: string; name: string } | null;
+            onClose: () => void;
+        };
     };
     actions: {
         onCreateTask: (title: string, description: string) => void;
         onCreateStatus: (name: string, position: number) => void;
         onInvite: (email: string, role: ProjectRole) => void;
+        onDeleteStatus: (id: string, name: string) => void;
     };
+
 }
 
-export const BoardModals = ({ modals, actions }: BoardModalsProps) => {
+export const BoardModals = ({modals, actions}: BoardModalsProps) => {
     return (
         <>
             {/* New Task */}
@@ -68,6 +75,21 @@ export const BoardModals = ({ modals, actions }: BoardModalsProps) => {
                 <EditTaskModal
                     card={modals.edit.task}
                     onClose={modals.edit.onClose}
+                />
+            )}
+            {modals.deleteStatus.status && (
+                <ConfirmModal
+                    title="COLUMN_DECONSTRUCTION"
+                    message={`Are you sure you want to delete the column "${modals.deleteStatus.status.name}"? All data in this column will be erased.`}
+                    confirmText="CONFIRM_DELETE"
+                    cancelText="ABORT"
+                    onConfirm={() => {
+                        if (modals.deleteStatus.status) {
+                            actions.onDeleteStatus(modals.deleteStatus.status.id, modals.deleteStatus.status.name);
+                            modals.deleteStatus.onClose();
+                        }
+                    }}
+                    onCancel={modals.deleteStatus.onClose}
                 />
             )}
         </>

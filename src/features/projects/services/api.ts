@@ -28,3 +28,7 @@ export const fetchProjectById = async (id: string) => {
     return res.data;
 };
 
+export const fetchDeleteProject = async (id: string) => {
+    const res = await axiosInstance.delete(`${PROJECTS_BASE_PATH}/${id}`);
+    return res.data;
+};
