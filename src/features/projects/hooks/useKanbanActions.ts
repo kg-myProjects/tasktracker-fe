@@ -20,12 +20,10 @@ export const useKanbanActions = (projectId?: string) => {
         await dispatch(getAllTaskStatuses(projectId));
     };
 
-    const handleDeleteStatus = async (statusId: string, statusName: string) => {
+    const handleDeleteStatus = async (statusId: string) => {
         if (!projectId) return;
-        if (window.confirm(`Delete column "${statusName}"?`)) {
             await dispatch(deleteTaskStatus(statusId)).unwrap();
             await dispatch(getAllTaskStatuses(projectId));
-        }
     };
 
     const handleInvite = async (projectId: string, email: string, role: ProjectRole) => {

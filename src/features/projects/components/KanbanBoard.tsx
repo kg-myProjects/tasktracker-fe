@@ -32,6 +32,7 @@ export default function KanbanBoard() {
     const [statusModalOpen, setStatusModalOpen] = useState(false);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+    const [statusToDelete, setStatusToDelete] = useState<{id: string, name: string} | null>(null);
 
     const {
         sensors, activeTask, handleDragStart, handleDragEnd,
@@ -87,7 +88,8 @@ export default function KanbanBoard() {
                                     setModalOpen(true);
                                 }}
                                 canDelete={tasksInStatus.length === 0}
-                                onDelete={() => handleDeleteStatus(status.id, status.name)}
+                                onDelete={() => setStatusToDelete({ id: status.id, name: status.name })}
+
                             >
                                 <SortableContext
                                     items={tasksInStatus.map(t => t.id)}
@@ -139,6 +141,10 @@ export default function KanbanBoard() {
                         taskId: editingTaskId,
                         task: tasks.find(t => t.id === editingTaskId),
                         onClose: () => setEditingTaskId(null)
+                    },
+                    deleteStatus: {
+                        status: statusToDelete,
+                        onClose: () => setStatusToDelete(null)
                     }
                 }}
                 actions={{
@@ -153,7 +159,8 @@ export default function KanbanBoard() {
                         handleInvite(projectId!, email, role).then(res => {
                             if(res.meta.requestStatus === 'fulfilled') setIsInviteModalOpen(false);
                         });
-                    }
+                    },
+                    onDeleteStatus: handleDeleteStatus
                 }}
             />
         </div>
