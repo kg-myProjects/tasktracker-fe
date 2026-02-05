@@ -7,6 +7,7 @@ export interface Project {
     owner: EmployeeDto;
     projectTeam: CollaboratorDto[];
     markers: MarkerDto[];
+    logs?: ProjectLog[];
 }
 
 // дто без id
@@ -47,3 +48,13 @@ export interface InviteModalProps {
     error?: string;
 }
 
+export interface ProjectLog {
+    entity: string;
+    entityName: string;
+    action: string;
+    userEmail: string;
+    userNickname?: string;
+    userAvatar?: string;
+    difference: string;
+    createdAt: string;
+}

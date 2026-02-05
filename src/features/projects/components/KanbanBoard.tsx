@@ -33,6 +33,7 @@ export default function KanbanBoard() {
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [statusToDelete, setStatusToDelete] = useState<{id: string, name: string} | null>(null);
+    const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
     const {
         sensors, activeTask, handleDragStart, handleDragEnd,
@@ -67,6 +68,7 @@ export default function KanbanBoard() {
                 title={project?.title}
                 onAddStatus={() => setStatusModalOpen(true)}
                 onAddCollab={() => setIsInviteModalOpen(true)}
+                onOpenLogs={() => setIsLogsModalOpen(true)}
                 collaborators={project?.projectTeam}
             />
 
@@ -145,6 +147,11 @@ export default function KanbanBoard() {
                     deleteStatus: {
                         status: statusToDelete,
                         onClose: () => setStatusToDelete(null)
+                    },
+                    logs: {
+                        isOpen: isLogsModalOpen,
+                        onClose: () => setIsLogsModalOpen(false),
+                        projectId: projectId!
                     }
                 }}
                 actions={{
