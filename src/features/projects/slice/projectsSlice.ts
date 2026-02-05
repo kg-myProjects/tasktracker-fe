@@ -208,7 +208,6 @@ export const projectsSlice = createAppSlice({
     selectIsLoading: (state) => state.isLoading,
     selectCreateProjectErrorMessage: (state) => state.createProjectErrorMessage,
     selectInviteUserErrorMessage: (state) => state.inviteUserErrorMessage,
-      //selectCurrentProjectLogs: (state) => state.currentProject?.logs || [],
       selectCurrentProjectLogs: createSelector(
           (state: ProjectsSliceState) => state.currentProject?.logs,
           (logs) => logs ?? []
