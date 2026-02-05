@@ -5,6 +5,7 @@ import {EditTaskModal} from "../../tasks/components/EditTaskModal";
 import type {ProjectRole} from "../types";
 import type {Task} from "../../tasks/types";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
+import {ProjectLogsModal} from "./ProjectLogsModal.tsx";
 
 interface BoardModalsProps {
     modals: {
@@ -33,6 +34,10 @@ interface BoardModalsProps {
             status: { id: string; name: string } | null;
             onClose: () => void;
         };
+        logs?: {
+            isOpen: boolean;
+            onClose: () => void;
+            projectId: string };
     };
     actions: {
         onCreateTask: (title: string, description: string) => void;
@@ -90,6 +95,14 @@ export const BoardModals = ({modals, actions}: BoardModalsProps) => {
                         }
                     }}
                     onCancel={modals.deleteStatus.onClose}
+                />
+            )}
+
+            {modals.logs && modals.logs.isOpen && (
+                <ProjectLogsModal
+                    isOpen={modals.logs.isOpen}
+                    projectId={modals.logs.projectId}
+                    onClose={modals.logs.onClose}
                 />
             )}
         </>

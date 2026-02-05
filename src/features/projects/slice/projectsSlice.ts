@@ -1,9 +1,10 @@
 import { createAppSlice } from "../../../app/createAppSlice";
-import type {CreateProjectDto, Project, InviteRequestDto, ProjectsSliceState} from "../types";
+import type {CreateProjectDto, Project, InviteRequestDto, ProjectsSliceState, ProjectLog} from "../types";
 import * as api from "../services/api";
 import { isAxiosError, type AxiosError } from "axios";
-import type {PayloadAction} from "@reduxjs/toolkit";
+import {createSelector, type PayloadAction} from "@reduxjs/toolkit";
 import type {MarkerDto} from "../../tasks/types";
+import {fetchProjectLogs} from "../services/api";
 
 const initialState: ProjectsSliceState = {
   projects: [],
@@ -141,6 +142,32 @@ export const projectsSlice = createAppSlice({
           }
       ),
 
+      getProjectLogs: create.asyncThunk(
+          async (projectId: string): Promise<ProjectLog[]> => {
+              return fetchProjectLogs(projectId).catch((error) => {
+                  if (isAxiosError(error)) {
+                      throw new Error(error.response?.data?.message || "Failed to fetch project logs");
+                  }
+                  throw error;
+              });
+          },
+          {
+              pending: (state) => {
+                  state.isLoading = true;
+              },
+              fulfilled: (state, action: PayloadAction<ProjectLog[]>) => {
+                  state.isLoading = false;
+                  if (state.currentProject) {
+                      state.currentProject.logs = action.payload;
+                  }
+              },
+              rejected: (state, action) => {
+                  state.isLoading = false;
+                  console.log(action.error.message);
+              },
+          }
+      ),
+
       deleteProject: create.asyncThunk(
           async (id: string) => {
               try {
@@ -181,12 +208,17 @@ export const projectsSlice = createAppSlice({
     selectIsLoading: (state) => state.isLoading,
     selectCreateProjectErrorMessage: (state) => state.createProjectErrorMessage,
     selectInviteUserErrorMessage: (state) => state.inviteUserErrorMessage,
+      //selectCurrentProjectLogs: (state) => state.currentProject?.logs || [],
+      selectCurrentProjectLogs: createSelector(
+          (state: ProjectsSliceState) => state.currentProject?.logs,
+          (logs) => logs ?? []
+      ),
 
 },
 });
 
 // // Action creators are generated for each case reducer function.
-export const { createProject, getAllProjects, getProjectById, inviteUser, addMarkerToCurrentProject, deleteProject  } = projectsSlice.actions;
+export const { createProject, getAllProjects, getProjectById, inviteUser, addMarkerToCurrentProject, deleteProject, getProjectLogs  } = projectsSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
@@ -195,4 +227,5 @@ export const {
   selectCurrentProject,
   selectCreateProjectErrorMessage,
     selectInviteUserErrorMessage,
+    selectCurrentProjectLogs
 } = projectsSlice.selectors;
