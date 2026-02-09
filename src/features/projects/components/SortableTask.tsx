@@ -81,7 +81,7 @@ export const SortableTask = React.memo( function SortableTask({
 
                 <div className="mt-3 flex items-center justify-between">
 
-                    {/* Прогрес чек-ліста */}
+                    {/* Progress checklist */}
                     {task.checklist && task.checklist.length > 0 && (
                         <div className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
                             <span className={task.checklist.every(i => i.completed) ? "text-emerald-500" : ""}>
@@ -90,7 +90,7 @@ export const SortableTask = React.memo( function SortableTask({
                         </div>
                     )}
 
-                    {/* Іконки виконавців (аватари) */}
+                    {/* Avatars */}
                     {task.executors && task.executors.length > 0 && (
                         <div className="flex -space-x-1.5 ml-auto">
                             {task.executors.map(ex => (
@@ -126,6 +126,7 @@ export const SortableTask = React.memo( function SortableTask({
             </button>
 
             {showConfirm && (
+                <div onClick={(e) => e.stopPropagation()}>
                 <ConfirmModal
                     title="Delete task?"
                     message={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
@@ -134,6 +135,7 @@ export const SortableTask = React.memo( function SortableTask({
                     onConfirm={handleConfirmDelete}
                     onCancel={handleCancelDelete}
                 />
+                </div>
             )}
 
         </div>
