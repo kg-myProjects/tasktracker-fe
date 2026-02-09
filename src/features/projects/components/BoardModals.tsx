@@ -84,10 +84,10 @@ export const BoardModals = ({modals, actions}: BoardModalsProps) => {
             )}
             {modals.deleteStatus.status && (
                 <ConfirmModal
-                    title="COLUMN_DECONSTRUCTION"
+                    title="Delete column?"
                     message={`Are you sure you want to delete the column "${modals.deleteStatus.status.name}"? All data in this column will be erased.`}
-                    confirmText="CONFIRM_DELETE"
-                    cancelText="ABORT"
+                    confirmText="Delete"
+                    cancelText="Cancel"
                     onConfirm={() => {
                         if (modals.deleteStatus.status) {
                             actions.onDeleteStatus(modals.deleteStatus.status.id, modals.deleteStatus.status.name);

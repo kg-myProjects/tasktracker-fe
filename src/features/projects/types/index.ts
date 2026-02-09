@@ -31,6 +31,7 @@ export interface ProjectsSliceState {
     currentProject?: Project | null;
     createProjectErrorMessage?: string;
     inviteUserErrorMessage?: string;
+    deleteProjectErrorMessage?: string;
     isLoading: boolean;
 }
 

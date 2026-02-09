@@ -216,12 +216,15 @@ export const projectsSlice = createAppSlice({
                       state.currentProject = null;
                   }
               },
-              rejected: (state) => {
+              rejected: (state, action) => {
                   state.isLoading = false;
+                  state.deleteProjectErrorMessage = action.error.message;
               },
           }
       ),
-
+      clearDeleteError: create.reducer((state) => {
+          state.deleteProjectErrorMessage = undefined;
+      }),
 
 
   }),
@@ -233,6 +236,7 @@ export const projectsSlice = createAppSlice({
     selectCurrentProject: state => state.currentProject,
     selectIsLoading: (state) => state.isLoading,
     selectCreateProjectErrorMessage: (state) => state.createProjectErrorMessage,
+    selectDeleteProjectErrorMessage: (state) => state.deleteProjectErrorMessage,
     selectInviteUserErrorMessage: (state) => state.inviteUserErrorMessage,
       selectCurrentProjectLogs: createSelector(
           (state: ProjectsSliceState) => state.currentProject?.logs,
@@ -243,7 +247,8 @@ export const projectsSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { createProject, getAllProjects,getMyProjects, getProjectById, inviteUser, addMarkerToCurrentProject, deleteProject, getProjectLogs } = projectsSlice.actions;
+export const { createProject, getAllProjects,getMyProjects, getProjectById, inviteUser, addMarkerToCurrentProject,
+    deleteProject, getProjectLogs,clearDeleteError } = projectsSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
@@ -253,5 +258,6 @@ export const {
   selectCurrentProject,
   selectCreateProjectErrorMessage,
     selectInviteUserErrorMessage,
+    selectDeleteProjectErrorMessage,
     selectCurrentProjectLogs
 } = projectsSlice.selectors;

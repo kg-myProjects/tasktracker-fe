@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getMyProjects, selectProjects, deleteProject } from "../slice/projectsSlice";
+import { getMyProjects, selectProjects, deleteProject, selectDeleteProjectErrorMessage, clearDeleteError } from "../slice/projectsSlice";
 import NeonButton from "../../../components/ui/NeonButton";
 import ConfirmModal from "../../../components/ui/ConfirmModal"; // Твоя форма підтвердження
+import NotificationModal from "../../../components/ui/NotificationModal";
 
 export default function ProjectsList() {
     const dispatch = useAppDispatch();
     const projects = useAppSelector(selectProjects);
+    const deleteError = useAppSelector(selectDeleteProjectErrorMessage);
 
     const [projectToDelete, setProjectToDelete] = useState<{id: string, title: string} | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -24,20 +26,18 @@ export default function ProjectsList() {
         if (!projectToDelete) return;
 
         setIsDeleting(true);
-        try {
-            await dispatch(deleteProject(projectToDelete.id)).unwrap();
+        await dispatch(deleteProject(projectToDelete.id));
+
+        setIsDeleting(false);
+        if (!deleteError) {
             setProjectToDelete(null);
-        } catch (error) {
-            console.error("Failed to delete project:", error);
-        } finally {
-            setIsDeleting(false);
         }
     };
 
     return (
         <section className="p-8 min-h-screen bg-[#020617]">
             <h2 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] mb-10 text-glow">
-                SYSTEM_PROJECTS
+                Projects
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -62,22 +62,34 @@ export default function ProjectsList() {
                                 className="opacity-0 group-hover:opacity-100 border-rose-500/50 text-rose-500"
                                 onClick={() => openConfirm(project.id, project.title)}
                             >
-                                DELETE
+                                Delete
                             </NeonButton>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Твоя форма підтвердження */}
+            {/* ConfirmModal */}
             {projectToDelete && (
                 <ConfirmModal
-                    title="PROJECT_TERMINATION"
+                    title="Delete project?"
                     message={`Are you sure you want to delete "${projectToDelete.title}"? All data will be wiped from the grid.`}
-                    confirmText={isDeleting ? "WIPING..." : "CONFIRM_DELETE"}
-                    cancelText="ABORT"
+                    confirmText={isDeleting ? "Deleting..." : "Delete"}
+                    cancelText="Cancel"
                     onConfirm={handleConfirmDelete}
                     onCancel={() => setProjectToDelete(null)}
+                />
+            )}
+
+            {deleteError && (
+                <NotificationModal
+                    title="ACCESS_DENIED"
+                    message={deleteError}
+                    variant="error"
+                    onClose={() => {
+                         dispatch(clearDeleteError());
+                        setProjectToDelete(null);
+                    }}
                 />
             )}
         </section>

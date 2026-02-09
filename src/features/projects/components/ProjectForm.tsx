@@ -48,26 +48,26 @@ const ProjectForm = ({ onClose }: ProjectFormProps) => {
                         </svg>
                     </div>
 
-                    <h2 className="mb-2 text-2xl font-black text-rose-500 uppercase tracking-tighter">
+                    <h2 className="mb-2 text-2xl font-black text-rose-500 ">
                         Access Denied
                     </h2>
 
                     <p className="mb-8 text-slate-400 text-sm">
-                        Authorization required to initialize grid
+                        Authorization required to create project
                     </p>
 
                     <div className="flex flex-col gap-4">
                         <Link to="/login" className="w-full">
                             <NeonButton variant="primary" className="w-full border-rose-500 text-rose-500">
-                                GO_TO_LOGIN
+                                Login
                             </NeonButton>
                         </Link>
 
                         <button
                             onClick={onClose}
-                            className="text-[10px] uppercase tracking-widest text-slate-600 hover:text-slate-400 transition-colors"
+                            className="text-[10px] tracking-widest text-slate-600 hover:text-slate-400 transition-colors"
                         >
-                            [ Abort Operation ]
+                             Cancel
                         </button>
                     </div>
                 </div>
