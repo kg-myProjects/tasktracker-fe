@@ -19,8 +19,10 @@ export default function Projects() {
             <NeonButton size="lg"
                         variant="primary"
                         onClick={() => setShowForm(true)}
-                        className="w-full">
-                New Project
+                        className="w-full h-[180px] rounded-2xl border-2 border-dashed border-cyan-500/30 flex flex-col gap-2 uppercase tracking-[0.2em] font-black"
+            >
+                <span className="text-3xl font-light opacity-50">+</span>
+                <span>New Project</span>
             </NeonButton>
                )}
             {showForm && (

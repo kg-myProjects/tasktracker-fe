@@ -10,7 +10,7 @@ export function Column({ status,
     const { setNodeRef } = useDroppable({ id: status.id });
 
     return (
-        <div ref={setNodeRef} className="flex flex-col bg-[#1e293b]rounded-2xl border-2 border-cyan-400/20 text-cyan-400 p-4 min-w-[320px] min-h-[500px] transition-all hover:border-cyan-400/40">
+        <div ref={setNodeRef} className="flex flex-col bg-transparent rounded-2xl border-2 border-cyan-400/20 text-cyan-400 p-4 min-w-[320px] min-h-[500px] transition-all hover:border-cyan-400/40">
             <h2 className="text-lg font-semibold mb-3 flex justify-between items-center text-cyan-400">
                 {status.name}
                 <div className="flex gap-2">
