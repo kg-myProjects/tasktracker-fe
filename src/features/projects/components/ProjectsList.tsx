@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { getMyProjects, selectProjects, deleteProject, selectDeleteProjectErrorMessage, clearDeleteError } from "../slice/projectsSlice";
+import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import {
+    getMyProjects,
+    selectProjects,
+    deleteProject,
+    selectDeleteProjectErrorMessage,
+    clearDeleteError
+} from "../slice/projectsSlice";
 import NeonButton from "../../../components/ui/NeonButton";
-import ConfirmModal from "../../../components/ui/ConfirmModal"; // Твоя форма підтвердження
+import ConfirmModal from "../../../components/ui/ConfirmModal";
 import NotificationModal from "../../../components/ui/NotificationModal";
 
 export default function ProjectsList() {
@@ -11,7 +17,7 @@ export default function ProjectsList() {
     const projects = useAppSelector(selectProjects);
     const deleteError = useAppSelector(selectDeleteProjectErrorMessage);
 
-    const [projectToDelete, setProjectToDelete] = useState<{id: string, title: string} | null>(null);
+    const [projectToDelete, setProjectToDelete] = useState<{ id: string, title: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
@@ -19,7 +25,7 @@ export default function ProjectsList() {
     }, [dispatch]);
 
     const openConfirm = (id: string, title: string) => {
-        setProjectToDelete({ id, title });
+        setProjectToDelete({id, title});
     };
 
     const handleConfirmDelete = async () => {
@@ -35,32 +41,37 @@ export default function ProjectsList() {
     };
 
     return (
-        <section className="p-8 min-h-screen bg-[#020617]">
+        <section className="p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
             <h2 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] mb-10 text-glow">
                 Projects
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 border border-cyan-900/50 rounded-2xl bg-transparent">
                 {projects?.map((project) => (
                     <div
                         key={project.id}
                         className="group relative bg-black/40 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
                     >
-                        <Link to={`/project/${project.id}`} className="block mb-6">
+                        <Link to={`/project/${project.id}`} className="absolute inset-0 z-10"
+                              aria-label={`Open ${project.title}`}/>
+                        <div className="relative z-0 mb-6">
                             <h3 className="text-cyan-400 text-xl font-black uppercase mb-2 group-hover:text-cyan-200 transition-colors">
                                 {project.title}
                             </h3>
                             <p className="text-slate-500 text-sm line-clamp-2">
                                 {project.description}
                             </p>
-                        </Link>
+                        </div>
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-end relative z-20">
                             <NeonButton
                                 size="sm"
                                 variant="primary"
                                 className="opacity-0 group-hover:opacity-100 border-rose-500/50 text-rose-500"
-                                onClick={() => openConfirm(project.id, project.title)}
+                                onClick={() => {
+                                    openConfirm(project.id, project.title);
+                                }}
                             >
                                 Delete
                             </NeonButton>
@@ -87,7 +98,7 @@ export default function ProjectsList() {
                     message={deleteError}
                     variant="error"
                     onClose={() => {
-                         dispatch(clearDeleteError());
+                        dispatch(clearDeleteError());
                         setProjectToDelete(null);
                     }}
                 />

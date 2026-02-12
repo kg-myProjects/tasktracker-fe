@@ -63,7 +63,7 @@ export default function KanbanBoard() {
     }, [tasks, statuses]);
 
     return (
-        <div className="h-screen flex flex-col bg-slate-900 p-4 overflow-hidden">
+        <div className="h-screen flex flex-col bg-transparent p-4 overflow-hidden">
             <BoardHeader
                 title={project?.title}
                 onAddStatus={() => setStatusModalOpen(true)}
