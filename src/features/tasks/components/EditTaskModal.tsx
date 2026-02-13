@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAppSelector } from "../../../app/hooks.ts";
+import {useAppSelector} from "../../../app/hooks.ts";
 import { useTaskActions } from "../hooks/useTaskActions.ts";
 import { TaskChecklist } from "./TaskChecklist.tsx";
 import { TaskSidebar } from "./TaskSidebar.tsx";
@@ -10,75 +10,100 @@ interface TaskEditModalProps {
     onClose: () => void;
 }
 
-export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
-    const [title, setTitle] = useState(card.title || "");
-    const [description, setDescription] = useState(card.description || "");
-    const [isCreatingChecklist, setIsCreatingChecklist] = useState(false);
 
+export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
     const project = useAppSelector((state) => state.projects.currentProject);
     const allTasks = useAppSelector(state => state.tasks.tasks);
     const currentTask = allTasks.find(t => t.id === card.id) || card;
+    const [isCreatingChecklist, setIsCreatingChecklist] = useState(false);
 
     const {
         handleAddExecutor,
         handleAddMarker,
         handleCreateAndAddMarker,
         syncChecklist,
-        patchTask
+        patchTask,
+        isUpdating
     } = useTaskActions(currentTask, project?.id);
 
-    const handleSave = () => {
-        patchTask({ title, description });
-        onClose();
-    };
-
     return (
-        <div className="fixed inset-0 bg-[#0f172a]/95 z-50 flex items-start justify-center p-4 overflow-y-auto" onClick={onClose}>
-            <div className="bg-white rounded-2xl border-2 border-cyan-500/30 shadow-2xl w-full max-w-2xl my-8 transform transition-all" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-md z-50 flex items-start justify-center p-4 overflow-y-auto" onClick={onClose}>
+            {/* Main container */}
+            <div className="bg-[#f1f2f4] rounded-[40px] shadow-2xl w-full max-w-5xl my-8 relative flex flex-col overflow-visible"
+                 onClick={e => e.stopPropagation()}>
 
-                {/* Шапка */}
-                <div className="bg-cyan-500 px-6 py-4 flex items-center justify-between border-b-2 border-[#0f172a] rounded-t-2xl">
-                    <div className="flex items-center gap-3 flex-1">
-                        <div className="w-2 h-6 bg-[#0f172a] rounded-full"></div>
-                        <input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="bg-transparent text-lg font-black text-white uppercase outline-none focus:border-b w-full"
-                        />
+                {/* 1. Cover */}
+                <div className="h-40 w-full shrink-0 relative transition-all duration-500 bg-gradient-to-r from-cyan-500 to-blue-600 shadow-inner rounded-t-[40px]">
+                    <button onClick={onClose}
+                            className="absolute top-6 right-6 bg-black/20 hover:bg-black/40 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold z-10 transition-all">
+                        ✕
+                    </button>
+
+                    {/* Avatar */}
+                    <div className="absolute -bottom-8 left-10">
+                        <div className="w-20 h-20 rounded-full border-[6px] border-[#f1f2f4] shadow-xl overflow-visible bg-white flex items-center justify-center text-slate-300 text-3xl">
+                            👤
+                        </div>
                     </div>
-                    <button onClick={onClose} className="text-white hover:rotate-90 transition-transform text-2xl ml-4">✕</button>
                 </div>
 
-                <div className="p-8 flex flex-col md:flex-row gap-8 bg-slate-50 rounded-b-2xl">
-                    {/* Base Content */}
-                    <div className="flex-1 space-y-6">
+                <div className="px-10 pt-12 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10">
 
-                        {/* Markers and Executors */}
-                        <div className="flex flex-wrap gap-4">
+                    {/* Left part */}
+                    <div className="space-y-8">
+                        {/* Header */}
+                        <div className="space-y-1">
+                            <input
+                                defaultValue={currentTask.title}
+                                onBlur={(e) => {
+                                    const val = e.target.value.trim();
+                                    if (val && val !== currentTask.title) patchTask({ title: val });
+                                }}
+                                className="w-full bg-transparent text-3xl font-bold text-slate-800 outline-none focus:ring-2 focus:ring-cyan-500/20 rounded-lg px-2 -ml-2 transition-all"
+                            />
+                            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest px-1">
+                                in list <span className="underline decoration-cyan-500/50 cursor-pointer">Development</span>
+                            </p>
+                        </div>
+
+                        {/* Markers and Members */}
+                        <div className="flex flex-wrap gap-10">
                             {currentTask.markers?.length > 0 && (
-                                <div className="space-y-2">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-1">Markers</p>
-                                    <div className="flex gap-1">
+                                <div className="space-y-3">
+                                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Labels</h4>
+                                    <div className="flex flex-wrap gap-2">
                                         {currentTask.markers.map(m => (
-                                            <span key={m.id} className={`${m.color} h-2 w-8 rounded-full shadow-sm`} title={m.name} />
+                                            <span key={m.id} className={`${m.color} px-3 py-1 rounded-md text-[10px] font-black text-white shadow-sm uppercase`}>
+                                                {m.name}
+                                            </span>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
-                            {currentTask.executors && currentTask.executors.length > 0 && (
-                                <div className="space-y-2">
-                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-1">Members</p>
+                            {currentTask.executors?.length > 0 && (
+                                <div className="space-y-3">
+                                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Members</h4>
                                     <div className="flex -space-x-2">
-                                        {currentTask.executors.map((ex) => (
-                                            <div
-                                                key={ex.id}
-                                                title={ex.email}
-                                                className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-cyan-600 border-2 border-white flex items-center justify-center text-white text-[10px] font-black uppercase shadow-sm hover:scale-110 transition-transform cursor-help"
-                                            >
-                                                {ex.email ? ex.email.charAt(0).toUpperCase() : '?'}
+                                        {currentTask.executors.map(ex => (
+                                            <div key={ex.id} className="w-9 h-9 rounded-full bg-slate-800 border-2 border-[#f1f2f4] flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                                {ex.email.charAt(0).toUpperCase()}
                                             </div>
                                         ))}
+                                    </div>
+                                </div>
+                            )}
+                            {/* Due Date Display */}
+                            {currentTask.dueDate && (
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Due Date</p>
+                                    <div className="bg-white border-2 border-cyan-500/10 px-4 py-2 rounded-xl shadow-sm flex items-center gap-2 group hover:border-cyan-500/30 transition-all cursor-pointer">
+                                        <span className="text-base">📅</span>
+                                        <span className="text-slate-700 text-[10px] font-black uppercase">
+                {new Date(currentTask.dueDate).toLocaleString('uk-UA', {
+                    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                })}
+            </span>
                                     </div>
                                 </div>
                             )}
@@ -86,13 +111,18 @@ export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
                         </div>
 
                         {/* Description */}
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-cyan-600 uppercase tracking-widest flex items-center gap-2">📝 Description</label>
+                        <div className="space-y-3">
+                            <h4 className="flex items-center gap-2 text-sm font-bold text-slate-700">
+                                <span className="text-lg">📝</span> Description
+                            </h4>
                             <textarea
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                className="w-full bg-white border-2 border-slate-200 rounded-xl p-4 min-h-[120px] text-slate-800 focus:border-cyan-400 outline-none transition-all shadow-inner"
-                                placeholder="What needs to be done?"
+                                defaultValue={currentTask.description}
+                                onBlur={(e) => {
+                                    const val = e.target.value.trim();
+                                    if (val !== currentTask.description) patchTask({ description: val });
+                                }}
+                                className="w-full min-h-[120px] p-4 bg-slate-200/50 hover:bg-slate-200/80 focus:bg-white rounded-2xl outline-none text-slate-700 text-sm leading-relaxed transition-all resize-none border-2 border-transparent focus:border-cyan-500/20"
+                                placeholder="Add a more detailed description..."
                             />
                         </div>
 
@@ -103,26 +133,31 @@ export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
                             isCreating={isCreatingChecklist}
                             onCloseCreating={() => setIsCreatingChecklist(false)}
                         />
-
-                        {/* Кнопки */}
-                        <div className="flex gap-3 pt-6 border-t border-slate-200">
-                            <button onClick={handleSave} className="bg-cyan-500 hover:bg-cyan-400 text-white text-[10px] font-black px-10 py-3 rounded-xl border-b-4 border-cyan-700 active:border-b-0 active:translate-y-1 transition-all uppercase">Save Changes</button>
-                            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-[10px] font-black px-6 py-3 uppercase transition-colors">Cancel</button>
-                        </div>
                     </div>
 
-                    {/* Бокова панель */}
-                    <TaskSidebar
-                        task={currentTask}
-                        projectMembers={project?.projectTeam || []}
-                        projectMarkers={project?.markers || []}
-                        actions={{
-                            handleAddExecutor,
-                            handleAddMarker,
-                            handleCreateAndAddMarker,
-                            setIsCreatingChecklist
-                        }}
-                    />
+                    {/* SideBar */}
+                    <div className="space-y-6">
+                        <TaskSidebar
+                            task={currentTask}
+                            isUpdating={isUpdating}
+                            projectMembers={project?.projectTeam || []}
+                            projectMarkers={project?.markers || []}
+                            actions={{
+                                handleAddExecutor, handleAddMarker,
+                                handleCreateAndAddMarker, setIsCreatingChecklist,
+                                patchTask
+                            }}
+                        />
+
+                        {/* Status-footer SideBar */}
+                        <div className="p-4 bg-white/50 rounded-2xl border border-white">
+                            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1 text-center">System Info</p>
+                            <div className="flex justify-between text-[10px] font-bold text-slate-600">
+                                <span>Status:</span>
+                                <span className="text-cyan-600">Active Sync</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

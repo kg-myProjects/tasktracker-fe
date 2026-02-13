@@ -9,6 +9,7 @@ export function mapTaskFromApi(data: TaskDto): Task {
         projectId: data.project?.id ?? '',
         executors: data.executors || [],
         markers: data.markers || [],
-        checklist: data.checklist || []
+        checklist: data.checklist || [],
+        dueDate: data.dueDate
     };
 }
