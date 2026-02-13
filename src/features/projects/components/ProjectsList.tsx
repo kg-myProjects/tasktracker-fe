@@ -64,11 +64,11 @@ export default function ProjectsList() {
                             </p>
                         </div>
 
-                        <div className="flex justify-end relative z-20">
+                        <div className="flex justify-end">
                             <NeonButton
                                 size="sm"
                                 variant="primary"
-                                className="opacity-0 group-hover:opacity-100 border-rose-500/50 text-rose-500"
+                                className="  relative z-20 opacity-0 group-hover:opacity-100 border-rose-500/50 text-rose-500"
                                 onClick={() => {
                                     openConfirm(project.id, project.title);
                                 }}

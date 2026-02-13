@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import type { ChecklistItem } from "../types";
 
 interface TaskChecklistProps {
@@ -8,7 +8,7 @@ interface TaskChecklistProps {
     onCloseCreating: () => void;
 }
 
-export const TaskChecklist = ({ items, onSync, isCreating, onCloseCreating }: TaskChecklistProps) => {
+export const TaskChecklist =React.memo( ({ items, onSync, isCreating, onCloseCreating }: TaskChecklistProps) => {
     const [newItemText, setNewItemText] = useState("");
 
     const completedCount = items.filter(i => i.completed).length;
@@ -76,4 +76,4 @@ export const TaskChecklist = ({ items, onSync, isCreating, onCloseCreating }: Ta
             </div>
         </div>
     );
-};
+});

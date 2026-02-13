@@ -7,6 +7,10 @@ import type {Task} from "../../tasks/types";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
 import {ProjectLogsModal} from "./ProjectLogsModal.tsx";
 
+import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import { selectCreateTaskErrorMessage, clearTaskError } from "../../tasks/slice/tasksSlice";
+import NotificationModal from "../../../components/ui/NotificationModal";
+
 interface BoardModalsProps {
     modals: {
         task: {
@@ -49,8 +53,20 @@ interface BoardModalsProps {
 }
 
 export const BoardModals = ({modals, actions}: BoardModalsProps) => {
+    const dispatch = useAppDispatch();
+    const taskErrorMessage = useAppSelector(selectCreateTaskErrorMessage);
+
     return (
         <>
+            {taskErrorMessage && (
+                <NotificationModal
+                    title="ACCESS_DENIED"
+                    message={taskErrorMessage}
+                    buttonText="Cancel"
+                    variant="error"
+                    onClose={() => dispatch(clearTaskError())} // Очищуємо помилку в Redux
+                />
+            )}
             {/* New Task */}
             <TaskModal
                 isOpen={modals.task.isOpen}

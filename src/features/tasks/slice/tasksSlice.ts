@@ -3,6 +3,7 @@ import type {CreateTaskDto, TaskDto, TasksSliceState, UpdateTaskPayload} from ".
 import * as api from "../services/api";
 import {isAxiosError, type AxiosError} from "axios";
 import {mapTaskFromApi} from "../mapper/mapper.ts";
+import type {PayloadAction} from "@reduxjs/toolkit";
 
 const initialState: TasksSliceState = {
     tasks: [],
@@ -78,18 +79,28 @@ export const tasksSlice = createAppSlice({
                 },
                 {
                     pending: (state, action) => {
+                        state.isLoading = true;
                         const { id, dto } = action.meta.arg;
 
                         const task = state.tasks.find((t) => t.id === id);
                         if (task) {
                             if (dto.statusId) task.statusId = dto.statusId;
-                            if (dto.title) task.title = dto.title; // Добавь это для мгновенного обновления заголовка
-                            if (dto.description) task.description = dto.description; // И это для описания
+                            if (dto.title) task.title = dto.title;
+                            if (dto.description) task.description = dto.description;
+                            if (dto.dueDate !== undefined) task.dueDate = dto.dueDate;
+                            if (dto.executorIds) {
+                                task.executors = task.executors.filter(ex => dto.executorIds?.includes(ex.id));
+                            }
+                            if (dto.markerIds) {
+                                task.markers = task.markers.filter(m => dto.markerIds?.includes(m.id));
+                            }
+                            if (dto.checklist) task.checklist = dto.checklist;
                         }
                     },
                     fulfilled: (state, action) => {
-                        const updatedTaskDto = action.payload; // TaskDto
-                        const updatedTask = mapTaskFromApi(updatedTaskDto); // ✅ Task
+                        state.isLoading = false;
+                        const updatedTaskDto = action.payload;
+                        const updatedTask = mapTaskFromApi(updatedTaskDto);
 
                         const index = state.tasks.findIndex(
                             (t) => t.id === updatedTask.id
@@ -103,6 +114,7 @@ export const tasksSlice = createAppSlice({
                         state.createTaskErrorMessage = "";
                     },
                     rejected: (state, action) => {
+                        state.isLoading = false;
                         state.createTaskErrorMessage = action.error.message;
                         state.currentTask = null;
                     },
@@ -120,6 +132,12 @@ export const tasksSlice = createAppSlice({
                     }
                 }
             ),
+            setTaskError: create.reducer((state, action: PayloadAction<string>) => {
+                state.createTaskErrorMessage = action.payload;
+            }),
+            clearTaskError: create.reducer((state) => {
+                state.createTaskErrorMessage = "";
+            }),
 
 
         }),
@@ -139,7 +157,7 @@ export const tasksSlice = createAppSlice({
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask, getTasksByProjectId, updateTask, deleteTask} = tasksSlice.actions;
+export const {createTask, getTasksByProjectId, updateTask, deleteTask, clearTaskError, setTaskError} = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

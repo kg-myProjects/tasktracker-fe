@@ -9,6 +9,7 @@ export interface Task {
     executors: CollaboratorDto[];
     markers: MarkerDto[];
     checklist: ChecklistItem[];
+    dueDate?: string | null;
 
 }
 
@@ -60,6 +61,7 @@ export interface TaskDto{
     executors: CollaboratorDto[];
     markers: MarkerDto[];
     checklist: ChecklistItem[];
+    dueDate?: string | null;
 
 }
 
@@ -73,6 +75,7 @@ export interface UpdateTaskDto {
     executorIds?: string[];
     markerIds?: string[];
     checklist?: ChecklistItem[];
+    dueDate?: string | null;
 }
 
 export interface UpdateTaskPayload {
