@@ -5,7 +5,7 @@ import {EditTaskModal} from "../../tasks/components/EditTaskModal";
 import type {ProjectRole} from "../types";
 import type {Task} from "../../tasks/types";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
-import {ProjectLogsModal} from "./ProjectLogsModal.tsx";
+import {ProjectLogModal} from "./projectLog/ProjectLogModal.tsx";
 
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import { selectCreateTaskErrorMessage, clearTaskError } from "../../tasks/slice/tasksSlice";
@@ -60,7 +60,7 @@ export const BoardModals = ({modals, actions}: BoardModalsProps) => {
         <>
             {taskErrorMessage && (
                 <NotificationModal
-                    title="ACCESS_DENIED"
+                    title="ACCESS DENIED"
                     message={taskErrorMessage}
                     buttonText="Cancel"
                     variant="error"
@@ -115,7 +115,7 @@ export const BoardModals = ({modals, actions}: BoardModalsProps) => {
             )}
 
             {modals.logs && modals.logs.isOpen && (
-                <ProjectLogsModal
+                <ProjectLogModal
                     isOpen={modals.logs.isOpen}
                     projectId={modals.logs.projectId}
                     onClose={modals.logs.onClose}

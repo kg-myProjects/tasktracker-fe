@@ -21,14 +21,15 @@ const FormContainer = ({
     return (
         <div className="relative mx-auto max-w-md p-6 rounded-xl bg-white/5 backdrop-blur-md  border-2 border-dashed border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all   font-bold">
             {/* Close button */}
+            <div className="absolute top-2 right-2">
             <NeonButton
                 size="sm"
                 variant="warning"
                 onClick={onClose}
-                className="absolute top-4 right-4"
             >
                 ×
             </NeonButton>
+            </div>
 
             {/* Header */}
             <div className="space-y-2 text-center">
