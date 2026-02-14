@@ -57,18 +57,19 @@ const ProjectForm = ({ onClose }: ProjectFormProps) => {
                     </p>
 
                     <div className="flex flex-col gap-4">
+
                         <Link to="/login" className="w-full">
-                            <NeonButton variant="primary" className="w-full border-rose-500 text-rose-500">
+                            <NeonButton variant="primary" className="w-full border-white text-white">
                                 Login
                             </NeonButton>
                         </Link>
 
-                        <button
-                            onClick={onClose}
-                            className="text-[10px] tracking-widest text-slate-600 hover:text-slate-400 transition-colors"
-                        >
-                             Cancel
-                        </button>
+                        <div onClick={onClose}>
+                            <NeonButton variant="primary" className="w-full border-rose-500 text-rose-500">
+                                Cancel
+                            </NeonButton>
+                        </div>
+
                     </div>
                 </div>
             </div>

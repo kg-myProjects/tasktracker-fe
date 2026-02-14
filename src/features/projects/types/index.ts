@@ -51,9 +51,9 @@ export interface InviteModalProps {
 }
 
 export interface ProjectLog {
-    entity: string;
+    entity: "Task" | "Status";
     entityName: string;
-    action: string;
+    action: "CREATE" | "DELETE";
     userEmail: string;
     userNickname?: string;
     userAvatar?: string;

@@ -25,7 +25,7 @@ const NeonButton = ({
         transition-all duration-300
         flex items-center justify-center
         disabled:opacity-40
-        disabled:cursor-not-allowed
+        cursor-pointer
         hover:brightness-150 
         hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]
         ${sizeClasses[size]}
