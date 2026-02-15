@@ -4,6 +4,7 @@ import { useTaskActions } from "../hooks/useTaskActions.ts";
 import { TaskChecklist } from "./TaskChecklist.tsx";
 import { TaskSidebar } from "./TaskSidebar.tsx";
 import type { Task } from "../types";
+import {TaskAttachments} from "./TaskAttachments.tsx";
 
 interface TaskEditModalProps {
     card: Task;
@@ -125,6 +126,13 @@ export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
                                 placeholder="Add a more detailed description..."
                             />
                         </div>
+
+                        {/* TaskAttachments */}
+                        <TaskAttachments
+                            taskId={currentTask.id}
+                            attachments={currentTask.attachments || []}
+                        />
+
 
                         {/* CheckList */}
                         <TaskChecklist

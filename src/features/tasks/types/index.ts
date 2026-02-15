@@ -10,6 +10,7 @@ export interface Task {
     markers: MarkerDto[];
     checklist: ChecklistItem[];
     dueDate?: string | null;
+    attachments: Attachment[];
 
 }
 
@@ -62,7 +63,7 @@ export interface TaskDto{
     markers: MarkerDto[];
     checklist: ChecklistItem[];
     dueDate?: string | null;
-
+    attachments: Attachment[];
 }
 
 
@@ -76,13 +77,13 @@ export interface UpdateTaskDto {
     markerIds?: string[];
     checklist?: ChecklistItem[];
     dueDate?: string | null;
+    attachments: Attachment[];
 }
 
 export interface UpdateTaskPayload {
     id: string;
     dto: UpdateTaskDto;
 }
-export type UpdateTaskStatusDto = { statusId: string };
 
 
 export interface TasksSliceState {
@@ -90,13 +91,6 @@ export interface TasksSliceState {
     currentTask?: Task | null;
     createTaskErrorMessage?: string;
     isLoading: boolean;
-}
-
-export interface EmployeeDto {
-    id: string;
-    email: string;
-    name?: string;
-    avatar?: string;
 }
 
 export interface MarkerDto {
@@ -108,4 +102,12 @@ export interface ChecklistItem {
     id?: string;
     text: string;
     completed: boolean;
+}
+
+export interface Attachment {
+    id: string;
+    name: string;
+    url: string;
+    type: 'IMAGE' | 'PDF' | 'DOC' | 'VIDEO' | 'FILE' | 'LINK';
+    createdAt: string;
 }

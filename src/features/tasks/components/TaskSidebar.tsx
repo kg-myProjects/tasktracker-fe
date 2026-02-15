@@ -4,6 +4,7 @@ import type {CollaboratorDto} from "../../projects/types";
 import { NEON_COLORS } from "../constants/taskConstants.ts";
 import {setTaskError} from "../slice/tasksSlice";
 import {useAppDispatch} from "../../../app/hooks.ts";
+import {AttachmentPicker} from "./AttachmentPicker.tsx";
 
 interface TaskSidebarProps {
     task: Task;
@@ -25,13 +26,14 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
     const [showDatePicker, setShowDatePicker] = useState(false); // Нове
     const [newMarkerName, setNewMarkerName] = useState("");
     const [selectedColor, setSelectedColor] = useState("bg-cyan-500");
+    const [showAttachmentPicker, setShowAttachmentPicker] = useState(false);
 
     const actionButtons = [
         { id: 'members', label: 'Members', icon: '👤', action: () => setShowMembers(!showMembers) },
         { id: 'labels', label: 'Labels', icon: '🏷', action: () => setShowLabels(!showLabels) },
         { id: 'checklist', label: 'Checklist', icon: '✅', action: () => actions.setIsCreatingChecklist(true) },
         { id: 'dates', label: 'Dates', icon: '📅', action: () => setShowDatePicker(!showDatePicker) },
-        { id: 'attachment', label: 'Attachment', icon: '📎' },
+        { id: 'attachment', label: 'Attachment', icon: '📎',action: () => setShowAttachmentPicker(!showAttachmentPicker) },
     ];
 
 
@@ -220,6 +222,18 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                             </div>
                          </>
                         )}
+                        {/* В TaskSidebar.tsx замість старого блоку attachments */}
+                        {btn.id === 'attachment' && showAttachmentPicker && (
+                            <AttachmentPicker
+                                taskId={task.id}
+                                isUpdating={isUpdating}
+                                onClose={() => setShowAttachmentPicker(false)}
+                                onPatchTask={actions.patchTask}
+                                currentAttachments={task.attachments || []}
+                            />
+                        )}
+
+
                     </div>
                 ))}
 
