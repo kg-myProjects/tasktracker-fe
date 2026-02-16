@@ -8,7 +8,7 @@ export default function Projects() {
     usePageTitle("TrackerApp | Projects");
     const [showForm, setShowForm] = useState<boolean>(false);
     return (
-        <div className="flex gap-6 p-6">
+        <div className="flex gap-6">
 
             <div className="flex-1">
                 <ProjectsList/>

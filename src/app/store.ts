@@ -5,9 +5,10 @@ import { authSlice } from "../features/auth/slice/authSlice";
 import { projectsSlice } from "../features/projects/slice/projectsSlice";
 import { tasksSlice} from "../features/tasks/slice/tasksSlice.ts";
 import { taskStatusSlice} from "../features/statuses/slice/taskStatusSlice.ts";
+import {userSlice} from "../features/user/slice/userSlice.ts";
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-export const rootReducer = combineSlices(authSlice, projectsSlice, tasksSlice,taskStatusSlice);
+export const rootReducer = combineSlices(authSlice, userSlice, projectsSlice, tasksSlice,taskStatusSlice);
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
 

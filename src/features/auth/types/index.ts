@@ -21,7 +21,7 @@ export interface User {
 export interface AuthSliceState {
   isAuthenticated: boolean;
   isInitialized: boolean;
-  user?: User;
+  user?: UserResponseDto;
   loginErrorMessage?: string;
   registerErrorMessage?: string;
 
@@ -29,13 +29,15 @@ export interface AuthSliceState {
 
 export interface UserResponseDto {
     email: string;
-    role: ROLE;
-    confirmationStatus: CONFIRM_STATUS;
+    role?: ROLE;
+    confirmationStatus?: CONFIRM_STATUS;
+    nickname?: string;
+    avatarUrl?: string;
 }
 
 export interface UserCreateResponseDto {
     id: string;
     email: string;
     role: ROLE;
-    confirmationResent: boolean;
+    confirmationResent?: CONFIRM_STATUS;
 }
