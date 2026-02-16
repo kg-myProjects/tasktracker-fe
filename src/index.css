@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+    overflow-y: scroll;
+}
+
 /* Global styles for form inputs */
 /*input,*/
 /*textarea,*/

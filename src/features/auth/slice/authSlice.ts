@@ -1,7 +1,8 @@
 import {createAppSlice} from "../../../app/createAppSlice";
-import type {AuthSliceState, Credentials, UserRegistrationDto} from "../types";
+import type {AuthSliceState, Credentials, UserRegistrationDto, UserResponseDto} from "../types";
 import * as api from "../services/api";
 import {isAxiosError} from "axios";
+import type {PayloadAction} from "@reduxjs/toolkit";
 
 const initialState: AuthSliceState = {
     isAuthenticated: false,
@@ -106,13 +107,18 @@ export const authSlice = createAppSlice({
                     console.log("CheckAuth failed!", action.error.message);
                 },
             }
-        )
+        ),
+
+        setUser: create.reducer((state, action: PayloadAction<UserResponseDto | undefined>) => {
+            state.user = action.payload ? {...action.payload} : undefined;
+        })
+
     }),
     // You can define your selectors here. These selectors receive the slice
     // state as their first argument.
     selectors: {
         selectIsAuthenticated: (state) => state.isAuthenticated,
-        selectInitialized: (state) => state.isInitialized,
+        selectIsInitialized: (state) => state.isInitialized,
         selectUser: (state) => state.user,
         selectRole: (state) => state.user?.role,
         selectLoginError: (state) => state?.loginErrorMessage,
@@ -121,12 +127,12 @@ export const authSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const {login, register, checkAuth, logout} = authSlice.actions;
+export const {login, register, checkAuth, setUser, logout} = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
     selectIsAuthenticated,
-    selectInitialized,
+    selectIsInitialized,
     selectUser,
     selectRole,
     selectLoginError,

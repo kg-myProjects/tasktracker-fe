@@ -1,105 +1,342 @@
-import { useEffect, useState } from "react";
-import { fetchCurrentUser } from "../features/auth/services/api";
-import type { UserResponseDto } from "../features/auth/types";
+import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
+import {useAppDispatch, useAppSelector} from "../app/hooks.ts";
+import React, {type Dispatch, type SetStateAction, useEffect, useState} from "react";
+import {
+    getUserDetails,
+    selectUserData,
+    setUserDetails,
+    updateUserAvatar,
+    updateUserDetails
+} from "../features/user/slice/userSlice.ts";
+import {selectIsAuthenticated, selectIsInitialized, setUser} from "../features/auth/slice/authSlice.ts";
+import type {UpdateUserPayloadDto} from "../features/user/types";
 
 export default function Profile() {
-  const [userData, setUserData] = useState<UserResponseDto | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
+    const user = useAppSelector(selectUserData);
+    const isAuthInitialized = useAppSelector(selectIsInitialized);
+    const isAuthenticated = useAppSelector(selectIsAuthenticated);
+    usePageTitle(user ? `TrackerApp | ${user.email}` : "Loading...");
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await fetchCurrentUser();
-        setUserData(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Не удалось загрузить данные пользователя");
-      } finally {
-        setLoading(false);
-      }
+    useEffect(() => {
+        if (!isAuthInitialized) return;
+        if (!isAuthenticated) return;
+
+        dispatch(getUserDetails());
+    }, [dispatch, isAuthInitialized, isAuthenticated]);
+
+    useEffect(() => {
+        if (user) {
+            setEmail(user.email || "");
+            setAvatarUrl(user.avatarUrl || null);
+            setFirstName(user.firstName || "Not set");
+            setLastName(user.lastName || "Not set");
+            setBirthDate(user.birthDate || "Not set");
+            setCity(user.city || "Not set");
+            setPhone(user.phone || "Not set");
+            setAbout(user.about || "Not set");
+        }
+    }, [user]);
+
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [isEditingAvatar, setIsEditingAvatar] = useState(false);
+    const [isEditingEmail, setIsEditingEmail] = useState(false);
+
+    const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [email, setEmail] = useState(user?.email || "");
+    const [firstName, setFirstName] = useState(user?.firstName || "Not set");
+    const [lastName, setLastName] = useState(user?.lastName || "Not set");
+    const [birthDate, setBirthDate] = useState(user?.birthDate || "Not set");
+    const [city, setCity] = useState(user?.city || "Not set");
+    const [phone, setPhone] = useState(user?.phone || "Not set");
+    const [about, setAbout] = useState(user?.about || "Not set");
+
+    const fields: [string, string, Dispatch<SetStateAction<string>>][] = [
+        ["First Name", firstName, setFirstName],
+        ["Last Name", lastName, setLastName],
+        ["Birth Date", birthDate, setBirthDate],
+        ["City", city, setCity],
+        ["Phone", phone, setPhone],
+    ];
+
+    const handleAvatarUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setSelectedFile(file);
+            setIsEditingAvatar(true);
+
+            const previewUrl = URL.createObjectURL(file);
+            setAvatarPreview(previewUrl);
+        }
     };
 
-    loadUserData();
-  }, []);
+    const handleSaveAvatarUpdate = async () => {
+        if (!selectedFile) return;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-300 text-lg">Загрузка...</p>
-      </div>
-    );
-  }
+        const formData = new FormData();
+        formData.append("file", selectedFile);
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-red-500 text-lg">{error}</p>
-      </div>
-    );
-  }
+        try {
+            const updatedUser = await dispatch(updateUserAvatar(formData)).unwrap();
+            setAvatarUrl(`${updatedUser.avatarUrl}?t=${Date.now()}`);
 
-  if (!userData) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-300 text-lg">Данные пользователя не найдены</p>
-      </div>
-    );
-  }
+            dispatch(setUser({...updatedUser}));
 
-  const getRoleLabel = (role: string) => {
-    return role === "ROLE_ADMIN" ? "Администратор" : "Пользователь";
-  };
+            if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+            setAvatarPreview(null);
+            setSelectedFile(null);
+            setIsEditingAvatar(false);
 
-  const getStatusLabel = (status: string) => {
-    const statusMap: Record<string, string> = {
-      CONFIRMED: "Подтвержден",
-      UNCONFIRMED: "Не подтвержден",
-      BANNED: "Заблокирован",
+            const input = document.getElementById("avatarInput") as HTMLInputElement | null;
+            if (input) input.value = "";
+
+        } catch (err) {
+            alert(err);
+        }
     };
-    return statusMap[status] || status;
-  };
 
-  const getStatusColor = (status: string) => {
-    const colorMap: Record<string, string> = {
-      CONFIRMED: "text-cyan-400",
-      UNCONFIRMED: "text-yellow-600",
-      BANNED: "text-red-600",
+    const handleCancelAvatarUpdate = () => {
+        setAvatarPreview(null);
+        setSelectedFile(null);
+        setAvatarUrl(user?.avatarUrl || null);
+        setIsEditingAvatar(false);
+
+        const input = document.getElementById("avatarInput") as HTMLInputElement | null;
+        if (input) input.value = "";
     };
-    return colorMap[status] || "text-gray-600";
-  };
 
-  return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Профиль пользователя</h1>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Email
-            </label>
-            <p className="text-gray-800 text-base">{userData.email}</p>
-          </div>
+    const handleSaveProfileChanges = async () => {
+        const payload: UpdateUserPayloadDto = {
+            firstName,
+            lastName,
+            birthDate,
+            city,
+            phone,
+            about,
+        };
+        try {
+            const updatedUser = await dispatch(updateUserDetails(payload)).unwrap();
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Роль
-            </label>
-            <p className="text-gray-800 text-base">{getRoleLabel(userData.role)}</p>
-          </div>
+            dispatch(setUserDetails(updatedUser));
+            setIsEditingProfile(false);
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Статус
-            </label>
-            <p className={`text-base font-medium ${getStatusColor(userData.confirmationStatus)}`}>
-              {getStatusLabel(userData.confirmationStatus)}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+            console.log("Saved profile:", payload);
+        } catch (err) {
+            console.error("Failed to update profile", err);
+            alert("Failed to update profile");
+        }
+    };
+
+    const handleCancelProfileChanges = () => {
+        setIsEditingProfile(false);
+        setAvatarUrl(user?.avatarUrl || null);
+        setFirstName(user?.firstName || "Not set");
+        setLastName(user?.lastName || "Not set");
+        setBirthDate(user?.birthDate || "Not set");
+        setCity(user?.city || "Not set");
+        setPhone(user?.phone || "Not set");
+        setAbout(user?.about || "Not set");
+    };
+
+    if (!user) {
+        return (
+            <section className="p-8 flex items-center justify-center text-white">
+                Loading user...
+            </section>
+        );
+    }
+
+    return (
+        <section className="p-8 bg-transparent border border-cyan-900/50 rounded-2xl">
+            <h1 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] mb-6 text-glow">
+                User Profile
+            </h1>
+
+            {/* E-mail / Login */}
+            <div className="flex items-center gap-4 mb-6">
+                <div className="font-bold text-cyan-300 whitespace-nowrap">
+                    E-mail / Login:
+                </div>
+
+                <div className="flex-1 flex items-center gap-4">
+                    {isEditingEmail ? (
+                        <>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="flex-1 p-1 rounded border border-cyan-300 bg-slate-800 text-white text-base"
+                            />
+                            <div className="flex w-[220px] gap-4" >
+                            <button
+                                onClick={() => {
+                                    alert("email_saved");
+                                    setIsEditingEmail(false);
+                                }}
+                                className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
+                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setIsEditingEmail(false);
+                                    setEmail(user.email || "");
+                                }}
+                                className="rounded-xl bg-red-500 border border-red-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]
+                                    hover:scale-[1.20] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)] transition-all duration-300 ease-in-out"
+                            >
+                                Cancel
+                            </button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                {email}
+                            </div>
+                            <button
+                                onClick={() => setIsEditingEmail(true)}
+                                className="w-[220px] rounded-xl bg-cyan-500 border border-cyan-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
+                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
+                            >
+                                Edit E-mail
+                            </button>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            <hr className="border-cyan-900/50 mb-7" />
+
+            <div className="flex gap-20">
+                {/* Avatar */}
+                <div className="flex flex-col items-center">
+                    <div
+                        className="w-32 h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
+                    >
+                        {avatarPreview || avatarUrl ? (
+                            <img
+                                src={avatarPreview || `http://localhost:8080${avatarUrl}`}
+                                alt="User_Avatar"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            email?.[0]?.toUpperCase() || "?"
+                        )}
+                    </div>
+
+                    {/* Hidden input for file selection */}
+                    <input
+                        id="avatarInput"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarUpdate}
+                    />
+
+                    {isEditingAvatar ? (
+                        <div className="flex mt-5 gap-4 w-[220px] justify-center">
+                            <button
+                                onClick={handleSaveAvatarUpdate}
+                                className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
+                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={handleCancelAvatarUpdate}
+                                className="rounded-xl bg-red-500 border border-red-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]
+                                    hover:scale-[1.20] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)] transition-all duration-300 ease-in-out"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => document.getElementById("avatarInput")?.click()}
+                            className="mt-5 rounded-xl w-[220px] bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
+                                hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
+                        >
+                            Change Avatar
+                        </button>
+                    )}
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 flex flex-col gap-10">
+                    <div className="flex gap-6">
+                        {/* Left info block */}
+                        <div className="flex-1 space-y-4">
+                            {fields.map(([label, value, setter]) => (
+                                <div key={label as string} className="flex items-center gap-2">
+                                    <label className="w-32 font-bold text-cyan-300">{label}:</label>
+                                    {isEditingProfile ? (
+                                        <input
+                                            type="text"
+                                            value={value}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setter(e.target.value)
+                                            }
+                                            className="flex-1 p-1 rounded border border-cyan-300 bg-slate-800 text-white"
+                                        />
+                                    ) : (
+                                        <span className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                            {value}
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Right about block */}
+                        <div className="flex-1 flex flex-col">
+                            <label className="font-bold text-cyan-300 mb-2">About:</label>
+                            {isEditingProfile ? (
+                                <textarea
+                                    value={about}
+                                    onChange={(e) => setAbout(e.target.value)}
+                                    className="flex-1 p-2 rounded border border-cyan-300 bg-slate-800 text-white resize-none"
+                                />
+                            ) : (
+                                <p className="flex-1 p-2 text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Bottom buttons */}
+                    <div className="mt-4 flex justify-end">
+                        {isEditingProfile ? (
+                            <div className="w-[220px] flex gap-4">
+                                <button
+                                    onClick={handleSaveProfileChanges}
+                                    className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
+                                        hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
+                                >
+                                    Save
+                                </button>
+                                <button
+                                    onClick={handleCancelProfileChanges}
+                                    className="rounded-xl bg-red-500 border border-red-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]
+                                        hover:scale-[1.20] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)] transition-all duration-300 ease-in-out"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setIsEditingProfile(true)}
+                                className="w-[220px] rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
+                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
+                            >
+                                Edit Profile
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
 }
