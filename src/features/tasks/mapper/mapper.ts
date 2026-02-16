@@ -10,6 +10,7 @@ export function mapTaskFromApi(data: TaskDto): Task {
         executors: data.executors || [],
         markers: data.markers || [],
         checklist: data.checklist || [],
-        dueDate: data.dueDate
+        dueDate: data.dueDate,
+        attachments: data.attachments || []
     };
 }

@@ -132,6 +132,62 @@ export const tasksSlice = createAppSlice({
                     }
                 }
             ),
+
+            uploadTaskAttachment: create.asyncThunk(
+                async ({ taskId, file }: { taskId: string; file: File }) => {
+                    return await api.uploadAttachment(taskId, file);
+                },
+                {
+                    pending: (state) => {
+                        state.isLoading = true;
+                    },
+                    fulfilled: (state, action) => {
+                        state.isLoading = false;
+                        const newAttachment = action.payload;
+                        const taskId = action.meta.arg.taskId;
+
+                        const task = state.tasks.find(t => t.id === taskId);
+                        if (task) {
+                            if (!task.attachments) task.attachments = [];
+                            task.attachments.push(newAttachment);
+                        }
+
+                        if (state.currentTask && state.currentTask.id === taskId) {
+                            if (!state.currentTask.attachments) state.currentTask.attachments = [];
+                            state.currentTask.attachments.push(newAttachment);
+                        }
+                    },
+                    rejected: (state, action) => {
+                        state.isLoading = false;
+                        state.createTaskErrorMessage = action.error.message || "Failed to upload file";
+                    },
+                }
+            ),
+
+            deleteTaskAttachment: create.asyncThunk(
+                async ({ taskId, attachmentId }: { taskId: string; attachmentId: string }) => {
+                    await api.deleteAttachment(taskId, attachmentId);
+                    return { taskId, attachmentId };
+                },
+                {
+                    fulfilled: (state, action) => {
+                        const { taskId, attachmentId } = action.payload;
+                        const task = state.tasks.find(t => t.id === taskId);
+                        if (task) {
+                            task.attachments = task.attachments.filter(a => a.id !== attachmentId);
+                        }
+
+                        if (state.currentTask && state.currentTask.id === taskId) {
+                            state.currentTask.attachments = state.currentTask.attachments.filter(a => a.id !== attachmentId);
+                        }
+                    },
+                    rejected: (state) => {
+                        state.createTaskErrorMessage = "Failed to delete attachment";
+                    }
+                }
+            ),
+
+
             setTaskError: create.reducer((state, action: PayloadAction<string>) => {
                 state.createTaskErrorMessage = action.payload;
             }),
@@ -157,7 +213,7 @@ export const tasksSlice = createAppSlice({
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask, getTasksByProjectId, updateTask, deleteTask, clearTaskError, setTaskError} = tasksSlice.actions;
+export const {createTask, getTasksByProjectId, updateTask, deleteTask, clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment} = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {

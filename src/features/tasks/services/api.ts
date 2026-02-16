@@ -39,3 +39,19 @@ export const fetchCreateMarker = async ({ projectId, ...dto }: {
     return response.data;
 };
 
+
+export const uploadAttachment = async (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await axiosInstance.post(`${TASKS_BASE_PATH}/${id}/attachments`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+
+    return res.data;
+};
+
+export const deleteAttachment = async (taskId: string, attachmentId: string) => {
+    await axiosInstance.delete(`${TASKS_BASE_PATH}/${taskId}/attachments/${attachmentId}`);
+};
