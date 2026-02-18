@@ -55,7 +55,8 @@ export interface ProjectLog {
     entityName: string;
     action: "CREATE" | "DELETE";
     userEmail: string;
-    userNickname?: string;
+    userFirstName?: string;
+    userLastName?: string;
     userAvatar?: string;
     difference: string;
     createdAt: string;
