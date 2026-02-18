@@ -26,7 +26,9 @@ const ProjectLogItem = ({log}: ProjectLogsItemProps) => {
                         log.action,
                         log.entity,
                         log.entityName,
-                        log.userEmail
+                        log.userEmail,
+                        log.userFirstName,
+                        log.userLastName
                     )}
                 </span>
             </div>
