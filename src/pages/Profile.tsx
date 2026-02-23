@@ -2,6 +2,7 @@ import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 import {useAppDispatch, useAppSelector} from "../app/hooks.ts";
 import React, {type Dispatch, type SetStateAction, useEffect, useState} from "react";
 import {
+    AVATAR_UPDATE_ERROR,
     getUserDetails,
     selectUserData,
     setUserDetails,
@@ -26,32 +27,34 @@ export default function Profile() {
     }, [dispatch, isAuthInitialized, isAuthenticated]);
 
     useEffect(() => {
-        if (user) {
-            setEmail(user.email || "");
-            setAvatarUrl(user.avatarUrl || null);
-            setFirstName(user.firstName || "Not set");
-            setLastName(user.lastName || "Not set");
-            setBirthDate(user.birthDate || "Not set");
-            setCity(user.city || "Not set");
-            setPhone(user.phone || "Not set");
-            setAbout(user.about || "Not set");
-        }
+        if (!user) return;
+
+        setEmail(user.email || "");
+        setAvatarUrl(user.avatarUrl || null);
+        setFirstName(user.firstName || "");
+        setLastName(user.lastName || "");
+        setBirthDate(user.birthDate || "");
+        setCity(user.city || "");
+        setPhone(user.phone || "");
+        setAbout(user.about || "");
     }, [user]);
 
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isEditingAvatar, setIsEditingAvatar] = useState(false);
     const [isEditingEmail, setIsEditingEmail] = useState(false);
 
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
     const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [email, setEmail] = useState(user?.email || "");
-    const [firstName, setFirstName] = useState(user?.firstName || "Not set");
-    const [lastName, setLastName] = useState(user?.lastName || "Not set");
-    const [birthDate, setBirthDate] = useState(user?.birthDate || "Not set");
-    const [city, setCity] = useState(user?.city || "Not set");
-    const [phone, setPhone] = useState(user?.phone || "Not set");
-    const [about, setAbout] = useState(user?.about || "Not set");
+    const [firstName, setFirstName] = useState(user?.firstName || "");
+    const [lastName, setLastName] = useState(user?.lastName || "");
+    const [birthDate, setBirthDate] = useState(user?.birthDate || "");
+    const [city, setCity] = useState(user?.city || "");
+    const [phone, setPhone] = useState(user?.phone || "");
+    const [about, setAbout] = useState(user?.about || "");
 
     const fields: [string, string, Dispatch<SetStateAction<string>>][] = [
         ["First Name", firstName, setFirstName],
@@ -61,12 +64,20 @@ export default function Profile() {
         ["Phone", phone, setPhone],
     ];
 
+    const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
+    const ALLOWED_AVATAR_TYPES = ["image/jpeg", "image/png"];
+
     const handleAvatarUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
+
+            if (!ALLOWED_AVATAR_TYPES.includes(file.type) || file.size > MAX_AVATAR_SIZE) {
+                setErrorMessage("Only JPEG and PNG files smaller than 5MB are allowed as Avatar");
+                return;
+            }
+
             setSelectedFile(file);
             setIsEditingAvatar(true);
-
             const previewUrl = URL.createObjectURL(file);
             setAvatarPreview(previewUrl);
         }
@@ -92,8 +103,8 @@ export default function Profile() {
             const input = document.getElementById("avatarInput") as HTMLInputElement | null;
             if (input) input.value = "";
 
-        } catch (err) {
-            alert(err);
+        } catch (error: unknown) {
+            setErrorMessage(typeof error === "string" ? error : AVATAR_UPDATE_ERROR);
         }
     };
 
@@ -132,12 +143,12 @@ export default function Profile() {
     const handleCancelProfileChanges = () => {
         setIsEditingProfile(false);
         setAvatarUrl(user?.avatarUrl || null);
-        setFirstName(user?.firstName || "Not set");
-        setLastName(user?.lastName || "Not set");
-        setBirthDate(user?.birthDate || "Not set");
-        setCity(user?.city || "Not set");
-        setPhone(user?.phone || "Not set");
-        setAbout(user?.about || "Not set");
+        setFirstName(user?.firstName || "");
+        setLastName(user?.lastName || "");
+        setBirthDate(user?.birthDate || "");
+        setCity(user?.city || "");
+        setPhone(user?.phone || "");
+        setAbout(user?.about || "");
     };
 
     if (!user) {
@@ -232,7 +243,7 @@ export default function Profile() {
                     <input
                         id="avatarInput"
                         type="file"
-                        accept="image/*"
+                        accept="image/png, image/jpeg"
                         className="hidden"
                         onChange={handleAvatarUpdate}
                     />
@@ -256,12 +267,21 @@ export default function Profile() {
                         </div>
                     ) : (
                         <button
-                            onClick={() => document.getElementById("avatarInput")?.click()}
+                            onClick={() => {
+                                setErrorMessage("");
+                                document.getElementById("avatarInput")?.click()
+                            }}
                             className="mt-5 rounded-xl w-[220px] bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
                                 hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
                         >
                             Change Avatar
                         </button>
+                    )}
+                    {/* Avatar error message */}
+                    {errorMessage && (
+                        <div className="mt-3 w-full max-w-[220px] text-red-500 text-sm break-words text-center overflow-hidden">
+                            {errorMessage}
+                        </div>
                     )}
                 </div>
 
@@ -284,7 +304,7 @@ export default function Profile() {
                                         />
                                     ) : (
                                         <span className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
-                                            {value}
+                                            {value || "Not set"}
                                         </span>
                                     )}
                                 </div>
