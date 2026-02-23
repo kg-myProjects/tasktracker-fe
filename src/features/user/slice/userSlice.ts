@@ -10,6 +10,8 @@ const initialState: UserSliceState = {
     error: undefined,
 };
 
+export const AVATAR_UPDATE_ERROR = "Failed to update avatar on server";
+
 export const userSlice = createAppSlice({
     name: "user",
     initialState,
@@ -60,20 +62,22 @@ export const userSlice = createAppSlice({
         ),
 
         updateUserAvatar: create.asyncThunk(
-            async (formData: FormData) => {
+            async (formData: FormData, {rejectWithValue}) => {
                 try {
                     return await api.fetchUpdateUserAvatar(formData);
                 } catch (err) {
                     if (isAxiosError(err)) {
-                        throw new Error(err.response?.data?.message || "Failed to update avatar");
+                        return rejectWithValue(err.response?.data?.message || AVATAR_UPDATE_ERROR);
                     }
-                    throw err;
+                    return rejectWithValue(AVATAR_UPDATE_ERROR);
                 }
             },
             {
-                pending: (state) => { state.loading = true; state.error = undefined; },
-                fulfilled: (state, action) => { state.data = action.payload; state.loading = false; },
-                rejected: (state, action) => { state.loading = false; state.error = action.error.message; },
+                pending: (state) => {state.loading = true; state.error = undefined;},
+                fulfilled: (state, action) => {
+                    state.data = action.payload; state.loading = false;},
+                rejected: (state, action) => {
+                    state.loading = false; state.error = (action.payload as string) || AVATAR_UPDATE_ERROR;},
             }
         ),
 
