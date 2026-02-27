@@ -6,8 +6,8 @@ import type {CreateProjectDto, InviteRequestDto, Project, ProjectLog} from "../t
 const PROJECTS_BASE_PATH = "/projects";
 
 export const fetchProjects = async (): Promise<Project[]> => {
-  const res = await axiosInstance.get(PROJECTS_BASE_PATH);
-  return res.data;
+    const res = await axiosInstance.get(PROJECTS_BASE_PATH);
+    return res.data;
 };
 
 export const fetchMyProjects = async (): Promise<Project[]> => {
@@ -21,8 +21,16 @@ export const fetchInviteUser = async (id: string, inviteDto: InviteRequestDto) =
 };
 
 export const fetchCreateProject = async (projectDto: CreateProjectDto) => {
-  const res = await axiosInstance.post(PROJECTS_BASE_PATH, projectDto);
-  return res.data;
+    const res = await axiosInstance.post(PROJECTS_BASE_PATH, projectDto);
+    return res.data;
+};
+
+export const fetchUpdateProject = async (
+    id: string,
+    dto: { title: string; description: string }
+) => {
+    const res = await axiosInstance.patch(`${PROJECTS_BASE_PATH}/${id}`, dto);
+    return res.data;
 };
 
 export const fetchProjectById = async (id: string) => {

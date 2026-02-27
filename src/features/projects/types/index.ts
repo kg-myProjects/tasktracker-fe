@@ -10,8 +10,10 @@ export interface Project {
     logs?: ProjectLog[];
 }
 
-// дто без id
-export type CreateProjectDto = Omit<Project, "id" | "owner" | "projectTeam">;
+
+export type CreateProjectDto = Omit<Project, "id" | "owner" | "projectTeam" | "markers" | "logs">;
+
+export type EditProjectDto = Pick<Project, "id" | "title" | "description">;
 
 export interface CollaboratorDto {
     id: string;
@@ -32,7 +34,9 @@ export interface ProjectsSliceState {
     createProjectErrorMessage?: string;
     inviteUserErrorMessage?: string;
     deleteProjectErrorMessage?: string;
+    updateProjectErrorMessage?: string;
     isLoading: boolean;
+    isUpdatingProject?: boolean;
 }
 
 export type ProjectRole = "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
