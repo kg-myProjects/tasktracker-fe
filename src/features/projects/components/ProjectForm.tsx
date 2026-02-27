@@ -86,7 +86,7 @@ const ProjectForm = ({ onClose }: ProjectFormProps) => {
                     .required("Title is required")
                     .matches(
                         NAME_REGEX,
-                        "Project title should be at least 3 characters long and start with a capital letter. Special characters cannot be used"
+                        "Project title should be at least 3 to 50   characters long and start with a capital letter. Special characters cannot be used"
                     ),
                 description: Yup.string().required("Description is required"),
             })}
