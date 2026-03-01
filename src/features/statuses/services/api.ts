@@ -1,5 +1,5 @@
 import axiosInstance from "../../../lib/axiosInstance";
-import type {CreateTaskStatusDto, UpdateTaskStatusDto} from "../types";
+import type {CreateTaskStatusDto, TaskStatus, UpdateTaskStatusDto} from "../types";
 
 // we already added  prefix /api in axios config
 
@@ -24,5 +24,10 @@ export const fetchTaskStatuses = async (id:string) => {
 
 export const fetchDeleteTaskStatus = async (id: string) => {
     const res = await axiosInstance.delete(`${STATUS_BASE_PATH}/${id}`);
+    return res.data;
+};
+
+export const fetchUpdateTaskStatusesOrder = async (newOrder: TaskStatus[]) => {
+    const res = await axiosInstance.patch(`${STATUS_BASE_PATH}/order`,  newOrder );
     return res.data;
 };

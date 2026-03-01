@@ -1,19 +1,103 @@
-import type { TaskStatus } from "../../statuses/types";
+import {type KeyboardEvent, useEffect, useState} from 'react';
 import { useDroppable } from "@dnd-kit/core";
+import {updateTaskStatus} from "../../statuses/slice/taskStatusSlice.ts";
+import {useAppDispatch} from "../../../app/hooks.ts";
+import type {SortableColumnProps} from "./SortableColumn.tsx";
+import NotificationModal from "../../../components/ui/NotificationModal.tsx";
 
 export function Column({ status,
+                           allStatusNames,
                            children,
                            onAddTask,
                            onDelete,
                            canDelete,
-}: { status: TaskStatus, children: React.ReactNode, onAddTask: () => void, onDelete?: () => void, canDelete?: boolean }) {
+}: SortableColumnProps) {
     const { setNodeRef } = useDroppable({ id: status.id });
+    const dispatch = useAppDispatch();
+    const [isEditing, setIsEditing] = useState(false);
+    const [newName, setNewName] = useState(status.name);
+    const [validationError, setValidationError] = useState<{title: string, message: string} | null>(null);
+
+    useEffect(() => {
+        setNewName(status.name);
+    }, [status.name]);
+
+    const handleSave = () => {
+        const trimmedName = newName.trim();
+
+        if (!trimmedName) {
+            setValidationError({
+                title: "Empty Name",
+                message: "The status name cannot be empty. Please enter at least one character."
+            });
+            setNewName(status.name);
+            setIsEditing(false);
+            return;
+        }
+
+        const isDuplicate = allStatusNames.some(
+            (name) => name.toLowerCase() === trimmedName.toLowerCase() && name !== status.name
+        );
+
+        if (isDuplicate) {
+            setValidationError({
+                title: "Duplicate Status",
+                message: `A column with the name "${trimmedName}" already exists on this board. Names must be unique.`
+            });
+            setNewName(status.name);
+            setIsEditing(false);
+            return;
+        }
+
+        if (trimmedName !== status.name) {
+            dispatch(updateTaskStatus({ id: status.id, name: trimmedName }));
+        }
+        setIsEditing(false);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") handleSave();
+        if (e.key === "Escape") {
+            setNewName(status.name);
+            setIsEditing(false);
+        }
+    };
+
 
     return (
         <div ref={setNodeRef} className="flex flex-col bg-transparent rounded-2xl border-2 border-cyan-400/20 text-cyan-400 p-4 min-w-[320px] min-h-[500px] transition-all hover:border-cyan-400/40">
             <h2 className="text-lg font-semibold mb-3 flex justify-between items-center text-cyan-400">
+                <div className="flex-1 mr-2 min-w-0">
+                    {isEditing ? (
+                        <input
+                            autoFocus
+                            className="w-full bg-black/40 border border-cyan-400 rounded px-2 py-1 text-sm outline-none shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            onBlur={handleSave}
+                            onKeyDown={handleKeyDown}
+                        />
+                    ) : (
+                        <span
+                            onClick={() => setIsEditing(true)}
+                            className="cursor-pointer hover:text-cyan-300 transition-colors truncate block"
+                            title="Click to edit name"
+                        >
                 {status.name}
-                <div className="flex gap-2">
+            </span>
+                    )}
+
+                    {validationError && (
+                        <NotificationModal
+                            title={validationError.title}
+                            message={validationError.message}
+                            buttonText="Got it"
+                            variant="error"
+                            onClose={() => setValidationError(null)}
+                        />
+                    )}
+                </div>
+                <div className="flex gap-2 shrink-0">
                 <button onClick={onAddTask} className="flex-1 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-400 text-white text-xs font-black rounded-lg shadow-[0_4px_15px_rgba(6,182,212,0.4)] hover:brightness-110 transition-all uppercase">
                     + Add Task
                 </button>

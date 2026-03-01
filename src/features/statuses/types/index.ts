@@ -30,7 +30,8 @@ export type CreateTaskStatusDto = Omit<TaskStatus, "id">;
 
 export interface UpdateTaskStatusDto {
     id: string;
-    position: number;
+    name?: string;
+    position?: number;
 }
 
 export interface TaskStatusSliceState {
