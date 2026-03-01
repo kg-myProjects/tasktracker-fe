@@ -1,9 +1,10 @@
 import {createAppSlice} from "../../../app/createAppSlice";
-import type {CreateTaskStatusDto, TaskStatusSliceState, UpdateTaskStatusDto} from "../types";
+import type {CreateTaskStatusDto, TaskStatus, TaskStatusSliceState, UpdateTaskStatusDto} from "../types";
 import * as api from "../services/api";
 import {isAxiosError, type AxiosError} from "axios";
 import { createSelector } from '@reduxjs/toolkit';
 import type { RootState } from '../../../app/store';
+import { mapTaskStatusFromApi } from "../mapper/mapper.ts";
 
 const initialState: TaskStatusSliceState = {
     taskStatuses: [],
@@ -20,9 +21,7 @@ export const taskStatusSlice = createAppSlice({
                 return api
                     .fetchTaskStatuses(id)
                     .catch((err: AxiosError<{ message: string }>) => {
-                        // раскрываем ошибку от аксиоса и получаем сообщение
-                        // бросаем новую ошибку, которая поподет в rejected case
-                        throw new Error(err.response?.data?.message);
+                        throw new Error(err.response?.data?.message || "Failed to fetch task statuses.");
                     });
             },
             {
@@ -31,12 +30,12 @@ export const taskStatusSlice = createAppSlice({
                 },
                 fulfilled: (state, action) => {
                     state.isLoading = false;
-                    state.taskStatuses = action.payload;
+                    state.taskStatuses = action.payload.map(mapTaskStatusFromApi);
                 },
                 rejected: (state, action) => {
                     state.isLoading = false;
                     state.taskStatuses = [];
-                    console.log(action.error);
+                    console.log(action.error.message);
                 },
             }
         ),
@@ -49,16 +48,15 @@ export const taskStatusSlice = createAppSlice({
                             err.response?.data?.message || "Internal Server Error"
                         );
                     }
+                    throw err;
                 });
-                // The value we return becomes the `fulfilled` action payload
             },
             {
                 pending: (state) => {
-                    // TODO add spinner here
                     state.createTaskStatusErrorMessage = "";
                 },
                 fulfilled: (state, action) => {
-                    state.taskStatuses.push(action.payload);
+                    state.taskStatuses.push(mapTaskStatusFromApi(action.payload));
                     state.createTaskStatusErrorMessage = "";
                 },
                 rejected: (state, action) => {
@@ -76,11 +74,12 @@ export const taskStatusSlice = createAppSlice({
                             err.response?.data?.message || "Internal Server Error"
                         );
                     }
+                    throw err;
                 });
             },
             {
                 fulfilled: (state, action) => {
-                    const updated = action.payload;
+                    const updated = mapTaskStatusFromApi(action.payload);
 
                     const index = state.taskStatuses.findIndex(
                         (s) => s.id === updated.id
@@ -96,10 +95,15 @@ export const taskStatusSlice = createAppSlice({
                 },
             }
         ),
+
         deleteTaskStatus: create.asyncThunk(
             async (id: string) => {
-                await api.fetchDeleteTaskStatus(id);
-                return id;
+                return api.fetchDeleteTaskStatus(id).catch((err) => {
+                    if (isAxiosError(err)) {
+                        throw new Error(err.response?.data?.message || "Failed to delete task status.");
+                    }
+                    throw err;
+                }).then(() => id);
             },
             {
                 fulfilled: (state, action) => {
@@ -109,7 +113,27 @@ export const taskStatusSlice = createAppSlice({
                     console.error(action.error);
                 }
             }
-        )
+        ),
+
+        updateTaskStatusesOrder: create.asyncThunk(
+            async (newOrder: TaskStatus[]) => {
+                return api.fetchUpdateTaskStatusesOrder(newOrder).catch((err) => {
+                    if (isAxiosError(err)) {
+                        throw new Error(err.response?.data?.message || "Failed to update task statuses order.");
+                    }
+                    throw err;
+                });
+            },
+            {
+                fulfilled: (state, action) => {
+                    state.taskStatuses = action.payload.map(mapTaskStatusFromApi);
+                },
+                rejected: (_state, action) => {
+                    console.error(action.error.message);
+                }
+            }
+        ),
+
 
     }),
 
@@ -132,7 +156,8 @@ export const {
     getAllTaskStatuses,
     createTaskStatus,
     updateTaskStatus,
-    deleteTaskStatus
+    deleteTaskStatus,
+    updateTaskStatusesOrder
 } = taskStatusSlice.actions;
 
 export const {

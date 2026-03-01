@@ -7,15 +7,15 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectTasks, getTasksByProjectId } from "../../tasks/slice/tasksSlice";
 import { getProjectById, selectCurrentProject, selectInviteUserErrorMessage } from "../slice/projectsSlice";
 import { getAllTaskStatuses, selectSortedTaskStatuses } from "../../statuses/slice/taskStatusSlice";
-
-import { Column } from "./Column.tsx";
 import { SortableTask } from "./SortableTask.tsx";
+
 import { BoardHeader } from "./BoardHeader.tsx";
 import { BoardModals } from "./BoardModals.tsx";
 
 import { useKanbanDnd } from "../hooks/useKanbanDnd";
 import { useKanbanActions } from "../hooks/useKanbanActions";
 import { usePageTitle } from "../../../app/customHooks/usePageTitle.ts";
+import {SortableColumn} from "./SortableColumn.tsx";
 
 export default function KanbanBoard() {
     const { projectId } = useParams<{ projectId: string }>();
@@ -25,6 +25,7 @@ export default function KanbanBoard() {
     const tasks = useAppSelector(selectTasks);
     const project = useAppSelector(selectCurrentProject);
     const statuses = useAppSelector(selectSortedTaskStatuses);
+    const allNames = statuses.map(s => s.name);
     const inviteError = useAppSelector(selectInviteUserErrorMessage);
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -62,6 +63,7 @@ export default function KanbanBoard() {
         }), {} as Record<string, typeof tasks>);
     }, [tasks, statuses]);
 
+
     return (
         <div className="h-screen flex flex-col bg-transparent p-4 overflow-hidden">
             <BoardHeader
@@ -82,9 +84,10 @@ export default function KanbanBoard() {
                     {statuses.map(status => {
                         const tasksInStatus = tasksByStatus[status.id] || [];
                         return (
-                            <Column
+                            <SortableColumn
                                 key={status.id}
                                 status={status}
+                                allStatusNames={allNames}
                                 onAddTask={() => {
                                     setCurrentStatusId(status.id);
                                     setModalOpen(true);
@@ -93,6 +96,8 @@ export default function KanbanBoard() {
                                 onDelete={() => setStatusToDelete({ id: status.id, name: status.name })}
 
                             >
+
+
                                 <SortableContext
                                     items={tasksInStatus.map(t => t.id)}
                                     strategy={verticalListSortingStrategy}
@@ -107,7 +112,7 @@ export default function KanbanBoard() {
                                         ))}
                                     </div>
                                 </SortableContext>
-                            </Column>
+                            </SortableColumn>
                         );
                     })}
                 </div>

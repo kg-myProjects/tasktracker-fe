@@ -5,8 +5,10 @@ import {useSensor, useSensors,
 import type {DragStartEvent, DragEndEvent}from "@dnd-kit/core";
 import { useAppDispatch } from "../../../app/hooks";
 import { updateTask } from "../../tasks/slice/tasksSlice";
-import type { Task } from "../../tasks/types";
+import type {Task, UpdateTaskDto} from "../../tasks/types";
 import type { TaskStatus } from "../../statuses/types";
+import {updateTaskStatusesOrder} from "../../statuses/slice/taskStatusSlice.ts";
+import {arrayMove} from "@dnd-kit/sortable";
 
 export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
     const dispatch = useAppDispatch();
@@ -22,14 +24,29 @@ export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
     };
 
     const handleDragEnd = (event: DragEndEvent) => {
-        setActiveTask(null);
         const { active, over } = event;
+        setActiveTask(null);
         if (!over) return;
 
         const activeId = String(active.id);
         const overId = String(over.id);
-        const task = tasks.find(t => t.id === activeId);
 
+        if (active.data.current?.type === 'Status') {
+            const oldIndex = statuses.findIndex(s => s.id === activeId);
+            const newIndex = statuses.findIndex(s => s.id === overId);
+
+            if (oldIndex !== newIndex && oldIndex !== -1 && newIndex !== -1) {
+                const newOrder = arrayMove(statuses, oldIndex, newIndex).map((s, index) => ({
+                    ...s,
+                    position: index
+                }));
+                dispatch(updateTaskStatusesOrder(newOrder));
+            }
+            return;
+        }
+
+
+        const task = tasks.find(t => t.id === activeId);
         if (!task) return;
 
         let newStatusId: string;
@@ -41,7 +58,9 @@ export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
         }
 
         if (task.statusId !== newStatusId) {
-            dispatch(updateTask({ id: activeId, dto: { statusId: newStatusId } }));
+            // ВИПРАВЛЕНО: Явно вказуємо тип для DTO, щоб TS не вимагав attachments
+            const updateDto: Partial<UpdateTaskDto> = { statusId: newStatusId };
+            dispatch(updateTask({ id: activeId, dto: updateDto as UpdateTaskDto }));
         }
     };
 
