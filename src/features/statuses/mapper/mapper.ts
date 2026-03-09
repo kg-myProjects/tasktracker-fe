@@ -5,6 +5,6 @@ export function mapTaskStatusFromApi(data: TaskStatusDto): TaskStatus {
         id: data.id,
         name: data.name,
         position: data.position,
-        projectId: data.project.id,
+        projectId: data.projectId,
     };
 }

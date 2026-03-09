@@ -9,20 +9,7 @@ export interface TaskStatusDto{
     id: string;
     name: string;
     position: number;
-    project: {
-        id: string;
-        title: string;
-        description: string;
-        owner:{
-            id: string;
-            name: string;
-            email: string;
-            avatar: string;
-            roles:{
-                name: string;
-            } ;
-        }
-    }
+    projectId: string;
 }
 
 // дто без id
@@ -36,6 +23,6 @@ export interface UpdateTaskStatusDto {
 
 export interface TaskStatusSliceState {
     taskStatuses: TaskStatus[];
-    createTaskStatusErrorMessage?: string;
+    errorMessage: string;
     isLoading: boolean;
 }

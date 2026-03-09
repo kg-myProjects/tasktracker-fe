@@ -25,40 +25,8 @@ export interface TaskDto{
     id: string;
     title: string;
     description: string;
-    status:{
-        id: string;
-        name: string;
-        position: number;
-        project: {
-            id: string;
-            title: string;
-            description: string;
-            owner:{
-                id: string;
-                name: string;
-                email: string;
-                avatar: string;
-                roles:{
-                    name: string;
-                } ;
-            }
-        }
-
-    }
-    project: {
-        id: string;
-        title: string;
-        description: string;
-        owner:{
-            id: string;
-            name: string;
-            email: string;
-            avatar: string;
-            roles:{
-                name: string;
-            } ;
-        }
-    }
+    statusId: string;
+    projectId: string;
     executors: CollaboratorDto[];
     markers: MarkerDto[];
     checklist: ChecklistItem[];

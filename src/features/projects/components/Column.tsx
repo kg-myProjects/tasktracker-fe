@@ -1,7 +1,7 @@
 import {type KeyboardEvent, useEffect, useState} from 'react';
 import { useDroppable } from "@dnd-kit/core";
-import {updateTaskStatus} from "../../statuses/slice/taskStatusSlice.ts";
-import {useAppDispatch} from "../../../app/hooks.ts";
+import {clearStatusError, selectErrorMessage, updateTaskStatus} from "../../statuses/slice/taskStatusSlice.ts";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import type {SortableColumnProps} from "./SortableColumn.tsx";
 import NotificationModal from "../../../components/ui/NotificationModal.tsx";
 
@@ -17,7 +17,7 @@ export function Column({ status,
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(status.name);
     const [validationError, setValidationError] = useState<{title: string, message: string} | null>(null);
-
+    const serverError = useAppSelector(selectErrorMessage);
     useEffect(() => {
         setNewName(status.name);
     }, [status.name]);
@@ -64,6 +64,7 @@ export function Column({ status,
     };
 
 
+
     return (
         <div ref={setNodeRef} className="flex flex-col bg-transparent rounded-2xl border-2 border-cyan-400/20 text-cyan-400 p-4 min-w-[320px] min-h-[500px] transition-all hover:border-cyan-400/40">
             <h2 className="text-lg font-semibold mb-3 flex justify-between items-center text-cyan-400">
@@ -94,6 +95,14 @@ export function Column({ status,
                             buttonText="Got it"
                             variant="error"
                             onClose={() => setValidationError(null)}
+                        />
+                    )}
+                    {serverError && (
+                        <NotificationModal
+                            title="Access Denied"
+                            message={serverError}
+                            buttonText="Close"
+                            onClose={() => dispatch(clearStatusError())}
                         />
                     )}
                 </div>

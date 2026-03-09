@@ -9,8 +9,8 @@ import { mapTaskStatusFromApi } from "../mapper/mapper.ts";
 const initialState: TaskStatusSliceState = {
     taskStatuses: [],
     isLoading: false,
-    createTaskStatusErrorMessage: "",
-};
+    errorMessage: "",
+    };
 
 export const taskStatusSlice = createAppSlice({
     name: "taskStatuses",
@@ -53,14 +53,14 @@ export const taskStatusSlice = createAppSlice({
             },
             {
                 pending: (state) => {
-                    state.createTaskStatusErrorMessage = "";
+                    state.errorMessage = "";
                 },
                 fulfilled: (state, action) => {
                     state.taskStatuses.push(mapTaskStatusFromApi(action.payload));
-                    state.createTaskStatusErrorMessage = "";
+                    state.errorMessage = "";
                 },
                 rejected: (state, action) => {
-                    state.createTaskStatusErrorMessage = action.error.message;
+                    state.errorMessage = action.error.message|| "Failed to create task status.";
                 },
             }
         ),
@@ -88,9 +88,11 @@ export const taskStatusSlice = createAppSlice({
                     if (index !== -1) {
                         state.taskStatuses[index] = updated;
                     }
+                    state.errorMessage = "";
                 },
                 rejected: (state, action) => {
                     state.isLoading = false;
+                    state.errorMessage = action.error.message || "Failed to update task status.";
                     console.error(action.error);
                 },
             }
@@ -108,9 +110,10 @@ export const taskStatusSlice = createAppSlice({
             {
                 fulfilled: (state, action) => {
                     state.taskStatuses = state.taskStatuses.filter(s => s.id !== action.payload);
+                    state.errorMessage = "";
                 },
-                rejected: (_state, action) => {
-                    console.error(action.error);
+                rejected: (state, action) => {
+                    state.errorMessage = action.error.message || "Failed to delete task status.";
                 }
             }
         ),
@@ -134,6 +137,9 @@ export const taskStatusSlice = createAppSlice({
             }
         ),
 
+        clearStatusError: create.reducer((state) => {
+            state.errorMessage = "";
+        }),
 
     }),
 
@@ -142,8 +148,8 @@ export const taskStatusSlice = createAppSlice({
     selectors: {
         selectTaskStatuses: (state) => state.taskStatuses,
         selectIsLoading: (state) => state.isLoading,
-        selectCreateTaskStatusErrorMessage: (state) =>
-            state.createTaskStatusErrorMessage,
+        selectErrorMessage: (state) =>
+            state.errorMessage,
     },
 });
 
@@ -157,11 +163,11 @@ export const {
     createTaskStatus,
     updateTaskStatus,
     deleteTaskStatus,
+    clearStatusError,
     updateTaskStatusesOrder
 } = taskStatusSlice.actions;
 
 export const {
-    selectTaskStatuses,
-    selectIsLoading,
-    selectCreateTaskStatusErrorMessage,
+        selectIsLoading,
+    selectErrorMessage,
 } = taskStatusSlice.selectors;
