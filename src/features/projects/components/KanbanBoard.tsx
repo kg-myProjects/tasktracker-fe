@@ -6,7 +6,13 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectTasks, getTasksByProjectId } from "../../tasks/slice/tasksSlice";
 import { getProjectById, selectCurrentProject, selectInviteUserErrorMessage } from "../slice/projectsSlice";
-import { getAllTaskStatuses, selectSortedTaskStatuses } from "../../statuses/slice/taskStatusSlice";
+import {
+    clearStatusError, createTaskStatus,
+    getAllTaskStatuses,
+    selectErrorMessage,
+    selectIsLoading,
+    selectSortedTaskStatuses
+} from "../../statuses/slice/taskStatusSlice";
 import { SortableTask } from "./SortableTask.tsx";
 
 import { BoardHeader } from "./BoardHeader.tsx";
@@ -16,6 +22,7 @@ import { useKanbanDnd } from "../hooks/useKanbanDnd";
 import { useKanbanActions } from "../hooks/useKanbanActions";
 import { usePageTitle } from "../../../app/customHooks/usePageTitle.ts";
 import {SortableColumn} from "./SortableColumn.tsx";
+import NotificationModal from "../../../components/ui/NotificationModal.tsx";
 
 export default function KanbanBoard() {
     const { projectId } = useParams<{ projectId: string }>();
@@ -27,6 +34,8 @@ export default function KanbanBoard() {
     const statuses = useAppSelector(selectSortedTaskStatuses);
     const allNames = statuses.map(s => s.name);
     const inviteError = useAppSelector(selectInviteUserErrorMessage);
+    const isLoading = useAppSelector(selectIsLoading);
+    const statusesError = useAppSelector(selectErrorMessage);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [currentStatusId, setCurrentStatusId] = useState<string | null>(null);
@@ -42,7 +51,7 @@ export default function KanbanBoard() {
     } = useKanbanDnd(tasks, statuses);
 
     const {
-        handleCreateTask, handleCreateStatus,
+        handleCreateTask,
         handleDeleteStatus, handleInvite
     } = useKanbanActions(projectId);
 
@@ -63,6 +72,15 @@ export default function KanbanBoard() {
         }), {} as Record<string, typeof tasks>);
     }, [tasks, statuses]);
 
+    if (isLoading && statuses.length === 0) {
+        return (
+            <div className="h-screen flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                <div className="text-cyan-400 animate-pulse font-black uppercase tracking-widest">
+                    Loading project column...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="h-screen flex flex-col bg-transparent p-4 overflow-hidden">
@@ -164,9 +182,12 @@ export default function KanbanBoard() {
                         await  handleCreateTask(title, desc, currentStatusId!);
                         setModalOpen(false); },
                     onCreateStatus: async (name, pos) => {
-                        await   handleCreateStatus(name, pos);
-                        setStatusModalOpen(false);
-                    },
+                        try {
+                            await dispatch(createTaskStatus({ name, position: pos, projectId: projectId! })).unwrap();
+                            setStatusModalOpen(false);
+                        } catch (error) {
+                            console.error("Status creation failed:", error);
+                        }                    },
                     onInvite: (email, role) => {
                         handleInvite(projectId!, email, role).then(res => {
                             if(res.meta.requestStatus === 'fulfilled') setIsInviteModalOpen(false);
@@ -175,6 +196,13 @@ export default function KanbanBoard() {
                     onDeleteStatus: handleDeleteStatus
                 }}
             />
+            {statusesError && (
+                <NotificationModal
+                    title="Access Denied"
+                    message={statusesError}
+                    onClose={() => dispatch(clearStatusError())}
+                />
+            )}
         </div>
     );
 }
