@@ -11,6 +11,7 @@ export interface Task {
     checklist: ChecklistItem[];
     dueDate?: string | null;
     attachments: Attachment[];
+    comments: Comment[];
 
 }
 
@@ -32,6 +33,7 @@ export interface TaskDto{
     checklist: ChecklistItem[];
     dueDate?: string | null;
     attachments: Attachment[];
+    comments: Comment[];
 }
 
 
@@ -45,7 +47,7 @@ export interface UpdateTaskDto {
     markerIds?: string[];
     checklist?: ChecklistItem[];
     dueDate?: string | null;
-    attachments: Attachment[];
+    attachments?: Attachment[];
 }
 
 export interface UpdateTaskPayload {
@@ -58,6 +60,7 @@ export interface TasksSliceState {
     tasks: Task[];
     currentTask?: Task | null;
     createTaskErrorMessage?: string;
+    comments: Comment[];
     isLoading: boolean;
 }
 
@@ -77,5 +80,12 @@ export interface Attachment {
     name: string;
     url: string;
     type: 'IMAGE' | 'PDF' | 'DOC' | 'VIDEO' | 'FILE' | 'LINK';
+    createdAt: string;
+}
+export interface Comment {
+    id: string;
+    text: string;
+    authorName: string;
+    authorAvatarUrl: string;
     createdAt: string;
 }
