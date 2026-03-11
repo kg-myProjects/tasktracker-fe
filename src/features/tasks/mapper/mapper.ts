@@ -11,6 +11,9 @@ export function mapTaskFromApi(data: TaskDto): Task {
         markers: data.markers || [],
         checklist: data.checklist || [],
         dueDate: data.dueDate,
-        attachments: data.attachments || []
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        attachments: data.attachments || [],
+        comments: data.comments || []
     };
 }

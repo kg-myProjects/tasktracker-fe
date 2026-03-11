@@ -53,14 +53,16 @@ export const tasksSlice = createAppSlice({
                 },
                 {
                     pending: (state) => {
-                        // TODO add spinner here
+                        state.isLoading = true;
                         state.createTaskErrorMessage = "";
                     },
                     fulfilled: (state, action) => {
+                        state.isLoading = false;
                         state.tasks.push(mapTaskFromApi(action.payload));
                         state.createTaskErrorMessage = "";
                     },
                     rejected: (state, action) => {
+                        state.isLoading = false;
                         state.createTaskErrorMessage = action.error.message;
                     },
                 }
@@ -128,9 +130,12 @@ export const tasksSlice = createAppSlice({
                     return id;
                 },
                 {
+                    pending: (state) => { state.isLoading = true; },
                     fulfilled: (state, action) => {
+                        state.isLoading = false;
                         state.tasks = state.tasks.filter(t => t.id !== action.payload);
-                    }
+                    },
+                    rejected: (state) => { state.isLoading = false; }
                 }
             ),
 
