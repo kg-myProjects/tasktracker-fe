@@ -8,6 +8,7 @@ import type {PayloadAction} from "@reduxjs/toolkit";
 const initialState: TasksSliceState = {
     tasks: [],
     currentTask: null,
+    comments: [],
     isLoading: false,
 };
 
@@ -187,6 +188,46 @@ export const tasksSlice = createAppSlice({
                 }
             ),
 
+            getComments: create.asyncThunk(
+                async (taskId: string) => {
+                    return api.fetchComments(taskId).catch((err) => {
+                        if (isAxiosError(err)) {
+                            throw new Error(err.response?.data?.message || "Failed to fetch comments");
+                        }
+                        throw err;
+                    });
+                },
+                {
+                    pending: (state) => {
+                        state.comments = [];
+                    },
+                    fulfilled: (state, action) => {
+                        state.comments = action.payload;
+                    },
+                    rejected: (_state, action) => {
+                        console.error("Comments error:", action.error.message);
+                    }
+                }
+            ),
+
+            addComment: create.asyncThunk(
+                async ({ taskId, text }: { taskId: string, text: string }) => {
+                    return api.fetchAddComment(taskId, text).catch((err) => {
+                        if (isAxiosError(err)) {
+                            throw new Error(err.response?.data?.message || "Failed to add comment");
+                        }
+                        throw err;
+                    });
+                },
+                {
+                    fulfilled: (state, action) => {
+                        state.comments.unshift(action.payload);
+                    },
+                    rejected: (_state, action) => {
+                        console.error("Add comment error:", action.error.message);
+                    }
+                }
+            ),
 
             setTaskError: create.reducer((state, action: PayloadAction<string>) => {
                 state.createTaskErrorMessage = action.payload;
@@ -206,6 +247,7 @@ export const tasksSlice = createAppSlice({
             selectTasksByStatus: (state, statusId: string) =>
                 state.tasks.filter(task => task.statusId === statusId),
             selectCurrentTask: state => state.currentTask,
+            selectComments: (state) => state.comments,
             selectIsLoading: (state) => state.isLoading,
             selectCreateTaskErrorMessage: (state) => state.createTaskErrorMessage,
         },
@@ -213,13 +255,15 @@ export const tasksSlice = createAppSlice({
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask, getTasksByProjectId, updateTask, deleteTask, clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment} = tasksSlice.actions;
+export const {createTask, getTasksByProjectId, updateTask, deleteTask, clearTaskError, setTaskError,
+    uploadTaskAttachment, deleteTaskAttachment, getComments, addComment} = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
     selectTasks,
     selectTasksByStatus,
     selectCurrentTask,
+    selectComments,
     selectIsLoading,
     selectCreateTaskErrorMessage,
 } = tasksSlice.selectors;

@@ -19,7 +19,11 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     reducer: rootReducer,
 
     preloadedState,
-  });
+      middleware: (getDefaultMiddleware) =>
+          getDefaultMiddleware({
+              serializableCheck: false,
+              immutableCheck: false,
+          }),  });
   // configure listeners using the provided defaults
   // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
   setupListeners(store.dispatch);

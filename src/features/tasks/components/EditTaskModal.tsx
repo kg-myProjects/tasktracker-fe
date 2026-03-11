@@ -1,10 +1,12 @@
-import { useState } from "react";
-import {useAppSelector} from "../../../app/hooks.ts";
+import {useEffect, useState} from "react";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import { useTaskActions } from "../hooks/useTaskActions.ts";
 import { TaskChecklist } from "./TaskChecklist.tsx";
 import { TaskSidebar } from "./TaskSidebar.tsx";
 import type { Task } from "../types";
 import {TaskAttachments} from "./TaskAttachments.tsx";
+import {TaskComments} from "./TaskComments.tsx";
+import { getComments } from "../slice/tasksSlice";
 
 interface TaskEditModalProps {
     card: Task;
@@ -26,6 +28,13 @@ export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
         patchTask,
         isUpdating
     } = useTaskActions(currentTask, project?.id);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (currentTask.id) {
+            dispatch(getComments(currentTask.id));
+        }
+    }, [currentTask.id, dispatch]);
 
     return (
         <div className="fixed inset-0 bg-[#0f172a]/80 backdrop-blur-md z-50 flex items-start justify-center p-4 overflow-y-auto" onClick={onClose}>
@@ -141,6 +150,9 @@ export function EditTaskModal({ card, onClose }: TaskEditModalProps) {
                             isCreating={isCreatingChecklist}
                             onCloseCreating={() => setIsCreatingChecklist(false)}
                         />
+                        <div className="pt-4">
+                            <TaskComments taskId={currentTask.id} />
+                        </div>
                     </div>
 
                     {/* SideBar */}

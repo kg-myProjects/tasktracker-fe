@@ -55,3 +55,15 @@ export const uploadAttachment = async (id: string, file: File) => {
 export const deleteAttachment = async (taskId: string, attachmentId: string) => {
     await axiosInstance.delete(`${TASKS_BASE_PATH}/${taskId}/attachments/${attachmentId}`);
 };
+
+
+export const fetchComments = async (taskId: string) => {
+    const res = await axiosInstance.get(`${TASKS_BASE_PATH}/${taskId}/comments`);
+    return res.data;
+};
+
+export const fetchAddComment = async (taskId: string, text: string) => {
+    const res = await axiosInstance.post(`${TASKS_BASE_PATH}/${taskId}/comments`, { text });
+    return res.data;
+};
+
