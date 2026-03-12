@@ -53,8 +53,9 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
             dispatch(setTaskError("Deadline cannot be in the past! Please select a future date."));
             return;
         }
+        const backendFormat = selectedDate.toISOString();
 
-        actions.patchTask({ dueDate: fullISOString });
+        actions.patchTask({ dueDate: backendFormat });
         setShowDatePicker(false);
     };
 
