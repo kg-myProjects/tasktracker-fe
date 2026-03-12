@@ -10,6 +10,8 @@ export interface Task {
     markers: MarkerDto[];
     checklist: ChecklistItem[];
     dueDate?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
     attachments: Attachment[];
     comments: Comment[];
 
@@ -32,6 +34,8 @@ export interface TaskDto{
     markers: MarkerDto[];
     checklist: ChecklistItem[];
     dueDate?: string | null;
+    createdAt?: string;
+    updatedAt?: string;
     attachments: Attachment[];
     comments: Comment[];
 }

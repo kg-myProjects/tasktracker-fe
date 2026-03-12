@@ -37,10 +37,10 @@ export const TaskAttachments = ({ taskId, attachments }: TaskAttachmentsProps) =
     return (
         <div className="space-y-4 pt-6 border-t border-slate-200/60">
             <div className="flex items-center justify-between px-1">
-                <h4 className="flex items-center gap-2 text-sm font-black text-slate-700 uppercase tracking-tight">
+                <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">
                     <span className="text-lg">📎</span> Attachments
                 </h4>
-                <span className="text-[10px] font-bold text-slate-400 bg-slate-200/50 px-2 py-0.5 rounded-full uppercase">
+                <span className="text-[10px] font-bold text-cyan-400 bg-slate-200/50 px-2 py-0.5 rounded-full uppercase">
                     {attachments.length} files
                 </span>
             </div>
@@ -49,9 +49,9 @@ export const TaskAttachments = ({ taskId, attachments }: TaskAttachmentsProps) =
                 {attachments.map((file) => (
                     <div
                         key={file.id}
-                        className="group relative flex items-center gap-3 p-3 bg-white/40 hover:bg-white rounded-2xl border border-transparent hover:border-cyan-200 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden text-black"
+                        className="group relative flex items-center gap-3 p-3 bg-white/40 hover:bg-white rounded-2xl border border-transparent hover:border-cyan-200 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden text-cyan-400"
                     >
-                        <div className="w-12 h-12 shrink-0 rounded-xl bg-slate-200 flex items-center justify-center text-[10px] font-black text-slate-500 uppercase shadow-inner group-hover:bg-cyan-100 group-hover:text-cyan-600 transition-colors">
+                        <div className="w-12 h-12 shrink-0 rounded-xl bg-slate-200 flex items-center justify-center text-[10px] font-black text-cyan-400 uppercase shadow-inner group-hover:bg-cyan-100 group-hover:text-cyan-600 transition-colors">
                             {getFileIcon(file.type)}
                         </div>
 
@@ -60,12 +60,12 @@ export const TaskAttachments = ({ taskId, attachments }: TaskAttachmentsProps) =
                                 href={isExternal(file.url) ? file.url : `${API_BASE}${file.url}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[11px] font-black text-slate-800 truncate hover:text-cyan-600 transition-colors underline-offset-2 hover:underline"
+                                className="text-[11px] font-black text-cyan-400 truncate hover:text-cyan-600 transition-colors underline-offset-2 hover:underline"
                             >
                                 {file.name}
                             </a>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="text-[9px] text-slate-400 font-bold uppercase">
+                                <span className="text-[9px] text-cyan-400 font-bold uppercase">
                                     {new Date(file.createdAt).toLocaleDateString()}
                                 </span>
                                 <span className="w-1 h-1 bg-slate-300 rounded-full" />

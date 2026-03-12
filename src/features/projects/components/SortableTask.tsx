@@ -1,8 +1,8 @@
 import type { Task } from "../../tasks/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useAppDispatch } from "../../../app/hooks";
-import { deleteTask } from "../../tasks/slice/tasksSlice";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
+import { deleteTask, selectIsLoading } from "../../tasks/slice/tasksSlice";
 import React, {useState} from "react";
 
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx"; // Убедись, что экшен создан
@@ -16,6 +16,7 @@ export const SortableTask = React.memo( function SortableTask({
 }) {
     const dispatch = useAppDispatch();
     const [showConfirm, setShowConfirm] = useState(false);
+    const isLoading = useAppSelector(selectIsLoading);
 
     const {
         setNodeRef,
@@ -110,19 +111,21 @@ export const SortableTask = React.memo( function SortableTask({
             {/* Кнопка удаления в стиле Trello (появляется при hover) */}
             <button
                 onClick={handleDelete}
+                disabled={isLoading} // Блокуємо кнопку під час будь-якої операції
                 title="Delete task"
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-all"
+                className={`absolute top-2 right-2 p-1.5 rounded-md transition-all 
+        ${isLoading ? "opacity-100 bg-slate-100" : "opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 hover:bg-red-50"}`}
             >
-                <svg
-                    xmlns="http://www.w3.org"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-4 h-4"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                </svg>
+                {isLoading ? (
+                    <svg className="animate-spin h-4 w-4 text-cyan-500" xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                ) : (
+                    <svg xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                )}
             </button>
 
             {showConfirm && (
@@ -130,7 +133,8 @@ export const SortableTask = React.memo( function SortableTask({
                 <ConfirmModal
                     title="Delete task?"
                     message={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
-                    confirmText="Delete"
+                    confirmText={isLoading ? "Deleting..." : "Delete"}
+                    isLoading={isLoading}
                     cancelText="Cancel"
                     onConfirm={handleConfirmDelete}
                     onCancel={handleCancelDelete}

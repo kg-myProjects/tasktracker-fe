@@ -53,13 +53,16 @@ export const taskStatusSlice = createAppSlice({
             },
             {
                 pending: (state) => {
+                    state.isLoading = true;
                     state.errorMessage = "";
                 },
                 fulfilled: (state, action) => {
+                    state.isLoading = false;
                     state.taskStatuses.push(mapTaskStatusFromApi(action.payload));
                     state.errorMessage = "";
                 },
                 rejected: (state, action) => {
+                    state.isLoading = false;
                     state.errorMessage = action.error.message|| "Failed to create task status.";
                 },
             }
@@ -108,11 +111,14 @@ export const taskStatusSlice = createAppSlice({
                 }).then(() => id);
             },
             {
+                pending: (state) => { state.isLoading = true; },
                 fulfilled: (state, action) => {
+                    state.isLoading = false;
                     state.taskStatuses = state.taskStatuses.filter(s => s.id !== action.payload);
                     state.errorMessage = "";
                 },
                 rejected: (state, action) => {
+                    state.isLoading = false;
                     state.errorMessage = action.error.message || "Failed to delete task status.";
                 }
             }

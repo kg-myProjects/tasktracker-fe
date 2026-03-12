@@ -53,14 +53,15 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
             dispatch(setTaskError("Deadline cannot be in the past! Please select a future date."));
             return;
         }
+        const backendFormat = selectedDate.toISOString();
 
-        actions.patchTask({ dueDate: fullISOString });
+        actions.patchTask({ dueDate: backendFormat });
         setShowDatePicker(false);
     };
 
     return (
         <div className="md:col-span-4 space-y-4 shrink-0 h-auto relative overflow-visible">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1 text-left">Add to card</h3>
+            <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">Add to card</h4>
 
             <div className="flex flex-col gap-3 relative z-30">
                 {actionButtons.map((btn) => (
@@ -68,7 +69,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                         <button
                             onClick={btn.action}
                             disabled={isUpdating}
-                            className="w-full text-left px-4 py-3 bg-[#e8e9ec] hover:bg-[#dcdfe4] rounded-2xl text-[10px] font-black text-slate-600 flex items-center gap-3 transition-all group shadow-sm relative overflow-hidden"
+                            className="w-full text-left px-4 py-3 bg-cyan-500 text-white hover:bg-cyan-700 rounded-2xl text-[10px] font-black  flex items-center gap-3 transition-all group shadow-sm relative overflow-hidden"
                         >
                             {isUpdating ? (
                                 <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
@@ -173,6 +174,16 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                 onClick={e => e.stopPropagation()}
                                 className="w-[300px] bg-white border-2 border-cyan-500 rounded-3xl shadow-2xl p-5 z-[100] mt-2 relative md:absolute md:top-0 md:right-full md:mr-4 animate-in zoom-in-95"
                             >
+                                <button
+                                    onClick={() => setShowDatePicker(false)}
+                                    className="absolute top-4 right-4 text-slate-300 hover:text-rose-500 transition-colors p-1"
+                                    title="Close without saving"
+                                >
+                                    <svg xmlns="http://www.w3.org" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+
                                 <p className="text-[10px] font-black text-cyan-600 uppercase mb-4 text-center tracking-widest px-1">Set Deadline</p>
 
                                 <div className="bg-[#f1f2f4] rounded-xl p-4 mb-5 shadow-inner">

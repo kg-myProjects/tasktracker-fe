@@ -42,10 +42,15 @@ export const TaskChecklist =React.memo( ({ items, onSync, isCreating, onCloseCre
     return (
         <div className="space-y-4 pt-4 border-t border-slate-200 animate-in slide-in-from-left-4">
             <div className="flex items-center justify-between">
-                <label className="text-[10px] font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                    ✅ Checklist <span className="text-cyan-500 bg-cyan-50 px-2 py-0.5 rounded-full">{completedCount}/{totalCount}</span>
-                </label>
-                <button onClick={onCloseCreating} className="text-[9px] text-slate-400 hover:text-rose-500 font-black uppercase">Hide</button>
+                <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                    {/* Іконка трохи більша (text-lg) для акценту */}
+                    <span className="text-lg">✅</span>
+                    Checklist
+                    {/* Прогрес залишаємо компактним, але в неоновому стилі */}
+                    <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-lg border border-cyan-500/20 ml-1">
+            {completedCount}/{totalCount}
+        </span>
+                </h4>                <button onClick={onCloseCreating} className="text-[9px] text-cyan-400 hover:text-rose-500 font-black uppercase">Hide</button>
             </div>
 
             <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden border border-slate-300/50">
@@ -58,7 +63,7 @@ export const TaskChecklist =React.memo( ({ items, onSync, isCreating, onCloseCre
                         <button onClick={() => toggleItem(item)} className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${item.completed ? 'bg-cyan-500 border-cyan-500' : 'bg-white border-slate-300'}`}>
                             {item.completed && <span className="text-white text-xs">✓</span>}
                         </button>
-                        <span className={`text-sm font-bold flex-1 ${item.completed ? 'text-slate-400 line-through' : 'text-slate-700'}`}>{item.text}</span>
+                        <span className={`text-sm font-bold flex-1 ${item.completed ? 'text-cyan-400 line-through' : 'text-cyan-600'}`}>{item.text}</span>
                         <button onClick={() => deleteItem(item)} className="opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-600">✕</button>
                     </div>
                 ))}
