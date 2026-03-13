@@ -50,30 +50,42 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                 onClick={e => e.stopPropagation()}>
 
                 {/* 1. Cover */}
-                <div
-                    className="h-32 w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden">
+                {/* 1. Cover */}
+                <div className="h-44 w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden border-b border-cyan-500/20">
                     <div className="animate-progress-fast opacity-50"></div>
+
                     <button onClick={onClose}
                             className="absolute top-6 right-6 bg-cyan-500/10 hover:bg-rose-500/20 text-cyan-400 hover:text-rose-400 w-10 h-10 rounded-xl border border-cyan-500/30 flex items-center justify-center font-bold z-10 transition-all">
                         ✕
                     </button>
 
-                            {/* Header */}
-                            <div className="space-y-1">
-                                <input
-                                    defaultValue={currentTask.title}
-                                    onBlur={(e) => {
-                                        const val = e.target.value.trim();
-                                        if (val && val !== currentTask.title) patchTask({title: val});
-                                    }}
-                                    className="w-full bg-transparent text-4xl font-black text-white text-neon-strong outline-none transition-all uppercase tracking-tighter text-center"
-                                />
-                                <span className="text-cyan-400  items-center gap-1.5 inline-flex text-sm font-black uppercase tracking-[0.2em">
-    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></span>
-                                    {statusName}
-</span>
-                            </div>
+                    {/* Header */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-4">
+                        <div className="space-y-3 w-full max-w-3xl px-4 flex flex-col items-center">
 
+                            {/* TaskNumber */}
+                            <span className="text-[10px] font-black text-cyan-500/40 bg-cyan-500/5 px-3 py-1 rounded-full border border-cyan-500/10 tracking-[0.3em] uppercase">
+                Task Registry // ID: #{currentTask.taskNumber}
+            </span>
+
+                            <input
+                                defaultValue={currentTask.title}
+                                onBlur={(e) => {
+                                    const val = e.target.value.trim();
+                                    if (val && val !== currentTask.title) patchTask({title: val});
+                                }}
+                                className="w-full bg-transparent text-4xl font-black text-white text-neon-strong outline-none transition-all uppercase tracking-tighter text-center"
+                            />
+
+                            <div className="flex items-center gap-3 justify-center text-cyan-500/40 ">
+                                STATUS
+                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
+                                <span className="text-cyan-400 text-sm font-black uppercase tracking-[0.2em]">
+                    {statusName}
+                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="px-10 pt-12 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10">

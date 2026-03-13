@@ -3,6 +3,7 @@ import type {CollaboratorDto} from "../../projects/types";
 export interface Task {
     id: string;
     title: string;
+    taskNumber: number;
     description: string;
     statusId: string;
     projectId: string;
@@ -27,6 +28,7 @@ export interface CreateTaskDto {
 export interface TaskDto{
     id: string;
     title: string;
+    taskNumber: number;
     description: string;
     statusId: string;
     projectId: string;

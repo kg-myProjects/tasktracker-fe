@@ -72,7 +72,15 @@ export const SortableTask = React.memo( function SortableTask({
                     </div>
                 )}
 
-                <div className="font-semibold text-black pr-6">{task.title}</div>
+                <div className="flex flex-col gap-0.5 mb-1">
+                    <span className="text-[9px] font-black text-cyan-500/60 uppercase tracking-widest leading-none">
+        Task #{task.taskNumber}
+    </span>
+
+                    <div className="font-bold text-slate-800 leading-tight pr-6 truncate">
+                        {task.title}
+                    </div>
+                </div>
 
                 {task.description && (
                     <div className="text-sm text-slate-600 mt-1 line-clamp-2">
