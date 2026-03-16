@@ -1,6 +1,7 @@
 import {Link, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import {logout, selectIsAuthenticated, selectIsInitialized, selectUser} from "../../features/auth/slice/authSlice.ts";
+import MainButton from "../ui/buttons/MainButton.tsx";
 
 export default function Header() {
     const dispatch = useAppDispatch();
@@ -42,20 +43,20 @@ export default function Header() {
                     </Link>
 
                     <nav className="flex items-center space-x-8">
-                        <Link 
-                            to="/" 
+                        <Link
+                            to="/"
                             className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             Home
                         </Link>
-                        <Link 
-                            to="/about" 
+                        <Link
+                            to="/about"
                             className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             About
                         </Link>
-                        <Link 
-                            to="/projects" 
+                        <Link
+                            to="/projects"
                             className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             Projects
@@ -83,12 +84,9 @@ export default function Header() {
                                             </div>
                                             <span>{user?.email}</span>
                                         </Link>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] hover:text-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all duration-300 ease-in-out"
-                                        >
+                                        <MainButton onClick={handleLogout}>
                                             Logout
-                                        </button>
+                                        </MainButton>
                                     </>
                                 ) : (
                                     <>

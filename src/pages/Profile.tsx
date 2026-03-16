@@ -11,6 +11,7 @@ import {
 } from "../features/user/slice/userSlice.ts";
 import {selectIsAuthenticated, selectIsInitialized, setUser} from "../features/auth/slice/authSlice.ts";
 import type {UpdateUserPayloadDto} from "../features/user/types";
+import MainButton from "../components/ui/buttons/MainButton.tsx";
 
 export default function Profile() {
     const dispatch = useAppDispatch();
@@ -180,47 +181,36 @@ export default function Profile() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="flex-1 p-1 rounded border border-cyan-300 bg-slate-800 text-white text-base"
                             />
-                            <div className="flex w-[220px] gap-4" >
-                            <button
-                                onClick={() => {
-                                    alert("email_saved");
+                            <div className="flex w-[220px] gap-4">
+                                <MainButton onClick={() => {
+                                    alert("email_saved!");
                                     setIsEditingEmail(false);
-                                }}
-                                className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                            >
-                                Save
-                            </button>
-                            <button
-                                onClick={() => {
+                                }}>
+                                    Save
+                                </MainButton>
+                                <MainButton variant="danger" onClick={() => {
                                     setIsEditingEmail(false);
                                     setEmail(user.email || "");
-                                }}
-                                className="rounded-xl bg-red-500 border border-red-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]
-                                    hover:scale-[1.20] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)] transition-all duration-300 ease-in-out"
-                            >
-                                Cancel
-                            </button>
+                                }}>
+                                    Cancel
+                                </MainButton>
                             </div>
                         </>
                     ) : (
                         <>
-                            <div className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                            <div
+                                className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
                                 {email}
                             </div>
-                            <button
-                                onClick={() => setIsEditingEmail(true)}
-                                className="w-[220px] rounded-xl bg-cyan-500 border border-cyan-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                            >
+                            <MainButton width={220} onClick={() => setIsEditingEmail(true)}>
                                 Edit E-mail
-                            </button>
+                            </MainButton>
                         </>
                     )}
                 </div>
             </div>
 
-            <hr className="border-cyan-900/50 mb-7" />
+            <hr className="border-cyan-900/50 mb-7"/>
 
             <div className="flex gap-20">
                 {/* Avatar */}
@@ -250,36 +240,28 @@ export default function Profile() {
 
                     {isEditingAvatar ? (
                         <div className="flex mt-5 gap-4 w-[220px] justify-center">
-                            <button
-                                onClick={handleSaveAvatarUpdate}
-                                className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                            >
+                            <MainButton onClick={handleSaveAvatarUpdate}>
                                 Save
-                            </button>
-                            <button
-                                onClick={handleCancelAvatarUpdate}
-                                className="rounded-xl bg-red-500 border border-red-300/50 px-4 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]
-                                    hover:scale-[1.20] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)] transition-all duration-300 ease-in-out"
-                            >
+                            </MainButton>
+                            <MainButton variant="danger" onClick={handleCancelAvatarUpdate}>
                                 Cancel
-                            </button>
+                            </MainButton>
                         </div>
                     ) : (
-                        <button
-                            onClick={() => {
+                        <div className="mt-5">
+                            <MainButton width={220} onClick={() => {
                                 setErrorMessage("");
                                 document.getElementById("avatarInput")?.click()
                             }}
-                            className="mt-5 rounded-xl w-[220px] bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                                hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                        >
-                            Change Avatar
-                        </button>
+                            >
+                                Change Avatar
+                            </MainButton>
+                        </div>
                     )}
                     {/* Avatar error message */}
                     {errorMessage && (
-                        <div className="mt-3 w-full max-w-[220px] text-red-500 text-sm break-words text-center overflow-hidden">
+                        <div
+                            className="mt-3 w-full max-w-[220px] text-red-500 text-sm break-words text-center overflow-hidden">
                             {errorMessage}
                         </div>
                     )}
@@ -303,7 +285,8 @@ export default function Profile() {
                                             className="flex-1 p-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
-                                        <span className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                        <span
+                                            className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}
@@ -330,29 +313,17 @@ export default function Profile() {
                     <div className="mt-4 flex justify-end">
                         {isEditingProfile ? (
                             <div className="w-[220px] flex gap-4">
-                                <button
-                                    onClick={handleSaveProfileChanges}
-                                    className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                                        hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                                >
+                                <MainButton onClick={handleSaveProfileChanges}>
                                     Save
-                                </button>
-                                <button
-                                    onClick={handleCancelProfileChanges}
-                                    className="rounded-xl bg-red-500 border border-red-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(239,68,68,0.6)]
-                                        hover:scale-[1.20] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)] transition-all duration-300 ease-in-out"
-                                >
+                                </MainButton>
+                                <MainButton variant="danger" onClick={handleCancelProfileChanges}>
                                     Cancel
-                                </button>
+                                </MainButton>
                             </div>
                         ) : (
-                            <button
-                                onClick={() => setIsEditingProfile(true)}
-                                className="w-[220px] rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)]
-                                    hover:scale-[1.20] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] transition-all duration-300 ease-in-out"
-                            >
+                            <MainButton width={220} onClick={() => setIsEditingProfile(true)}>
                                 Edit Profile
-                            </button>
+                            </MainButton>
                         )}
                     </div>
                 </div>
