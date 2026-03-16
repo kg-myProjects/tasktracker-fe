@@ -4,7 +4,7 @@ import { DndContext, DragOverlay } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectTasks, getTasksByProjectId } from "../../tasks/slice/tasksSlice";
+import { selectFilteredTasks, getTasksByProjectId, setSearchQuery, selectSearchQuery, selectSelectedMarkerId, setSelectedMarkerId } from "../../tasks/slice/tasksSlice";
 import { getProjectById, selectCurrentProject, selectInviteUserErrorMessage } from "../slice/projectsSlice";
 import {
     clearStatusError, createTaskStatus,
@@ -29,8 +29,11 @@ export default function KanbanBoard() {
     const dispatch = useAppDispatch();
 
 
-    const tasks = useAppSelector(selectTasks);
+    const tasks = useAppSelector(selectFilteredTasks);
+    const searchQuery = useAppSelector(selectSearchQuery);
     const project = useAppSelector(selectCurrentProject);
+    const selectedMarkerId = useAppSelector(selectSelectedMarkerId);
+    const projectMarkers = project?.markers || [];
     const statuses = useAppSelector(selectSortedTaskStatuses);
     const allNames = statuses.map(s => s.name);
     const inviteError = useAppSelector(selectInviteUserErrorMessage);
@@ -86,6 +89,11 @@ export default function KanbanBoard() {
         <div className="h-screen flex flex-col bg-transparent p-4 overflow-hidden">
             <BoardHeader
                 title={project?.title}
+                searchQuery={searchQuery}
+                onSearchChange={(val) => dispatch(setSearchQuery(val))}
+                selectedMarkerId={selectedMarkerId}
+                projectMarkers={projectMarkers}
+                onMarkerClick={(id) => dispatch(setSelectedMarkerId(id === selectedMarkerId ? null : id))}
                 onAddStatus={() => setStatusModalOpen(true)}
                 onAddCollab={() => setIsInviteModalOpen(true)}
                 onOpenLogs={() => setIsLogsModalOpen(true)}
