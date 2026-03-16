@@ -64,10 +64,11 @@ export interface UpdateTaskPayload {
 
 export interface TasksSliceState {
     tasks: Task[];
-    currentTask?: Task | null;
     createTaskErrorMessage?: string;
     comments: Comment[];
     isLoading: boolean;
+    searchQuery: string,
+    selectedMarkerId: string | null
 }
 
 export interface MarkerDto {

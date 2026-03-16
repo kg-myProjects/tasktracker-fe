@@ -7,9 +7,10 @@ import type {PayloadAction} from "@reduxjs/toolkit";
 
 const initialState: TasksSliceState = {
     tasks: [],
-    currentTask: null,
     comments: [],
     isLoading: false,
+    searchQuery: "",
+    selectedMarkerId: null as string | null,
 };
 
 export const tasksSlice = createAppSlice({
@@ -113,13 +114,11 @@ export const tasksSlice = createAppSlice({
                             state.tasks[index] = updatedTask;
                         }
 
-                        state.currentTask = updatedTask;
                         state.createTaskErrorMessage = "";
                     },
                     rejected: (state, action) => {
                         state.isLoading = false;
                         state.createTaskErrorMessage = action.error.message;
-                        state.currentTask = null;
                     },
                 }
             ),
@@ -158,10 +157,6 @@ export const tasksSlice = createAppSlice({
                             task.attachments.push(newAttachment);
                         }
 
-                        if (state.currentTask && state.currentTask.id === taskId) {
-                            if (!state.currentTask.attachments) state.currentTask.attachments = [];
-                            state.currentTask.attachments.push(newAttachment);
-                        }
                     },
                     rejected: (state, action) => {
                         state.isLoading = false;
@@ -183,9 +178,6 @@ export const tasksSlice = createAppSlice({
                             task.attachments = task.attachments.filter(a => a.id !== attachmentId);
                         }
 
-                        if (state.currentTask && state.currentTask.id === taskId) {
-                            state.currentTask.attachments = state.currentTask.attachments.filter(a => a.id !== attachmentId);
-                        }
                     },
                     rejected: (state) => {
                         state.createTaskErrorMessage = "Failed to delete attachment";
@@ -234,6 +226,7 @@ export const tasksSlice = createAppSlice({
                 }
             ),
 
+
             setTaskError: create.reducer((state, action: PayloadAction<string>) => {
                 state.createTaskErrorMessage = action.payload;
             }),
@@ -241,6 +234,13 @@ export const tasksSlice = createAppSlice({
                 state.createTaskErrorMessage = "";
             }),
 
+            setSearchQuery: create.reducer((state, action: PayloadAction<string>) => {
+                state.searchQuery = action.payload;
+            }),
+
+            setSelectedMarkerId: create.reducer((state, action: PayloadAction<string | null>) => {
+                state.selectedMarkerId = action.payload;
+            }),
 
         }),
 
@@ -248,10 +248,23 @@ export const tasksSlice = createAppSlice({
         // You can define your selectors here. These selectors receive the slice
         // state as their first argument.
         selectors: {
-            selectTasks: (state) => state.tasks,
-            selectTasksByStatus: (state, statusId: string) =>
-                state.tasks.filter(task => task.statusId === statusId),
-            selectCurrentTask: state => state.currentTask,
+            selectSearchQuery: (state) => state.searchQuery,
+            selectFilteredTasks: (state) => {
+                const query = state.searchQuery.toLowerCase().trim();
+                const markerId = state.selectedMarkerId;
+
+                return state.tasks.filter(task => {
+                    const matchesText = !query ||
+                        task.title.toLowerCase().includes(query) ||
+                        `#${task.taskNumber}`.includes(query);
+
+                    const matchesMarker = !markerId ||
+                        task.markers?.some(m => m.id === markerId);
+
+                    return matchesText && matchesMarker;
+                });
+            },
+            selectSelectedMarkerId: (state) => state.selectedMarkerId,
             selectComments: (state) => state.comments,
             selectIsLoading: (state) => state.isLoading,
             selectCreateTaskErrorMessage: (state) => state.createTaskErrorMessage,
@@ -260,14 +273,15 @@ export const tasksSlice = createAppSlice({
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask, getTasksByProjectId, updateTask, deleteTask, clearTaskError, setTaskError,
-    uploadTaskAttachment, deleteTaskAttachment, getComments, addComment} = tasksSlice.actions;
+export const {createTask,setSearchQuery,setSelectedMarkerId,  getTasksByProjectId, updateTask, deleteTask,
+    clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment, getComments, addComment}
+    = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
-    selectTasks,
-    selectTasksByStatus,
-    selectCurrentTask,
+    selectSearchQuery,
+    selectFilteredTasks,
+    selectSelectedMarkerId,
     selectComments,
     selectIsLoading,
     selectCreateTaskErrorMessage,

@@ -1,5 +1,6 @@
 import { CollaboratorsList } from "./CollaboratorsList.tsx";
-import type { CollaboratorDto } from "../types"; // Перевір шлях до типів
+import type { CollaboratorDto } from "../types";
+import type {MarkerDto} from "../../tasks/types"; // Перевір шлях до типів
 
 interface BoardHeaderProps {
     title: string | undefined;
@@ -7,9 +8,16 @@ interface BoardHeaderProps {
     onAddCollab: () => void;
     onOpenLogs?: () => void;
     collaborators: CollaboratorDto[] | undefined;
+    searchQuery: string;
+    onSearchChange: (value: string) => void;
+    selectedMarkerId: string | null;
+    projectMarkers: MarkerDto[];
+    onMarkerClick: (id: string | null) => void;
 }
 
-export const BoardHeader = ({ title, onAddStatus, onAddCollab, onOpenLogs, collaborators }: BoardHeaderProps) => (
+export const BoardHeader = ({ title, onAddStatus, onAddCollab, onOpenLogs,
+                                collaborators, searchQuery,onSearchChange,
+                                selectedMarkerId, projectMarkers, onMarkerClick}: BoardHeaderProps) => (
     <div className="flex items-center gap-4 mb-8 text-cyan-400">
         <h1 className="text-2xl font-black uppercase tracking-tighter text-white">
             {title ?? "Loading..."}
@@ -36,6 +44,50 @@ export const BoardHeader = ({ title, onAddStatus, onAddCollab, onOpenLogs, colla
                 Project Logs
             </button>
 
+        </div>
+
+        <div className="relative group flex-1 max-w-md mx-6">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <span className="text-cyan-500/50 text-xs animate-twinkle">🔍</span>
+            </div>
+            <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                placeholder="SEARCH SYSTEM.TASK..."
+                className="w-full bg-black/40 border border-cyan-400/30 rounded-xl py-2 pl-10 pr-4 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
+            />
+            {searchQuery && (
+                <button
+                    onClick={() => onSearchChange("")}
+                    className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-rose-400 transition-colors"
+                >
+                    ✕
+                </button>
+            )}
+        </div>
+
+        <div className="flex gap-1.5 items-center px-4 border-l border-white/10 ml-2">
+            {projectMarkers.map(marker => (
+                <button
+                    key={marker.id}
+                    onClick={() => onMarkerClick(marker.id)}
+                    title={marker.name}
+                    className={`w-5 h-5 rounded-md border-2 transition-all hover:scale-110 ${marker.color} ${
+                        selectedMarkerId === marker.id
+                            ? "border-white shadow-[0_0_12px_rgba(34,211,238,0.4)] scale-110"
+                            : "border-transparent opacity-40 hover:opacity-100"
+                    }`}
+                />
+            ))}
+            {selectedMarkerId && (
+                <button
+                    onClick={() => onMarkerClick(null)}
+                    className="text-[10px] text-rose-500 font-black uppercase ml-2 hover:text-rose-400 transition-colors"
+                >
+                    Reset
+                </button>
+            )}
         </div>
 
         {collaborators && (
