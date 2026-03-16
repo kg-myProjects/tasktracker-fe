@@ -67,3 +67,11 @@ export const fetchAddComment = async (taskId: string, text: string) => {
     return res.data;
 };
 
+export const fetchDeleteComment = async (taskId: string, commentId: string) => {
+    await axiosInstance.delete(`${TASKS_BASE_PATH}/${taskId}/comments/${commentId}`);
+};
+
+export const fetchUpdateComment = async (taskId: string, commentId: string, text: string) => {
+    const res = await axiosInstance.patch(`${TASKS_BASE_PATH}/${taskId}/comments/${commentId}`, { text });
+    return res.data;
+};

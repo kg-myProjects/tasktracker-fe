@@ -226,6 +226,58 @@ export const tasksSlice = createAppSlice({
                 }
             ),
 
+            deleteComment: create.asyncThunk(
+                async ({ taskId, commentId }: { taskId: string, commentId: string }) => {
+                    try {
+                        await api.fetchDeleteComment(taskId, commentId);
+                        return commentId;
+                    } catch (err) {
+                        if (isAxiosError(err)) {
+                            throw new Error(err.response?.data?.message || "Failed to delete");
+                        }
+                        throw err;
+                    }                },
+                {
+                    pending: (state) => { state.isLoading = true; },
+                    fulfilled: (state, action) => {
+                        state.isLoading = false;
+                        state.comments = state.comments.filter(c => c.id !== action.payload);
+                    },
+                    rejected: (state, action) => {
+                        state.isLoading = false;
+                        state.createTaskErrorMessage = action.error.message;                    }
+                }
+            ),
+
+            updateComment: create.asyncThunk(
+                async ({ taskId, commentId, text }: { taskId: string, commentId: string, text: string }) => {
+                    try {
+                        return await api.fetchUpdateComment(taskId, commentId, text);
+                    } catch (err) {
+                        if (isAxiosError(err)) {
+                            throw new Error(err.response?.data?.message || "Forbidden");
+                        }
+                        throw err;
+                    }                },
+                {
+                    pending: (state) => {
+                        state.isLoading = true;
+                        state.createTaskErrorMessage = "";
+                    },
+                    fulfilled: (state, action) => {
+                        state.isLoading = false;
+                        const index = state.comments.findIndex(c => c.id === action.payload.id);
+                        if (index !== -1) {
+                            state.comments[index] = action.payload;
+                        }
+                    },
+                    rejected: (state, action) => {
+                        state.isLoading = false;
+                        state.createTaskErrorMessage = action.error.message;
+                    }
+                }
+            ),
+
 
             setTaskError: create.reducer((state, action: PayloadAction<string>) => {
                 state.createTaskErrorMessage = action.payload;
@@ -274,7 +326,7 @@ export const tasksSlice = createAppSlice({
 
 // // Action creators are generated for each case reducer function.
 export const {createTask,setSearchQuery,setSelectedMarkerId,  getTasksByProjectId, updateTask, deleteTask,
-    clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment, getComments, addComment}
+    clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment, getComments, addComment, deleteComment, updateComment}
     = tasksSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
