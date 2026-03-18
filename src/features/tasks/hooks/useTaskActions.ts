@@ -1,8 +1,12 @@
 import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import type {ChecklistItem, Task, UpdateTaskDto} from "../types";
 import {updateTask} from "../slice/tasksSlice.ts";
-import {addMarkerToCurrentProject} from "../../projects/slice/projectsSlice.ts";
+import {addMarkerToCurrentProject, removeMarkerFromProject} from "../../projects/slice/projectsSlice.ts";
+import { removeMarkerFromAllTasks } from "../slice/tasksSlice.ts";
 import {fetchCreateMarker} from "../services/api.ts";
+import {fetchDeleteMarker} from "../../projects/services/api.ts";
+import { setTaskError } from "../slice/tasksSlice.ts";
+import axios from "axios";
 
 export const useTaskActions = (currentTask: Task | undefined, projectId?: string) => {
     const dispatch = useAppDispatch();
@@ -45,7 +49,7 @@ export const useTaskActions = (currentTask: Task | undefined, projectId?: string
             const newMarker = await fetchCreateMarker({
                 name,
                 color,
-                projectId: projectId // Використовуємо projectId з аргументів хука
+                projectId: projectId
             });
 
             dispatch(addMarkerToCurrentProject(newMarker));
@@ -57,6 +61,25 @@ export const useTaskActions = (currentTask: Task | undefined, projectId?: string
         }
     };
 
+    const handleDeleteGlobalMarker = async (markerId: string): Promise<void> => {
+        if (!projectId) return;
+        try {
+            await fetchDeleteMarker(projectId, markerId);
+            dispatch(removeMarkerFromProject(markerId));
+            dispatch(removeMarkerFromAllTasks(markerId));
+        } catch (error: unknown) {
+            let errorMessage = "Failed to delete marker. Access denied.";
+
+            if (axios.isAxiosError(error)) {
+                errorMessage = error.response?.data?.message || error.message || errorMessage;
+            }
+
+            dispatch(setTaskError(errorMessage));
+            console.error("Failed to delete marker:", error);
+        }
+    };
+
+
     const syncChecklist = (newItems: ChecklistItem[]) => {
         patchTask({ checklist: newItems });
     };
@@ -65,6 +88,7 @@ export const useTaskActions = (currentTask: Task | undefined, projectId?: string
         handleAddExecutor,
         handleAddMarker,
         handleCreateAndAddMarker,
+        handleDeleteGlobalMarker,
         syncChecklist,
         patchTask,
         isUpdating,

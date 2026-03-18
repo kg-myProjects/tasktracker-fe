@@ -47,3 +47,8 @@ export const fetchDeleteProject = async (id: string) => {
     const res = await axiosInstance.delete(`${PROJECTS_BASE_PATH}/${id}`);
     return res.data;
 };
+
+export const fetchDeleteMarker = async (projectId: string, markerId: string): Promise<void> => {
+    await axiosInstance.delete(`${PROJECTS_BASE_PATH}/${projectId}/markers/${markerId}`);
+};
+
