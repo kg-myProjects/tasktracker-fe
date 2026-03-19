@@ -6,7 +6,7 @@ import {TaskSidebar} from "./TaskSidebar.tsx";
 import type {Task} from "../types";
 import {TaskAttachments} from "./TaskAttachments.tsx";
 import {TaskComments} from "./TaskComments.tsx";
-import {getComments} from "../slice/tasksSlice";
+import {getComments, setTaskError} from "../slice/tasksSlice";
 import {format, formatDistanceToNow} from 'date-fns';
 
 interface TaskEditModalProps {
@@ -23,11 +23,13 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
     const allStatuses = useAppSelector((state) => state.taskStatuses.taskStatuses);
     const currentStatus = allStatuses.find(s => s.id === currentTask.statusId);
     const statusName = currentStatus ? currentStatus.name : "Unknown Status";
+    const error = useAppSelector(state => state.tasks.createTaskErrorMessage);
 
     const {
         handleAddExecutor,
         handleAddMarker,
         handleCreateAndAddMarker,
+        handleDeleteGlobalMarker,
         syncChecklist,
         patchTask,
         isUpdating
@@ -39,6 +41,16 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
             dispatch(getComments(currentTask.id));
         }
     }, [currentTask.id, dispatch]);
+
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                dispatch(setTaskError(""));
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error, dispatch]);
+
 
     return (
         <div
@@ -95,6 +107,17 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
 
                         {/* Markers and Members */}
                         <div className="flex flex-wrap gap-10">
+
+                            {error && (
+                                <div className="w-full mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <div className="bg-rose-500/10 border border-rose-500/50 rounded-xl px-4 py-2.5 flex items-center gap-3 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+                                        <span className="text-rose-500 animate-pulse text-xs">⚠️</span>
+                                        <span className="text-[10px] font-black text-rose-400 uppercase tracking-[0.1em]">
+                    System Alert // {error}
+                </span>
+                                    </div>
+                                </div>
+                            )}
                             {currentTask.markers?.length > 0 && (
                                 <div className="space-y-3">
                                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3"> Labels</h4>
@@ -186,7 +209,7 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                 projectMarkers={project?.markers || []}
                                 actions={{
                                     handleAddExecutor, handleAddMarker,
-                                    handleCreateAndAddMarker, setIsCreatingChecklist,
+                                    handleCreateAndAddMarker,handleDeleteGlobalMarker, setIsCreatingChecklist,
                                     patchTask
                                 }}
                             />

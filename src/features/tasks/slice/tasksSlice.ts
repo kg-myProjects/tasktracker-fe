@@ -294,6 +294,19 @@ export const tasksSlice = createAppSlice({
                 state.selectedMarkerId = action.payload;
             }),
 
+            removeMarkerFromAllTasks: create.reducer(
+                (state, action: PayloadAction<string>) => {
+                    const markerId = action.payload;
+
+                    state.tasks = state.tasks.map(task => ({
+                        ...task,
+                        markers: task.markers?.filter(m => m.id !== markerId) || []
+                    }));
+
+                }
+            ),
+
+
         }),
 
 
@@ -325,7 +338,7 @@ export const tasksSlice = createAppSlice({
 );
 
 // // Action creators are generated for each case reducer function.
-export const {createTask,setSearchQuery,setSelectedMarkerId,  getTasksByProjectId, updateTask, deleteTask,
+export const {createTask,setSearchQuery,setSelectedMarkerId, removeMarkerFromAllTasks, getTasksByProjectId, updateTask, deleteTask,
     clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment, getComments, addComment, deleteComment, updateComment}
     = tasksSlice.actions;
 

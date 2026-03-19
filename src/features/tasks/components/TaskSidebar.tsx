@@ -5,6 +5,7 @@ import { NEON_COLORS } from "../constants/taskConstants.ts";
 import {setTaskError} from "../slice/tasksSlice";
 import {useAppDispatch} from "../../../app/hooks.ts";
 import {AttachmentPicker} from "./AttachmentPicker.tsx";
+import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 
 interface TaskSidebarProps {
     task: Task;
@@ -15,6 +16,7 @@ interface TaskSidebarProps {
         handleAddExecutor: (id: string) => void;
         handleAddMarker: (id: string) => void;
         handleCreateAndAddMarker: (name: string, color: string) => void;
+        handleDeleteGlobalMarker: (id: string) => Promise<void>;
         setIsCreatingChecklist: (val: boolean) => void;
         patchTask: (dto: Partial<UpdateTaskDto>) => void;
     };
@@ -23,10 +25,12 @@ interface TaskSidebarProps {
 export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isUpdating }: TaskSidebarProps) => {
     const [showMembers, setShowMembers] = useState(false);
     const [showLabels, setShowLabels] = useState(false);
-    const [showDatePicker, setShowDatePicker] = useState(false); // Нове
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [newMarkerName, setNewMarkerName] = useState("");
     const [selectedColor, setSelectedColor] = useState("bg-cyan-500");
     const [showAttachmentPicker, setShowAttachmentPicker] = useState(false);
+    const [markerToDelete, setMarkerToDelete] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const actionButtons = [
         { id: 'members', label: 'Members', icon: '👤', action: () => setShowMembers(!showMembers) },
@@ -98,15 +102,25 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                     {projectMarkers?.map((marker) => {
                                         const isSelected = task.markers?.some(m => m.id === marker.id);
                                         return (
-                                            <button
-                                                key={marker.id}
-                                                onClick={() => actions.handleAddMarker(marker.id)}
-                                                className={`w-full h-8 rounded-lg flex items-center px-3 text-[9px] font-black text-white uppercase transition-all ${marker.color} ${isSelected ? 'ring-2 ring-slate-900 ring-offset-1' : 'opacity-90 hover:opacity-100'}`}
-                                            >
-                                                {marker.name}
-                                                {isSelected && <span className="ml-auto text-xs">✓</span>}
-                                            </button>
-                                        );
+                                            <div key={marker.id} className="group/marker relative flex items-center gap-1.5">
+                                                <button
+                                                    onClick={() => actions.handleAddMarker(marker.id)}
+                                                    className={`flex-1 h-8 rounded-lg flex items-center px-3 text-[9px] font-black text-white uppercase transition-all ${marker.color} ${isSelected ? 'ring-2 ring-slate-900 ring-offset-1' : 'opacity-90 hover:opacity-100'}`}
+                                                >
+                                                    {marker.name}
+                                                    {isSelected && <span className="ml-auto text-xs">✓</span>}
+                                                </button>
+
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setMarkerToDelete(marker.id);
+                                                    }}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-50 text-rose-400 opacity-0 group-hover/marker:opacity-100 hover:bg-rose-500 hover:text-white transition-all border border-rose-100 shadow-sm"
+                                                >
+                                                    <span className="text-[10px]">🗑</span>
+                                                </button>
+                                            </div>                                        );
                                     })}
                                 </div>
                                 <div className="mt-4 pt-4 border-t border-slate-100 space-y-3">
@@ -233,7 +247,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                             </div>
                          </>
                         )}
-                        {/* В TaskSidebar.tsx замість старого блоку attachments */}
+
                         {btn.id === 'attachment' && showAttachmentPicker && (
                             <AttachmentPicker
                                 taskId={task.id}
@@ -247,6 +261,22 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
 
                     </div>
                 ))}
+                {markerToDelete && (
+                    <ConfirmModal
+                        title="Delete Label"
+                        message="This will permanently remove the label from the entire project and all associated tasks. Proceed?"
+                        confirmText="Confirm Delete"
+                        cancelText="Cancel"
+                        isLoading={isDeleting}
+                        onConfirm={async () => {
+                            setIsDeleting(true);
+                            await actions.handleDeleteGlobalMarker(markerToDelete);
+                            setIsDeleting(false);
+                            setMarkerToDelete(null);
+                        }}
+                        onCancel={() => setMarkerToDelete(null)}
+                    />
+                )}
 
             </div>
         </div>

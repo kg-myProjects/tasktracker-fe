@@ -192,6 +192,7 @@ export const projectsSlice = createAppSlice({
                 },
             }
         ),
+
         addMarkerToCurrentProject: create.reducer(
             (state, action: PayloadAction<MarkerDto>) => {
                 const newMarker = action.payload;
@@ -207,6 +208,28 @@ export const projectsSlice = createAppSlice({
                 if (projectInList) {
                     if (!projectInList.markers) projectInList.markers = [];
                     projectInList.markers.push(newMarker);
+                }
+            }
+        ),
+
+        removeMarkerFromProject: create.reducer(
+            (state, action: PayloadAction<string>) => {
+                const markerId = action.payload;
+
+                if (state.currentProject && state.currentProject.markers) {
+                    state.currentProject.markers = state.currentProject.markers.filter(
+                        (m) => m.id !== markerId
+                    );
+                }
+
+                const projectInList = state.projects.find(
+                    (p) => p.id === state.currentProject?.id
+                );
+
+                if (projectInList && projectInList.markers) {
+                    projectInList.markers = projectInList.markers.filter(
+                        (m) => m.id !== markerId
+                    );
                 }
             }
         ),
@@ -292,7 +315,8 @@ export const projectsSlice = createAppSlice({
 });
 
 // // Action creators are generated for each case reducer function.
-export const { createProject, updateProject, getAllProjects,getMyProjects, getProjectById, inviteUser, addMarkerToCurrentProject,
+export const { createProject, updateProject, getAllProjects,getMyProjects, getProjectById, inviteUser,
+    addMarkerToCurrentProject, removeMarkerFromProject,
     deleteProject, getProjectLogs,clearDeleteError } = projectsSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
