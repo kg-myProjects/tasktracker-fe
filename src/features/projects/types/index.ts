@@ -57,7 +57,7 @@ export interface InviteModalProps {
 export interface ProjectLog {
     entity: "Task" | "Status";
     entityName: string;
-    action: "CREATE" | "DELETE";
+    action: ProjectLogAction;
     userEmail: string;
     userFirstName?: string;
     userLastName?: string;
@@ -65,3 +65,12 @@ export interface ProjectLog {
     difference: string;
     createdAt: string;
 }
+
+export type ProjectLogAction =
+    | "CREATE"
+    | "DELETE"
+    | "MOVE"
+    | "MARKERS"
+    | "TITLE"
+    | "DESCRIPTION"
+    | "DUE_DATE";

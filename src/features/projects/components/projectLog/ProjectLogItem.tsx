@@ -8,7 +8,7 @@ interface ProjectLogsItemProps {
 
 const ProjectLogItem = ({log}: ProjectLogsItemProps) => {
     return (
-        <div className="bg-slate-800 rounded-md p-3 flex justify-between items-start gap-4 text-sm text-white hover:bg-slate-600/60 transition-colors">
+        <div className="bg-slate-800 rounded-md p-3 flex justify-between items-center gap-4 text-sm text-white hover:bg-slate-600/60 transition-colors">
             <div className="flex items-center gap-2">
                 {log.userAvatar ? (
                     <img
@@ -28,7 +28,8 @@ const ProjectLogItem = ({log}: ProjectLogsItemProps) => {
                         log.entityName,
                         log.userEmail,
                         log.userFirstName,
-                        log.userLastName
+                        log.userLastName,
+                        log.difference
                     )}
                 </span>
             </div>
