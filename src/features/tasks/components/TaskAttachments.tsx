@@ -30,7 +30,7 @@ export const TaskAttachments = ({ taskId, attachments }: TaskAttachmentsProps) =
             setFileToDelete(null);
         }
     };
-    const API_BASE = "http://localhost:8080";
+    const API_BASE = "http://localhost:8080/api/v1/attachments/download";
     const isExternal = (url: string) => url.startsWith('http');
     if (!attachments || attachments.length === 0) return null;
 
@@ -79,7 +79,7 @@ export const TaskAttachments = ({ taskId, attachments }: TaskAttachmentsProps) =
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                setFileToDelete(file); // Відкриваємо модалку, зберігаючи файл у стейт
+                                setFileToDelete(file);
                             }}
                             className="..."
                         >
