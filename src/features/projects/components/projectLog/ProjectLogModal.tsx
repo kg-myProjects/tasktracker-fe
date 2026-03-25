@@ -31,11 +31,11 @@ export const ProjectLogModal: React.FC<ProjectLogsModalProps> = ({isOpen, onClos
                 onClick={e => e.stopPropagation()}>
 
                 <div className="relative w-full">
-                    <div className="absolute w-full h-16 bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900"></div>
-                    <div className="relative flex flex-col justify-center h-16">
-                        <h2 className="mx-6 mt-4 text-lg font-bold text-white text-neon-strong uppercase">Project Logs</h2>
-                        <PulsedStripe height="2px" className="mt-4 w-full" />
+                    <div className="absolute w-full h-full bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900"></div>
+                    <div className="flex relative h-20 items-center justify-center">
+                        <h2 className="text-lg font-bold text-white text-neon-strong uppercase">Project Logs</h2>
                     </div>
+                    <PulsedStripe height="2px"></PulsedStripe>
                 </div>
 
                 <div className="max-h-[60vh] overflow-y-auto px-6 py-4 space-y-2">
