@@ -8,6 +8,7 @@ import {TaskAttachments} from "./TaskAttachments.tsx";
 import {TaskComments} from "./TaskComments.tsx";
 import {getComments, setTaskError} from "../slice/tasksSlice";
 import {format, formatDistanceToNow} from 'date-fns';
+import PulsedStripe from "../../../components/ui/PulsedStripe.tsx";
 
 interface TaskEditModalProps {
     card: Task;
@@ -54,61 +55,54 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-0 overflow-hidden animate-in fade-in duration-500 bg-black/60"
+            className="fixed inset-0 z-50 flex items-center justify-center p-0 animate-in fade-in duration-500 bg-black/60"
             onClick={onClose}>
             {/* Main container */}
             <div
-                className="w-full min-h-[90%] max-w-6xl bg-slate-900 border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl flex flex-col relative overflow-y-auto custom-scrollbar"
+                className="w-full max-h-[95%] max-w-6xl bg-slate-900 border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl flex flex-col relative overflow-hidden custom-scrollbar"
                 onClick={e => e.stopPropagation()}>
 
                 {/* 1. Cover */}
-                <div className="h-44 w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden border-b border-cyan-500/20">
-                    <div className="animate-progress-fast opacity-50"></div>
+                <div className="h-20 w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden">
 
                     {/* Header */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-4">
-                        <div className="space-y-3 w-full max-w-3xl px-4 flex flex-col items-center">
-
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full px-4 flex">
                             {/* TaskNumber */}
-                            <span className="text-[10px] font-black text-cyan-500/40 bg-cyan-500/5 px-3 py-1 rounded-full border border-cyan-500/10 tracking-[0.3em] uppercase">
-                Task Number #{currentTask.taskNumber}
-            </span>
-
+                            <span className="text-base whitespace-nowrap font-black text-cyan-500/40 bg-cyan-500/5 p-2 rounded-full border border-cyan-500/20 tracking-[0.3em] uppercase">
+                                Task #{currentTask.taskNumber}
+                            </span>
                             <input
                                 defaultValue={currentTask.title}
                                 onBlur={(e) => {
                                     const val = e.target.value.trim();
                                     if (val && val !== currentTask.title) patchTask({title: val});
                                 }}
-                                className="w-full bg-transparent text-4xl font-black text-white text-neon-strong outline-none transition-all uppercase tracking-tighter text-center"
+                                className="w-full bg-transparent text-xl font-black text-white text-neon-strong outline-none transition-all uppercase tracking-tighter text-center"
                             />
-
-                            <div className="flex items-center gap-3 justify-center text-cyan-500/40 ">
+                            <div className="flex whitespace-nowrap items-center gap-4 justify-center text-base text-cyan-500/40 ">
                                 CURRENT STATUS:
                                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
-                                <span className="text-cyan-400 text-sm font-black uppercase tracking-[0.2em]">
-                    {statusName}
-                </span>
+                                <span className="text-cyan-400 text-base font-black uppercase tracking-[0.2em]">
+                                        {statusName}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div className="px-10 pt-12 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-10">
-
+                <PulsedStripe height="2px"></PulsedStripe>
+                <div className="px-10 pt-12 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] overflow-y-auto gap-10">
                     {/* Left part */}
                     <div className="space-y-8">
-
                         {/* Markers and Members */}
                         <div className="flex flex-wrap gap-10">
-
                             {error && (
                                 <div className="w-full mb-4 animate-in fade-in slide-in-from-top-2 duration-300">
                                     <div className="bg-rose-500/10 border border-rose-500/50 rounded-xl px-4 py-2.5 flex items-center gap-3 shadow-[0_0_15px_rgba(244,63,94,0.2)]">
                                         <span className="text-rose-500 animate-pulse text-xs">⚠️</span>
                                         <span className="text-[10px] font-black text-rose-400 uppercase tracking-[0.1em]">
-                    System Alert // {error}
-                </span>
+                                            System Alert // {error}
+                                        </span>
                                     </div>
                                 </div>
                             )}
@@ -148,14 +142,13 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                         <span className="text-cyan-400 animate-twinkle">📅</span>
                                         <span
                                             className="text-cyan-100 text-[10px] font-black uppercase tracking-tighter">
-                {new Date(currentTask.dueDate).toLocaleString('en-US', {
-                    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
-                })}
-            </span>
+                                            {new Date(currentTask.dueDate).toLocaleString('en-US', {
+                                                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                                            })}
+                                        </span>
                                     </div>
                                 </div>
                             )}
-
                         </div>
 
                         {/* Description */}
@@ -221,28 +214,27 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                     <div className="flex items-center gap-2">
                                         <div className="w-1 h-1 rounded-full bg-cyan-500/20"></div>
                                         <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
-                    Initialized
-                </span>
+                                            Initialized
+                                        </span>
                                     </div>
                                     <span className="text-[10px] font-black uppercase tracking-tighter text-cyan-400/80">
-                {currentTask.createdAt
-                    ? format(new Date(currentTask.createdAt), 'MMM d, yyyy')
-                    : '---'}
-            </span>
+                                        {currentTask.createdAt
+                                        ? format(new Date(currentTask.createdAt), 'MMM d, yyyy')
+                                        : '---'}
+                                    </span>
                                 </div>
-
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2">
                                         <div className="w-1 h-1 rounded-full bg-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.4)]"></div>
                                         <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">
-                    Last Update
-                </span>
+                                            Last Update
+                                        </span>
                                     </div>
                                     <span className="text-[10px] font-black uppercase tracking-tighter text-cyan-400">
-                {currentTask.updatedAt
-                    ? formatDistanceToNow(new Date(currentTask.updatedAt), {addSuffix: true})
-                    : 'Just now'}
-            </span>
+                                        {currentTask.updatedAt
+                                        ? formatDistanceToNow(new Date(currentTask.updatedAt), {addSuffix: true})
+                                        : 'Just now'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
