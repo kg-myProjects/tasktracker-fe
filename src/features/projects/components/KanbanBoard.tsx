@@ -86,7 +86,7 @@ export default function KanbanBoard() {
     }
 
     return (
-        <div className="h-screen flex flex-col bg-transparent p-4 overflow-hidden">
+        <div className="h-screen flex flex-col bg-transparent border border-cyan-900/50 rounded-2xl p-4 overflow-hidden">
             <BoardHeader
                 title={project?.title}
                 searchQuery={searchQuery}

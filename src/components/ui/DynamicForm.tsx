@@ -1,7 +1,7 @@
 import {type FormikValues, useFormik} from "formik";
 import type {FormikHelpers} from 'formik';
 import * as Yup from "yup";
-import NeonButton from "./NeonButton";
+import NeonButton from "./buttons/NeonButton.tsx";
 import FormContainer from "./FormContainer";
 import type {FieldConfig} from "./types";
 import {getErrorMessage} from "../../utils/utils";

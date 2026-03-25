@@ -28,13 +28,13 @@ export const BoardHeader = ({ title, onAddStatus, onAddCollab, onOpenLogs,
                 onClick={onAddStatus}
                 className="px-4 py-2 bg-white/5 backdrop-blur-md rounded-xl border border-cyan-400/30 text-[10px] font-black uppercase hover:bg-cyan-400/10 hover:border-cyan-400 transition-all"
             >
-                + Status
+                Add Status
             </button>
             <button
                 onClick={onAddCollab}
                 className="px-4 py-2 bg-white/5 backdrop-blur-md rounded-xl border border-cyan-400/30 text-[10px] font-black uppercase hover:bg-cyan-400/10 hover:border-cyan-400 transition-all"
             >
-                + Invite
+                Invite User
             </button>
 
             <button
@@ -54,7 +54,7 @@ export const BoardHeader = ({ title, onAddStatus, onAddCollab, onOpenLogs,
                 type="text"
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="SEARCH SYSTEM.TASK..."
+                placeholder="SEARCH TASK..."
                 className="w-full bg-black/40 border border-cyan-400/30 rounded-xl py-2 pl-10 pr-4 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
             />
             {searchQuery && (

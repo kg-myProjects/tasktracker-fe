@@ -65,7 +65,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
 
     return (
         <div className="md:col-span-4 space-y-4 shrink-0 h-auto relative overflow-visible">
-            <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">Add to card</h4>
+            <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center justify-center gap-3">Add to task</h4>
 
             <div className="flex flex-col gap-3 relative z-30">
                 {actionButtons.map((btn) => (
@@ -73,7 +73,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                         <button
                             onClick={btn.action}
                             disabled={isUpdating}
-                            className="w-full text-left px-4 py-3 bg-cyan-500 text-white hover:bg-cyan-700 rounded-2xl text-[10px] font-black  flex items-center gap-3 transition-all group shadow-sm relative overflow-hidden"
+                            className="w-full text-left px-4 py-3 bg-cyan-500 text-white hover:bg-cyan-700 rounded-2xl text-[15px] font-black  flex items-center gap-3 transition-all group shadow-sm relative overflow-hidden"
                         >
                             {isUpdating ? (
                                 <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />

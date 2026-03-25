@@ -1,4 +1,4 @@
-import {type NeonButtonProps, sizeClasses, variantClasses} from "./types.ts";
+import {type NeonButtonProps, sizeClasses, variantClasses} from "../types.ts";
 
 const NeonButton = ({
                         children,

@@ -9,7 +9,7 @@ import {useState} from "react";
 import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 import { selectUser } from "../../auth/slice/authSlice";
 import {Link} from "react-router-dom";
-import NeonButton from "../../../components/ui/NeonButton.tsx";
+import NeonButton from "../../../components/ui/buttons/NeonButton.tsx";
 
 type ProjectFormProps = {
     onClose: () => void;

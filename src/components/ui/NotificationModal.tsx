@@ -1,4 +1,4 @@
-import NeonButton from "./NeonButton";
+import NeonButton from "./buttons/NeonButton.tsx";
 
 type NotificationModalProps = {
     title?: string;

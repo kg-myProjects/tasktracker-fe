@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 import {addComment, selectComments, deleteComment, updateComment, clearTaskError} from '../slice/tasksSlice';
-import NeonButton from '../../../components/ui/NeonButton';
+import NeonButton from '../../../components/ui/buttons/NeonButton.tsx';
 import {format} from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
@@ -54,7 +54,7 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({taskId}) => {
 
     return (
         <div className="mt-8 border-t border-cyan-500/20 pt-6">
-            <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">
+            <h4 className="mb-3 text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">
                 <svg xmlns="http://www.w3.org" className="h-4 w-4" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -96,7 +96,8 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({taskId}) => {
                         <div key={comment.id} className="flex gap-3 group relative">
                             <div className="flex-shrink-0">
                                 {comment.authorAvatarUrl ? (
-                                    <img src={comment.authorAvatarUrl} alt={comment.authorName}
+                                    <img src={`http://localhost:8080${comment.authorAvatarUrl}`}
+                                         alt={comment.authorName}
                                          className="h-8 w-8 rounded-lg border border-cyan-500/30 shadow-[0_0_5px_rgba(6,182,212,0.2)]"/>
                                 ) : (
                                     <div className="h-8 w-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-xs">
