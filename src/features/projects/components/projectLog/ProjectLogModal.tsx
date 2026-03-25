@@ -33,7 +33,7 @@ export const ProjectLogModal: React.FC<ProjectLogsModalProps> = ({isOpen, onClos
                 <div className="relative w-full">
                     <div className="absolute w-full h-full bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900"></div>
                     <div className="flex relative h-20 items-center justify-center">
-                        <h2 className="text-lg font-bold text-white text-neon-strong uppercase">Project Logs</h2>
+                        <h2 className="text-xl font-bold text-white text-neon-strong uppercase">Project Logs</h2>
                     </div>
                     <PulsedStripe height="2px"></PulsedStripe>
                 </div>

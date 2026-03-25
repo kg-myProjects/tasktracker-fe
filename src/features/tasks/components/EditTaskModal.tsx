@@ -63,30 +63,27 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                 onClick={e => e.stopPropagation()}>
 
                 {/* 1. Cover */}
-                <div className="h-[180px] w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden">
+                <div className="h-20 w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden">
 
                     {/* Header */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pt-4">
-                        <div className="space-y-3 w-full max-w-3xl px-4 flex flex-col items-center">
-
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full px-4 flex">
                             {/* TaskNumber */}
-                            <span className="text-[10px] font-black text-cyan-500/40 bg-cyan-500/5 px-3 py-1 rounded-full border border-cyan-500/10 tracking-[0.3em] uppercase">
-                Task Number #{currentTask.taskNumber}
-            </span>
-
+                            <span className="text-base whitespace-nowrap font-black text-cyan-500/40 bg-cyan-500/5 p-2 rounded-full border border-cyan-500/20 tracking-[0.3em] uppercase">
+                                Task #{currentTask.taskNumber}
+                            </span>
                             <input
                                 defaultValue={currentTask.title}
                                 onBlur={(e) => {
                                     const val = e.target.value.trim();
                                     if (val && val !== currentTask.title) patchTask({title: val});
                                 }}
-                                className="w-full bg-transparent text-4xl font-black text-white text-neon-strong outline-none transition-all uppercase tracking-tighter text-center"
+                                className="w-full bg-transparent text-xl font-black text-white text-neon-strong outline-none transition-all uppercase tracking-tighter text-center"
                             />
-
-                            <div className="flex items-center gap-3 justify-center text-cyan-500/40 ">
+                            <div className="flex whitespace-nowrap items-center gap-4 justify-center text-base text-cyan-500/40 ">
                                 CURRENT STATUS:
                                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
-                                <span className="text-cyan-400 text-sm font-black uppercase tracking-[0.2em]">
+                                <span className="text-cyan-400 text-base font-black uppercase tracking-[0.2em]">
                                         {statusName}
                                 </span>
                             </div>
