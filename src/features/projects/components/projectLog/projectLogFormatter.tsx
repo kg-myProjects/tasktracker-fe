@@ -20,13 +20,13 @@ export const getLogMessage = (
         case "CREATE":
             verb = "created";
             verbColor = "text-green-500";
-            restText = ` ${entity.toLowerCase()}: ${entityName}.`;
+            restText = ` ${entity.toLowerCase()}: ${entityName} ${formatCreateDeleteDiff(difference)}`;
             break;
 
         case "DELETE":
             verb = "deleted";
             verbColor = "text-red-500";
-            restText = ` ${entity.toLowerCase()}: ${entityName}.`;
+            restText = ` ${entity.toLowerCase()}: ${entityName} ${formatCreateDeleteDiff(difference)}`;
             break;
 
         case "MOVE":
@@ -75,7 +75,7 @@ export const getLogMessage = (
         <>
             <span className="font-medium">{displayUser}</span>{" "}
             <span className={`${verbColor} font-semibold`}>{verb}</span>
-            <span className="text-cyan-300">{restText}</span>
+            <span className="text-cyan-400">{restText}</span>
         </>
     );
 };
@@ -152,4 +152,15 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
     }
 
     return <span className="text-cyan-300">{diff}</span>;
+}
+
+function formatCreateDeleteDiff(diff?: string) {
+    if (!diff) return "";
+
+    if (diff.startsWith("createdIn=") || diff.startsWith("deletedFrom=")) {
+        const status = diff.split("=")[1];
+        return `in status: ${status}.`;
+    }
+
+    return "";
 }

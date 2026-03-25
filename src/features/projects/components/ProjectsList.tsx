@@ -10,11 +10,13 @@ import {
     updateProject,
     selectUpdateProjectErrorMessage,
 } from "../slice/projectsSlice";
-import NeonButton from "../../../components/ui/NeonButton";
+import NeonButton from "../../../components/ui/buttons/NeonButton.tsx";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
 import NotificationModal from "../../../components/ui/NotificationModal";
 import ProjectEditModal from "./ProjectEditModal.tsx";
 import type {EditProjectDto} from "../types";
+import MainButton from "../../../components/ui/buttons/MainButton.tsx";
+import ProjectForm from "./ProjectForm.tsx";
 
 export default function ProjectsList() {
     const dispatch = useAppDispatch();
@@ -25,6 +27,7 @@ export default function ProjectsList() {
     const [projectToEdit, setProjectToEdit] = useState<EditProjectDto | null>(null);
     const [projectToDelete, setProjectToDelete] = useState<{ id: string, title: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showForm, setShowForm] = useState<boolean>(false);
 
     useEffect(() => {
         dispatch(getMyProjects());
@@ -69,13 +72,19 @@ export default function ProjectsList() {
     };
     console.log("projectToEdit:", projectToEdit);
     return (
-        <section className="p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
-            <h2 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] mb-10 text-glow">
-                Projects
-            </h2>
+        <section className="flex-1 p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
+            <div className="flex items-center justify-between mb-10">
+                <h2 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] text-glow">
+                    Projects
+                </h2>
+
+                <MainButton onClick={() => setShowForm(true)}>
+                    New Project
+                </MainButton>
+            </div>
 
             <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 border border-cyan-900/50 rounded-2xl bg-transparent">
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 bg-transparent">
                 {projects?.map((project) => (
                     <div
                         key={project.id}
@@ -116,6 +125,14 @@ export default function ProjectsList() {
                     </div>
                 ))}
             </div>
+
+            {showForm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-black/50">
+                    <div className="w-full max-w-2xl px-4">
+                        <ProjectForm onClose={() => setShowForm(false)} />
+                    </div>
+                </div>
+            )}
 
             {/* ConfirmModal */}
             {projectToDelete && (

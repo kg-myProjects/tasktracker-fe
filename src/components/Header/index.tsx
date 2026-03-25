@@ -63,7 +63,7 @@ export default function Header() {
                         </Link>
 
                         <div
-                            className="flex items-center space-x-8 ml-6 min-w-[350px] flex-shrink-0 transition-all duration-300"
+                            className="flex items-center justify-end space-x-8 ml-6 min-w-[450px] flex-shrink-0"
                         >
                             {isInitialized ? (
                                 isAuthenticated ? (
@@ -106,7 +106,7 @@ export default function Header() {
                                 )
                             ) : (
                                 <>
-                                    <div className="h-5 w-24 bg-slate-950/90 rounded animate-pulse"></div>
+                                    <div className="h-10 w-24 bg-slate-950/90 rounded animate-pulse"></div>
                                     <div className="h-10 w-20 bg-slate-950/90 rounded animate-pulse"></div>
                                 </>
                             )}

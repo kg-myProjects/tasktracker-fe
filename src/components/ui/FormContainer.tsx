@@ -1,5 +1,5 @@
 import React from "react";
-import NeonButton from "./NeonButton";
+import NeonButton from "./buttons/NeonButton.tsx";
 
 type FormContainerProps = {
     title: string;

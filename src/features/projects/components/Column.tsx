@@ -4,6 +4,7 @@ import {clearStatusError, selectErrorMessage, updateTaskStatus,selectIsLoading a
 import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import type {SortableColumnProps} from "./SortableColumn.tsx";
 import NotificationModal from "../../../components/ui/NotificationModal.tsx";
+import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 
 export function Column({ status,
                            allStatusNames,
@@ -109,9 +110,7 @@ export function Column({ status,
                     )}
                 </div>
                 <div className="flex gap-2 shrink-0">
-                <button onClick={onAddTask} className="flex-1 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-400 text-white text-xs font-black rounded-lg shadow-[0_4px_15px_rgba(6,182,212,0.4)] hover:brightness-110 transition-all uppercase">
-                    + Add Task
-                </button>
+                    <MainButton onClick={onAddTask}>New Task</MainButton>
                     {canDelete && onDelete && (
                         <button
                             onClick={onDelete}
