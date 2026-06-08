@@ -221,7 +221,7 @@ export default function Profile() {
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
-                                src={avatarPreview || `${API_BASE}${avatarUrl}`}
+                                src={avatarPreview || `${API_BASE}${avatarUrl}?t=${Date.now()}`}
                                 alt="User_Avatar"
                                 className="w-full h-full object-cover"
                             />
