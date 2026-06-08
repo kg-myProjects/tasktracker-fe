@@ -12,6 +12,7 @@ import {
 import {selectIsAuthenticated, selectIsInitialized, setUser} from "../features/auth/slice/authSlice.ts";
 import type {UpdateUserPayloadDto} from "../features/user/types";
 import MainButton from "../components/ui/buttons/MainButton.tsx";
+import {API_BASE} from "../shared/config/api.ts";
 
 export default function Profile() {
     const dispatch = useAppDispatch();
@@ -220,7 +221,7 @@ export default function Profile() {
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
-                                src={avatarPreview || `http://localhost:8080${avatarUrl}`}
+                                src={avatarPreview || `${API_BASE}${avatarUrl}`}
                                 alt="User_Avatar"
                                 className="w-full h-full object-cover"
                             />
