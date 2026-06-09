@@ -2,7 +2,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import {logout, selectIsAuthenticated, selectIsInitialized, selectUser} from "../../features/auth/slice/authSlice.ts";
 import MainButton from "../ui/buttons/MainButton.tsx";
-import {API_BASE} from "../../shared/config/api.ts";
+import {API_URL} from "../../config/api.ts";
 
 export default function Header() {
     const dispatch = useAppDispatch();
@@ -75,7 +75,7 @@ export default function Header() {
                                             <div className="w-8 h-8 flex rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-xs text-white overflow-hidden">
                                                 {user?.avatarUrl ? (
                                                     <img
-                                                        src={`${API_BASE}${user.avatarUrl}?t=${Date.now()}`}
+                                                        src={`${API_URL}${user.avatarUrl}?t=${Date.now()}`}
                                                         alt="avatar"
                                                         className="w-full h-full object-cover"
                                                     />

@@ -12,7 +12,7 @@ import {
 import {selectIsAuthenticated, selectIsInitialized, setUser} from "../features/auth/slice/authSlice.ts";
 import type {UpdateUserPayloadDto} from "../features/user/types";
 import MainButton from "../components/ui/buttons/MainButton.tsx";
-import {API_BASE} from "../shared/config/api.ts";
+import {API_URL} from "../config/api.ts";
 
 export default function Profile() {
     const dispatch = useAppDispatch();
@@ -221,7 +221,7 @@ export default function Profile() {
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
-                                src={avatarPreview || `${API_BASE}${avatarUrl}?t=${Date.now()}`}
+                                src={avatarPreview || `${API_URL}${avatarUrl}?t=${Date.now()}`}
                                 alt="User_Avatar"
                                 className="w-full h-full object-cover"
                             />

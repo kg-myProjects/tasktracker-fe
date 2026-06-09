@@ -1,5 +1,6 @@
 import {getLogMessage} from "./projectLogFormatter.tsx";
 import type {ProjectLog} from "../../types";
+import {API_URL} from "../../../../config/api.ts";
 
 
 interface ProjectLogsItemProps {
@@ -12,7 +13,7 @@ const ProjectLogItem = ({log}: ProjectLogsItemProps) => {
             <div className="flex items-center gap-2">
                 {log.userAvatar ? (
                     <img
-                        src={`http://localhost:8080${log.userAvatar}`}
+                        src={`${API_URL}${log.userAvatar}`}
                         alt="avatar"
                         className="h-7 w-7 rounded-full object-cover"
                     />
