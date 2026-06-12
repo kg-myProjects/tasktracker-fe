@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "../../../app/hooks";
-import { selectIsLoading } from "../../statuses/slice/taskStatusSlice";
+import {useEffect, useRef, useState} from "react";
+import {useAppSelector} from "../../../app/hooks";
+import {selectIsLoading} from "../../statuses/slice/taskStatusSlice";
+import PulsedStripe from "../../../components/ui/PulsedStripe.tsx";
+import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 
 type Props = {
     isOpen: boolean;
@@ -36,61 +38,59 @@ export function CreateStatusModal({
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-96 text-black">
-                <h2 className="text-lg font-semibold mb-4">
-                    Новый статус
-                </h2>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+             onClick={onClose}>
+            <div className="bg-slate-900 w-96 text-white border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl"
+                 onClick={(e) => e.stopPropagation()}>
+                <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 rounded-xl">
+                    <h2
+                        className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
+                        Add task status
+                    </h2>
+                    <PulsedStripe height="2px"></PulsedStripe></div>
 
-                <input
-                    ref={inputRef}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Column title"
-                    className="w-full border rounded px-3 py-2 mb-3"
-                />
-
-                <label className="block text-sm text-gray-600 mb-1">
-                    Position (0 – {maxPosition})
-                </label>
-
-                <input
-                    type="number"
-                    min={0}
-                    max={maxPosition}
-                    value={position}
-                    onChange={(e) => setPosition(Number(e.target.value))}
-                    className="w-full border rounded px-3 py-2 mb-4"
-                />
-
-                <div className="flex justify-end gap-2">
-                    <button
-                        onClick={onClose}
-                        disabled={isLoading}
-                        className="px-3 py-1.5 border rounded"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isLoading || !name.trim()}
-                        className={`px-3 py-1.5 bg-cyan-400 text-white rounded flex items-center justify-center gap-2 transition-all ${
-                            isLoading ? "opacity-70 cursor-not-allowed" : "hover:bg-cyan-500"
-                        }`}
-                    >
-                        {isLoading ? (
-                            <>
-                                {/* Spinner */}
-                                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Creating...</span>
-                            </>
-                        ) : (
-                            "Create"
-                        )}
-                    </button>                </div>
+                <div className="p-4">
+                    <input
+                        ref={inputRef}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Status title"
+                        className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
+                    />
+                    <label className="block text-sm text-gray-600 mb-1">
+                        Status position (0 – {maxPosition})
+                    </label>
+                    <input
+                        type="number"
+                        min={0}
+                        max={maxPosition}
+                        value={position}
+                        onChange={(e) => setPosition(Number(e.target.value))}
+                        className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
+                    />
+                    <div className="flex justify-end gap-2">
+                        <MainButton
+                            variant="primary"
+                            disabled={isLoading || !name.trim()}
+                            onClick={handleSubmit}
+                            className="flex items-center justify-center gap-2"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                strokeWidth="4"/>
+                                        <path className="opacity-75" fill="currentColor"
+                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                    </svg>
+                                    Creating...
+                                </>
+                            ) : (
+                                "Create"
+                            )}
+                        </MainButton>
+                    </div>
+                </div>
             </div>
         </div>
     );
