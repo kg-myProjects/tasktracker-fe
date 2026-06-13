@@ -43,12 +43,11 @@ export function CreateStatusModal({
             <div className="bg-slate-900 w-96 text-white border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl"
                  onClick={(e) => e.stopPropagation()}>
                 <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 rounded-xl">
-                    <h2
-                        className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
+                    <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
                         Add task status
                     </h2>
-                    <PulsedStripe height="2px"></PulsedStripe></div>
-
+                    <PulsedStripe height="2px"></PulsedStripe>
+                </div>
                 <div className="p-4">
                     <input
                         ref={inputRef}
@@ -68,7 +67,7 @@ export function CreateStatusModal({
                         onChange={(e) => setPosition(Number(e.target.value))}
                         className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
                     />
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end">
                         <MainButton
                             variant="primary"
                             disabled={isLoading || !name.trim()}
