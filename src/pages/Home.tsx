@@ -38,8 +38,8 @@ export default function Home() {
 
   return (
     <>
-        <h2 className="text-cyan-300 text-2xl font-bold">Welcome to the Tracker App!</h2>
-        <h4 className="text-cyan-300 text-lg"> On this page, you can try creating columns for task statuses and adding task cards to them.</h4>
+        <h2 className="text-cyan-400 text-2xl font-bold">Welcome to the Tracker App!</h2>
+        <h4 className="text-cyan-400 text-lg"> On this page, you can try creating columns for task statuses and adding task cards to them.</h4>
         <h4 className="text-cyan-400 text-lg"> You can create a real project in the Projects tab. Good luck!</h4>
       <div className="flex flex-row gap-6 p-8 items-start">
         {columns.map((column) => (

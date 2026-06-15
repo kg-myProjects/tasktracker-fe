@@ -85,7 +85,7 @@ export function CreateStatusModal({
                                     Creating...
                                 </>
                             ) : (
-                                "Create"
+                                "Add"
                             )}
                         </MainButton>
                     </div>

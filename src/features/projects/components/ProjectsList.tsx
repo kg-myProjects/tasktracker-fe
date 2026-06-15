@@ -75,7 +75,7 @@ export default function ProjectsList() {
         <section className="flex-1 p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
             <div className="flex items-center justify-between mb-10">
                 <h2 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] text-glow">
-                    Projects
+                    My boards
                 </h2>
 
                 <MainButton onClick={() => setShowForm(true)}>
