@@ -3,8 +3,14 @@ import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
 import {logout, selectIsAuthenticated, selectIsInitialized, selectUser} from "../../features/auth/slice/authSlice.ts";
 import MainButton from "../ui/buttons/MainButton.tsx";
 import {API_URL} from "../../config/api.ts";
+import MainLogo from "./MainLogo.tsx";
+import {useState} from "react";
+import MobileMenu from "./MobileMenu.tsx";
 
 export default function Header() {
+
+    const [mobileOpen, setMobileOpen] = useState(false);
+
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
@@ -17,50 +23,28 @@ export default function Header() {
     }
 
     return (
-        <header className="w-full sticky top-0 z-50 px-6 py-6">
-            <div className="mx-auto max-w-7xl relative group">
-                <div className="relative z-10 flex items-center gap-10 px-8 py-4 rounded-2xl border border-cyan-400/50 bg-slate-950/90 backdrop-blur-2xl shadow-[0_5px_15px_rgba(0,0,0,0.8),0_0_25px_rgba(6,182,212,0.8)] transition-all duration-500 ease-in-out hover:shadow-[0_10px_80px_rgba(6,182,212,0.6)] origin-center">
+        <header className="w-full sticky top-0 z-50 px-2 py-6">
+            <div className="mx-auto max-w-7xl relative">
+                <div className="relative flex z-10 items-center gap-6 px-8 py-4 rounded-2xl border border-cyan-400/50 bg-slate-950/90 backdrop-blur-2xl shadow-[0_5px_15px_rgba(0,0,0,0.8),0_0_25px_rgba(6,182,212,0.8)] transition-all duration-500 ease-in-out hover:shadow-[0_10px_80px_rgba(6,182,212,0.6)] origin-center">
+                    {/* MAIN LOGO */}
                     <Link to="/" className="flex items-center">
-                        <div className="relative flex items-center justify-center w-20 h-20 transition-all duration-500 hover:scale-[1.20]">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
-                                 className="absolute animate-[spin_10s_linear_infinite]">
-                                <circle cx="12" cy="12" r="10" stroke="#22d3ee" strokeWidth="1" strokeDasharray="4 4" className="opacity-50"/>
-                            </svg>
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" className="relative drop-shadow-[0_0_8px_rgba(34,211,238,1)] transition-all duration-500">
-                                <circle cx="12" cy="12" r="8" stroke="#22d3ee" strokeWidth="2"/>
-                                <path d="M12 8V12M12 12H16M12 12V16M12 12H8" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round"/>
-                                <circle cx="12" cy="12" r="2" fill="white" className="animate-pulse"/>
-                            </svg>
-                        </div>
-                        <span className="text-4xl tracking-tighter drop-shadow-[0_0_10px_rgba(6,182,212,1)] transition-all duration-500 hover:scale-[1.20] flex items-baseline">
-                            <span className="text-white font-black tracking-wider logo-wave-text transition-all duration-500">
-                                Tracker
-                            </span>
-                            <span className="text-cyan-400 font-black hover:text-white transition-all duration-500 ml-1">
-                                App
-                            </span>
-                        </span>
+                        <MainLogo />
                     </Link>
-
+                    {/* NAVIGATION */}
                     <nav className="flex items-center w-full gap-10">
-                        <Link to="/"
-                            className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
-                        >
-                            Home
-                        </Link>
                         <Link to="/about"
-                            className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
+                            className="hidden md:block text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out"
                         >
                             About
                         </Link>
                         {isAuthenticated && (
                             <Link to="/projects"
-                                className="text-sm font-bold text-white hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] transition-all duration-300"
+                                className="hidden md:block text-sm font-bold text-white whitespace-nowrap hover:text-cyan-400 hover:scale-[1.20] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] transition-all duration-300"
                             >
                                 My boards
                             </Link>
                         )}
-                        <div className="flex items-center justify-end gap-6 ml-auto min-w-[350px] flex-shrink-0">
+                        <div className="flex items-center justify-end gap-3 md:gap-6 ml-auto min-w-fit md:min-w-[350px] flex-shrink-0">
                             {isInitialized ? (
                                 isAuthenticated ? (
                                     <>
@@ -79,9 +63,17 @@ export default function Header() {
                                                 )}
                                             </div>
                                         </Link>
-                                        <MainButton onClick={handleLogout}>
-                                            Logout
-                                        </MainButton>
+                                        <div className="hidden md:block">
+                                            <MainButton onClick={handleLogout}>
+                                                Logout
+                                            </MainButton>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setMobileOpen(true)}
+                                            className="md:hidden w-10 h-10 flex items-center justify-center rounded-full text-xl border-2 border-cyan-500 text-white hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:scale-[1.20] transition-all duration-300 ease-in-out">
+                                            ☰
+                                        </button>
                                     </>
                                 ) : (
                                     <>
@@ -90,23 +82,26 @@ export default function Header() {
                                         >
                                             Sign up
                                         </Link>
-                                        <Link to="/login"
-                                            className="rounded-xl bg-cyan-500 border border-cyan-300/50 px-6 py-2.5 text-sm font-black text-white shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:scale-[1.35] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)] hover:text-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all duration-300 ease-in-out"
-                                        >
+                                        <MainButton to="/login">
                                             Sign in
-                                        </Link>
+                                        </MainButton>
                                     </>
                                 )
                             ) : (
                                 <>
-                                    <div className="h-10 w-20 bg-slate-950/90 rounded "></div>
-                                    <div className="h-10 w-20 bg-slate-950/90 rounded animate-pulse"></div>
+                                    <div className="h-10 w-20 bg-slate-950/90 rounded"></div>
+                                    <div className="h-10 w-20 bg-slate-950/90 rounded"></div>
                                 </>
                             )}
                         </div>
                     </nav>
                 </div>
             </div>
+            {/* MOBILE SCREEN MENU */}
+            <MobileMenu
+                open={mobileOpen}
+                onClose={() => setMobileOpen(false)}
+            />
         </header>
     );
 }
