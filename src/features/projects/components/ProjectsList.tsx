@@ -79,7 +79,7 @@ export default function ProjectsList() {
                 </h2>
 
                 <MainButton onClick={() => setShowForm(true)}>
-                    New Project
+                    New Board
                 </MainButton>
             </div>
 
@@ -88,7 +88,7 @@ export default function ProjectsList() {
                 {projects?.map((project) => (
                     <div
                         key={project.id}
-                        className="group relative bg-black/40 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
+                        className="group relative bg-black/60 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
                     >
                         <Link to={`/project/${project.id}`} className="absolute inset-0 z-10"
                               aria-label={`Open ${project.title}`}/>
@@ -127,17 +127,13 @@ export default function ProjectsList() {
             </div>
 
             {showForm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-black/50">
-                    <div className="w-full max-w-2xl px-4">
-                        <ProjectForm onClose={() => setShowForm(false)} />
-                    </div>
-                </div>
+                <ProjectForm onClose={() => setShowForm(false)} />
             )}
 
             {/* ConfirmModal */}
             {projectToDelete && (
                 <ConfirmModal
-                    title="Delete project?"
+                    title="Delete board?"
                     message={`Are you sure you want to delete "${projectToDelete.title}"? All data will be wiped from the grid.`}
                     confirmText={isDeleting ? "Deleting..." : "Delete"}
                     cancelText="Cancel"

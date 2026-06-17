@@ -21,7 +21,7 @@ const ConfirmModal = ({
                           isLoading = false,
                       }: ConfirmModalProps) => {
     const modalContent = (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center animate-in fade-in duration-300 bg-black/60">
             <div className="absolute inset-0 bg-transparent" onClick={onCancel} />
 
             <div className="relative w-full max-w-md rounded-xl border border-cyan-400/30 bg-black p-6 shadow-[0_0_20px_rgba(34,211,238,0.2)] animate-in zoom-in-95 duration-200">
