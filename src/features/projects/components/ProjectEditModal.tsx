@@ -1,7 +1,15 @@
-import { createPortal } from "react-dom";
+import {createPortal} from "react-dom";
 import * as Yup from "yup";
 import DynamicForm from "../../../components/ui/DynamicForm";
 import type {EditProjectDto} from "../types";
+import {
+    PROJECT_DESC_MAX,
+    PROJECT_DESC_MIN,
+    PROJECT_TITLE_MAX,
+    PROJECT_TITLE_MIN,
+    PROJECT_TITLE_REGEX
+} from "../constants/projectValidation.ts";
+import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 
 type ProjectEditModalProps = {
     project: EditProjectDto;
@@ -11,17 +19,19 @@ type ProjectEditModalProps = {
     errorMessage?: string;
 };
 
-const NAME_REGEX = /^[A-Z][a-zA-Z0-9 ]{2,49}$/;
-
 const validationSchema = Yup.object({
     title: Yup.string()
         .required("Title is required")
+        .min(PROJECT_TITLE_MIN, `Minimum ${PROJECT_TITLE_MIN} characters`)
+        .max(PROJECT_TITLE_MAX, `Maximum ${PROJECT_TITLE_MAX} characters`)
         .matches(
-            NAME_REGEX,
-            "Project title should be at least 3 to 50   characters long and start with a capital letter. Special characters cannot be used"
+            PROJECT_TITLE_REGEX,
+            "Board title must be 3–50 characters and start with a letter."
         ),
     description: Yup.string()
-        .required("Description is required"),
+        .required("Description is required")
+        .min(PROJECT_DESC_MIN, `Minimum ${PROJECT_DESC_MIN} characters`)
+        .max(PROJECT_DESC_MAX, `Maximum ${PROJECT_DESC_MAX} characters`),
 });
 
 export default function ProjectEditModal({
@@ -31,36 +41,39 @@ export default function ProjectEditModal({
                                              isLoading,
                                              errorMessage,
                                          }: ProjectEditModalProps) {
+    usePageTitle("TrackerApp | Edit Board");
     return createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50">
-            <DynamicForm
-                title="Edit Project"
-                description="Update project details"
-                fields={[
-                    {
-                        name: "title",
-                        label: "Project Title",
-                        placeholder: "Enter project title",
-                    },
-                    {
-                        name: "description",
-                        label: "Project Description",
-                        type: "textarea",
-                        placeholder: "Enter project description",
-                        rows: 4,
-                    },
-                ]}
-                initialValues={{
-                    title: project.title,
-                    description: project.description,
-                }}
-                validationSchema={validationSchema}
-                onSubmit={onSubmit}
-                onClose={onClose}
-                submitText="Save Changes"
-                isLoading={isLoading}
-                errorMessage={errorMessage}
-            />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="w-full max-w-md">
+                <DynamicForm
+                    title="Edit Board"
+                    description="Update board title and description"
+                    fields={[
+                        {
+                            name: "title",
+                            label: "Board Title",
+                            placeholder: "Enter board title",
+                        },
+                        {
+                            name: "description",
+                            label: "Board Description",
+                            type: "textarea",
+                            placeholder: "Enter board description",
+                            rows: 4,
+                        },
+                    ]}
+                    initialValues={{
+                        title: project.title,
+                        description: project.description,
+                    }}
+                    validationSchema={validationSchema}
+                    onSubmit={onSubmit}
+                    onClose={onClose}
+                    submitText="Save Changes"
+                    isLoading={isLoading}
+                    errorMessage={errorMessage}
+                />
+            </div>
         </div>,
         document.body
     );

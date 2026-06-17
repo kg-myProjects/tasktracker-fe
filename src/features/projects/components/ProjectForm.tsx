@@ -7,18 +7,23 @@ import {
 } from "../slice/projectsSlice";
 import {useState} from "react";
 import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
-import { selectUser } from "../../auth/slice/authSlice";
+import {selectUser} from "../../auth/slice/authSlice";
 import {Link} from "react-router-dom";
 import NeonButton from "../../../components/ui/buttons/NeonButton.tsx";
+import {
+    PROJECT_DESC_MAX,
+    PROJECT_DESC_MIN,
+    PROJECT_TITLE_MAX,
+    PROJECT_TITLE_MIN,
+    PROJECT_TITLE_REGEX
+} from "../constants/projectValidation.ts";
 
 type ProjectFormProps = {
     onClose: () => void;
 };
 
-const NAME_REGEX = /^[A-Z][a-zA-Z0-9 ]{2,49}$/;
-
-const ProjectForm = ({ onClose }: ProjectFormProps) => {
-    usePageTitle("TrackerApp | New project");
+const ProjectForm = ({onClose}: ProjectFormProps) => {
+    usePageTitle("TrackerApp | New Board");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const dispatch = useAppDispatch();
     const projectError = useAppSelector(selectCreateProjectErrorMessage);
@@ -33,18 +38,21 @@ const ProjectForm = ({ onClose }: ProjectFormProps) => {
             onClose();
         } catch (error) {
             console.error("Failed to create project:", error);
-        }finally {
+        } finally {
             setIsSubmitting(false);
         }
 
     };
     if (!currentUser) {
         return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
-                <div className="w-full max-w-md rounded-2xl border border-rose-500/30 bg-slate-900 p-8 shadow-[0_0_50px_rgba(244,63,94,0.1)] text-center">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+                <div
+                    className="w-full max-w-md rounded-2xl border border-rose-500/30 bg-slate-900 p-8 shadow-[0_0_50px_rgba(244,63,94,0.1)] text-center">
                     <div className="mb-4 flex justify-center text-rose-500">
-                        <svg xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                        <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                             className="w-12 h-12">
+                            <path strokeLinecap="round" strokeLinejoin="round"
+                                  d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/>
                         </svg>
                     </div>
 
@@ -77,29 +85,44 @@ const ProjectForm = ({ onClose }: ProjectFormProps) => {
     }
 
     return (
-        <DynamicForm
-            title="New Project"
-            description="Enter the project title and description"
-            initialValues={{ title: "", description: "" }}
-            validationSchema={Yup.object({
-                title: Yup.string()
-                    .required("Title is required")
-                    .matches(
-                        NAME_REGEX,
-                        "Project title should be at least 3 to 50   characters long and start with a capital letter. Special characters cannot be used"
-                    ),
-                description: Yup.string().required("Description is required"),
-            })}
-            fields={[
-                { name: "title", label: "Title", placeholder: "New Website Development" },
-                { name: "description", label: "Description", type: "textarea", placeholder: "A Project to develop a new company website", rows: 4 },
-            ]}
-            onSubmit={handleSubmit}
-            isLoading={isSubmitting}
-            onClose={onClose}
-            submitText="Create Project"
-            errorMessage={projectError || undefined}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="w-full max-w-md">
+                <DynamicForm
+                    title="New Board"
+                    description="Provide board title and description"
+                    initialValues={{title: "", description: ""}}
+                    validationSchema={Yup.object({
+                        title: Yup.string()
+                            .required("Title is required")
+                            .min(PROJECT_TITLE_MIN, `Minimum ${PROJECT_TITLE_MIN} characters`)
+                            .max(PROJECT_TITLE_MAX, `Maximum ${PROJECT_TITLE_MAX} characters`)
+                            .matches(
+                                PROJECT_TITLE_REGEX,
+                                "Board title must be 3–50 characters and start with a letter."
+                            ),
+                        description: Yup.string()
+                            .required("Description is required")
+                            .min(PROJECT_DESC_MIN, `Minimum ${PROJECT_DESC_MIN} characters`)
+                            .max(PROJECT_DESC_MAX, `Maximum ${PROJECT_DESC_MAX} characters`),
+                    })}
+                    fields={[
+                        {name: "title", label: "Title", placeholder: "Example: Development Board"},
+                        {
+                            name: "description",
+                            label: "Description",
+                            type: "textarea",
+                            placeholder: "Example: Tasks and workflow for developing a company website",
+                            rows: 4
+                        },
+                    ]}
+                    onSubmit={handleSubmit}
+                    isLoading={isSubmitting}
+                    onClose={onClose}
+                    submitText="Create Board"
+                    errorMessage={projectError || undefined}
+                />
+            </div>
+        </div>
     );
 };
 
