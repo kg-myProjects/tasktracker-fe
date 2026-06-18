@@ -13,7 +13,7 @@ type MainButtonProps = {
 export default function MainButton({children, variant = "primary", width, className = "", to, ...props}: MainButtonProps) {
 
     const baseStyles =
-        "rounded-xl px-6 py-2.5 text-sm font-black text-white transition-all duration-300 ease-in-out hover:scale-[1.20]";
+        "rounded-xl px-4 py-2.5 text-sm font-black text-white transition-all duration-300 ease-in-out hover:scale-[1.20]";
 
     const variantStyles = {
         primary:
