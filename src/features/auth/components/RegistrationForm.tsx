@@ -62,7 +62,7 @@ const RegistrationForm = () => {
         <div className="min-h-screen flex items-start justify-center p-4">
             <div className="w-full max-w-md">
                 <DynamicForm
-                    title="Create Account"
+                    title="Sign Up"
                     description="Enter your email and password to register"
                     fields={fields}
                     initialValues={initialValues}
