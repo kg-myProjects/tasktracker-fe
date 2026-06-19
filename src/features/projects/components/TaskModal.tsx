@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useAppSelector } from "../../../app/hooks";
-import { selectIsLoading } from "../../tasks/slice/tasksSlice";
+import PulsedStripe from "../../../components/ui/PulsedStripe.tsx";
+import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 
 export function TaskModal({
                               isOpen,
@@ -17,7 +17,6 @@ export function TaskModal({
     const [description, setDescription] = useState("");
     const [error, setError] = useState("");
     const titleRef = useRef<HTMLInputElement>(null);
-    const isLoading = useAppSelector(selectIsLoading);
 
     // Используем useCallback, чтобы handleClose не пересоздавалась
     const handleClose = useCallback(() => {
@@ -62,56 +61,40 @@ export function TaskModal({
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 bg-opacity-40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-96 text-black shadow-lg">
-                <h2 className="text-lg font-semibold mb-4">Add Task to {statusName}</h2>
-                <input
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+             onClick={handleClose}>
+            <div className="bg-slate-900 w-96 text-white border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl"
+                 onClick={(e) => e.stopPropagation()}>
+                <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 rounded-xl">
+                    <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">Add Task to {statusName}</h2>
+                    <PulsedStripe height="2px"></PulsedStripe>
+                </div>
+                <div className="p-4">
+                    <input
                     ref={titleRef}
                     type="text"
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className={`w-full px-2 py-1 text-sm text-[#0f172a] font-bold focus:outline-none bg-transparent placeholder:text-slate-400 ${
-                        error ? "border-red-500" : "border-gray-300"
+                    className={`w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl ${
+                        error ? "border-red-500" : "border-cyan-500/20"
                     }`}
                 />
-                <textarea
-                    placeholder="Description (optional, max 200 chars)"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className={`w-full px-2 py-1 text-sm text-[#0f172a] font-bold focus:outline-none bg-transparent placeholder:text-slate-400 ${
-                        error && description.length > 200 ? "border-red-500" : "border-gray-300"
-                    }`}
-                />
-                {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-                <div className="flex justify-end gap-2">
-                    <button
-                        onClick={handleClose}
-                        disabled={isLoading}
-                        className="px-3 py-1 rounded border hover:bg-gray-100 transition"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                        className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-400 text-white text-xs font-black rounded-lg shadow-[0_4px_15px_rgba(6,182,212,0.4)] hover:brightness-110 transition-all uppercase ${
-                            isLoading ? "opacity-70 cursor-not-allowed" : ""
+                    <textarea
+                        placeholder="Description (optional, max 200 chars)"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className={`w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl ${
+                            error && description.length > 200 ? "border-red-500" : "border-cyan-500/20"
                         }`}
-                    >
-                        {isLoading ? (
-                            <>
-                                {/* Spinner */}
-                                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Creating...</span>
-                            </>
-                        ) : (
-                            "Create"
-                        )}
-                    </button>                </div>
+                    />
+                    {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+                    <div className="flex justify-end">
+                        <MainButton onClick={handleSubmit}>
+                            Add
+                        </MainButton>
+                    </div>
+                </div>
             </div>
         </div>
     );
