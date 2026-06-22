@@ -162,18 +162,18 @@ export default function Profile() {
     }
 
     return (
-        <section className="p-8 bg-transparent border border-cyan-900/50 rounded-2xl">
-            <h1 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] mb-6 text-glow">
+        <section className="p-4 md:p-8 bg-transparent border border-cyan-900/50 rounded-2xl">
+            <h1 className="text-cyan-300 text-xl md:text-3xl font-black uppercase tracking-[0.2em] mb-6 text-glow">
                 User Profile
             </h1>
 
             {/* E-mail / Login */}
-            <div className="flex items-center gap-4 mb-6">
-                <div className="font-bold text-cyan-300 whitespace-nowrap">
+            <div className="flex items-baseline gap-2 md:gap-4 mb-6">
+                <div className="text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">
                     E-mail / Login:
                 </div>
 
-                <div className="flex-1 flex items-center gap-4">
+                <div className="flex-1 flex flex-col md:flex-row items-center gap-4">
                     {isEditingEmail ? (
                         <>
                             <input
@@ -213,11 +213,11 @@ export default function Profile() {
 
             <hr className="border-cyan-900/50 mb-7"/>
 
-            <div className="flex gap-20">
+            <div className="flex gap-2 md:gap-20">
                 {/* Avatar */}
                 <div className="flex flex-col items-center">
                     <div
-                        className="w-32 h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
+                        className="w-16 h-16 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
@@ -250,7 +250,7 @@ export default function Profile() {
                         </div>
                     ) : (
                         <div className="mt-5">
-                            <MainButton width={220} onClick={() => {
+                            <MainButton width={220} className={"hidden md:block"} onClick={() => {
                                 setErrorMessage("");
                                 document.getElementById("avatarInput")?.click()
                             }}
@@ -270,9 +270,9 @@ export default function Profile() {
 
                 {/* Info */}
                 <div className="flex-1 flex flex-col gap-10">
-                    <div className="flex gap-6">
+                    <div className="flex flex-col md:flex-row gap-6">
                         {/* Left info block */}
-                        <div className="flex-1 space-y-4">
+                        <div className="flex-1 space-y-2 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
                                 <div key={label as string} className="flex items-center gap-2">
                                     <label className="w-32 font-bold text-cyan-300">{label}:</label>
@@ -287,7 +287,7 @@ export default function Profile() {
                                         />
                                     ) : (
                                         <span
-                                            className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                            className="flex-1 px-1 py-[1px] md:py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}

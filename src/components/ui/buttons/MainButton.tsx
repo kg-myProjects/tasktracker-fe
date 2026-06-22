@@ -8,6 +8,7 @@ type MainButtonProps = {
     width?: number;
     to?: string;
     children: React.ReactNode;
+    className?: string;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function MainButton({children, variant = "primary", width, className = "", to, ...props}: MainButtonProps) {
