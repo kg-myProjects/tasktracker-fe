@@ -173,23 +173,23 @@ export default function Profile() {
                     E-mail / Login:
                 </div>
 
-                <div className="flex-1 flex flex-col md:flex-row items-center gap-4">
+                <div className="flex-1 flex flex-col md:flex-row items-end md:items-center gap-2">
                     {isEditingEmail ? (
                         <>
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="flex-1 p-1 rounded border border-cyan-300 bg-slate-800 text-white text-base"
+                                className="flex-1 p-1 min-w-[250px] rounded border border-cyan-300 bg-slate-800 text-white text-base"
                             />
-                            <div className="flex w-[220px] gap-4">
-                                <MainButton onClick={() => {
+                            <div className="flex gap-2">
+                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" onClick={() => {
                                     alert("email_saved!");
                                     setIsEditingEmail(false);
                                 }}>
                                     Save
                                 </MainButton>
-                                <MainButton variant="danger" onClick={() => {
+                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" variant="danger" onClick={() => {
                                     setIsEditingEmail(false);
                                     setEmail(user.email || "");
                                 }}>
@@ -200,10 +200,10 @@ export default function Profile() {
                     ) : (
                         <>
                             <div
-                                className="flex-1 px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                className="flex-1 min-w-[250px] px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
                                 {email}
                             </div>
-                            <MainButton width={220} onClick={() => setIsEditingEmail(true)}>
+                            <MainButton className="px-[5px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm w-26 md:w-[190px]" onClick={() => setIsEditingEmail(true)}>
                                 Edit E-mail
                             </MainButton>
                         </>
@@ -215,9 +215,9 @@ export default function Profile() {
 
             <div className="flex gap-2 md:gap-20">
                 {/* Avatar */}
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col w-[125px] md:w-[180px] items-center">
                     <div
-                        className="w-16 h-16 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
+                        className="w-22 h-22 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
@@ -240,17 +240,17 @@ export default function Profile() {
                     />
 
                     {isEditingAvatar ? (
-                        <div className="flex mt-5 gap-4 w-[220px] justify-center">
-                            <MainButton onClick={handleSaveAvatarUpdate}>
+                        <div className="flex flex-col md:flex-row mt-5 gap-2 w-[125px] md:w-[180px] justify-center">
+                            <MainButton className="py-[8px] md:py-2.5 text-[11px] md:text-sm" onClick={handleSaveAvatarUpdate}>
                                 Save
                             </MainButton>
-                            <MainButton variant="danger" onClick={handleCancelAvatarUpdate}>
+                            <MainButton className="py-[8px] md:py-2.5 text-[11px] md:text-sm" variant="danger" onClick={handleCancelAvatarUpdate}>
                                 Cancel
                             </MainButton>
                         </div>
                     ) : (
                         <div className="mt-5">
-                            <MainButton width={220} className={"hidden md:block"} onClick={() => {
+                            <MainButton className="py-[8px] md:py-2.5 text-[11px] md:text-sm" onClick={() => {
                                 setErrorMessage("");
                                 document.getElementById("avatarInput")?.click()
                             }}
@@ -262,7 +262,7 @@ export default function Profile() {
                     {/* Avatar error message */}
                     {errorMessage && (
                         <div
-                            className="mt-3 w-full max-w-[220px] text-red-500 text-sm break-words text-center overflow-hidden">
+                            className="mt-3 w-full text-red-500 text-xs md:text-sm break-words text-center overflow-hidden">
                             {errorMessage}
                         </div>
                     )}
@@ -272,10 +272,10 @@ export default function Profile() {
                 <div className="flex-1 flex flex-col gap-10">
                     <div className="flex flex-col md:flex-row gap-6">
                         {/* Left info block */}
-                        <div className="flex-1 space-y-2 md:space-y-4">
+                        <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
                                 <div key={label as string} className="flex items-center gap-2">
-                                    <label className="w-32 font-bold text-cyan-300">{label}:</label>
+                                    <label className="w-18 md:w-32 text-xs md:text-base font-bold text-cyan-300">{label}:</label>
                                     {isEditingProfile ? (
                                         <input
                                             type="text"
@@ -283,11 +283,11 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="flex-1 p-1 rounded border border-cyan-300 bg-slate-800 text-white"
+                                            className="flex-1 w-18 md:w-full p-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
-                                            className="flex-1 px-1 py-[1px] md:py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                            className="flex-1 px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}
@@ -297,15 +297,15 @@ export default function Profile() {
 
                         {/* Right about block */}
                         <div className="flex-1 flex flex-col">
-                            <label className="font-bold text-cyan-300 mb-2">About:</label>
+                            <label className="text-xs md:text-base font-bold text-cyan-300 mb-2">About:</label>
                             {isEditingProfile ? (
                                 <textarea
                                     value={about}
                                     onChange={(e) => setAbout(e.target.value)}
-                                    className="flex-1 p-2 rounded border border-cyan-300 bg-slate-800 text-white resize-none"
+                                    className="flex-1 p-2 min-h-[180px] rounded border border-cyan-300 bg-slate-800 text-white resize-none"
                                 />
                             ) : (
-                                <p className="flex-1 p-2 text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
+                                <p className="flex-1 p-2 min-h-[180px] text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
                             )}
                         </div>
                     </div>
@@ -313,16 +313,16 @@ export default function Profile() {
                     {/* Bottom buttons */}
                     <div className="mt-4 flex justify-end">
                         {isEditingProfile ? (
-                            <div className="w-[220px] flex gap-4">
-                                <MainButton onClick={handleSaveProfileChanges}>
+                            <div className="flex gap-2">
+                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" onClick={handleSaveProfileChanges}>
                                     Save
                                 </MainButton>
-                                <MainButton variant="danger" onClick={handleCancelProfileChanges}>
+                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" variant="danger" onClick={handleCancelProfileChanges}>
                                     Cancel
                                 </MainButton>
                             </div>
                         ) : (
-                            <MainButton width={220} onClick={() => setIsEditingProfile(true)}>
+                            <MainButton className="px-[5px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm w-26 md:w-[190px]" onClick={() => setIsEditingProfile(true)}>
                                 Edit Profile
                             </MainButton>
                         )}
