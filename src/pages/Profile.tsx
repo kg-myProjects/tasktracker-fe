@@ -287,7 +287,7 @@ export default function Profile() {
                                         />
                                     ) : (
                                         <span
-                                            className="flex-1 px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
+                                            className="flex-1 w-18 md:w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}
