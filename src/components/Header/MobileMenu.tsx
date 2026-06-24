@@ -36,4 +36,4 @@ export default function MobileMenu({open, onClose}: Props) {
             </div>
         </div>
     );
-}
+};
