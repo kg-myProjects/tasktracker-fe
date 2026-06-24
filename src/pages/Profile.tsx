@@ -183,13 +183,13 @@ export default function Profile() {
                                 className="flex-1 p-1 min-w-[250px] rounded border border-cyan-300 bg-slate-800 text-white text-base"
                             />
                             <div className="flex gap-2">
-                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" onClick={() => {
+                                <MainButton size="compact" onClick={() => {
                                     alert("email_saved!");
                                     setIsEditingEmail(false);
                                 }}>
                                     Save
                                 </MainButton>
-                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" variant="danger" onClick={() => {
+                                <MainButton size="compact" variant="danger" onClick={() => {
                                     setIsEditingEmail(false);
                                     setEmail(user.email || "");
                                 }}>
@@ -203,7 +203,7 @@ export default function Profile() {
                                 className="flex-1 min-w-[250px] px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
                                 {email}
                             </div>
-                            <MainButton className="px-[5px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm w-26 md:w-[190px]" onClick={() => setIsEditingEmail(true)}>
+                            <MainButton size="compact" className="w-26 md:w-[190px]" onClick={() => setIsEditingEmail(true)}>
                                 Edit E-mail
                             </MainButton>
                         </>
@@ -240,17 +240,17 @@ export default function Profile() {
                     />
 
                     {isEditingAvatar ? (
-                        <div className="flex flex-col md:flex-row mt-5 gap-2 w-[125px] md:w-[180px] justify-center">
-                            <MainButton className="py-[8px] md:py-2.5 text-[11px] md:text-sm" onClick={handleSaveAvatarUpdate}>
+                        <div className="flex flex-col md:flex-row mt-5 gap-2  justify-center">
+                            <MainButton size="compact" onClick={handleSaveAvatarUpdate}>
                                 Save
                             </MainButton>
-                            <MainButton className="py-[8px] md:py-2.5 text-[11px] md:text-sm" variant="danger" onClick={handleCancelAvatarUpdate}>
+                            <MainButton size="compact" variant="danger" onClick={handleCancelAvatarUpdate}>
                                 Cancel
                             </MainButton>
                         </div>
                     ) : (
                         <div className="mt-5">
-                            <MainButton className="py-[8px] md:py-2.5 text-[11px] md:text-sm" onClick={() => {
+                            <MainButton size="compact" onClick={() => {
                                 setErrorMessage("");
                                 document.getElementById("avatarInput")?.click()
                             }}
@@ -269,8 +269,8 @@ export default function Profile() {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 flex flex-col gap-10">
-                    <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1 flex flex-col gap-1">
+                    <div className="flex flex-col md:flex-row gap-4">
                         {/* Left info block */}
                         <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
@@ -302,27 +302,27 @@ export default function Profile() {
                                 <textarea
                                     value={about}
                                     onChange={(e) => setAbout(e.target.value)}
-                                    className="flex-1 p-2 min-h-[180px] rounded border border-cyan-300 bg-slate-800 text-white resize-none"
+                                    className="flex-1 p-2 min-h-[120px] rounded border border-cyan-300 bg-slate-800 text-white resize-none"
                                 />
                             ) : (
-                                <p className="flex-1 p-2 min-h-[180px] text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
+                                <p className="flex-1 p-2 min-h-[120px] text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
                             )}
                         </div>
                     </div>
 
                     {/* Bottom buttons */}
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-2 flex justify-end">
                         {isEditingProfile ? (
                             <div className="flex gap-2">
-                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" onClick={handleSaveProfileChanges}>
+                                <MainButton size="compact" onClick={handleSaveProfileChanges}>
                                     Save
                                 </MainButton>
-                                <MainButton className="px-[15px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm" variant="danger" onClick={handleCancelProfileChanges}>
+                                <MainButton variant="danger" size="compact" onClick={handleCancelProfileChanges}>
                                     Cancel
                                 </MainButton>
                             </div>
                         ) : (
-                            <MainButton className="px-[5px] py-[8px] md:px-4 md:py-2.5 text-[11px] md:text-sm w-26 md:w-[190px]" onClick={() => setIsEditingProfile(true)}>
+                            <MainButton size="compact" className="w-26 md:w-[190px]" onClick={() => setIsEditingProfile(true)}>
                                 Edit Profile
                             </MainButton>
                         )}
