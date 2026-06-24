@@ -180,7 +180,7 @@ export default function Profile() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="flex-1 px-1 md:py-1 py-[6px] w-full rounded border border-cyan-300 bg-slate-800 text-white text-base"
+                                className="flex-1 px-1 md:py-1 py-[5px] w-full rounded border border-cyan-300 bg-slate-800 text-white text-base"
                             />
                             <div className="flex gap-2">
                                 <MainButton size="compact" onClick={() => {
