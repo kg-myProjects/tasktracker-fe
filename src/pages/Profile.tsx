@@ -213,9 +213,9 @@ export default function Profile() {
 
             <hr className="border-cyan-900/50 mb-5"/>
 
-            <div className="flex gap-2 md:gap-20">
+            <div className="flex gap-4 md:gap-20">
                 {/* Avatar */}
-                <div className="flex flex-col w-[125px] md:w-[180px] items-center">
+                <div className="flex flex-col w-[130px] md:w-[180px] items-center">
                     <div
                         className="w-22 h-22 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
                     >
