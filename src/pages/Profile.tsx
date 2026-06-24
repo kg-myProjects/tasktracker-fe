@@ -180,7 +180,7 @@ export default function Profile() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="flex-1 p-1 min-w-[250px] rounded border border-cyan-300 bg-slate-800 text-white text-base"
+                                className="flex-1 px-1 md:py-1 py-[6px] w-full rounded border border-cyan-300 bg-slate-800 text-white text-base"
                             />
                             <div className="flex gap-2">
                                 <MainButton size="compact" onClick={() => {
@@ -200,7 +200,7 @@ export default function Profile() {
                     ) : (
                         <>
                             <div
-                                className="flex-1 min-w-[250px] px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
+                                className="flex-1 w-full px-1 py-[5px] text-white text-base bg-transparent rounded border border-cyan-300">
                                 {email}
                             </div>
                             <MainButton size="compact" className="w-26 md:w-[190px]" onClick={() => setIsEditingEmail(true)}>
@@ -211,7 +211,7 @@ export default function Profile() {
                 </div>
             </div>
 
-            <hr className="border-cyan-900/50 mb-7"/>
+            <hr className="border-cyan-900/50 mb-5"/>
 
             <div className="flex gap-2 md:gap-20">
                 {/* Avatar */}
@@ -240,7 +240,7 @@ export default function Profile() {
                     />
 
                     {isEditingAvatar ? (
-                        <div className="flex flex-col md:flex-row mt-5 gap-2  justify-center">
+                        <div className="flex mt-5 gap-2 justify-center">
                             <MainButton size="compact" onClick={handleSaveAvatarUpdate}>
                                 Save
                             </MainButton>
