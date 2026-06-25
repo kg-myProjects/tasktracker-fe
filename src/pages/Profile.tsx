@@ -283,11 +283,11 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="w-36 md:w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
+                                            className="w-34 md:w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
-                                            className="w-36 md:w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
+                                            className="w-34 md:w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}
@@ -302,10 +302,10 @@ export default function Profile() {
                                 <textarea
                                     value={about}
                                     onChange={(e) => setAbout(e.target.value)}
-                                    className="flex-1 p-2 min-h-[120px] rounded border border-cyan-300 bg-slate-800 text-white resize-none"
+                                    className="p-2 min-h-[120px] md:h-full rounded border border-cyan-300 bg-slate-800 text-white resize-none"
                                 />
                             ) : (
-                                <p className="flex-1 p-2 min-h-[120px] text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
+                                <p className="p-2 min-h-[120px] md:h-full text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
                             )}
                         </div>
                     </div>
