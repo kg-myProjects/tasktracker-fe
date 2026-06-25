@@ -269,10 +269,10 @@ export default function Profile() {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex-1 flex flex-col">
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Left info block */}
-                        <div className="flex-1 space-y-1 md:space-y-4">
+                        <div className="flex-1 min-w-0 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
                                 <div key={label as string} className="flex items-center">
                                     <label className="w-18 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
@@ -283,11 +283,11 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="flex-1 w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
+                                            className="min-w-0 flex-1 w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
-                                            className="flex-1 w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
+                                            className="min-w-0 flex-1 w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}
@@ -296,7 +296,7 @@ export default function Profile() {
                         </div>
 
                         {/* Right about block */}
-                        <div className="flex-1 flex flex-col">
+                        <div className="flex-1 min-w-0 flex flex-col">
                             <label className="text-xs md:text-base font-bold text-cyan-300 mb-2">About:</label>
                             {isEditingProfile ? (
                                 <textarea
