@@ -162,7 +162,7 @@ export default function Profile() {
     }
 
     return (
-        <section className="p-4 md:p-8 bg-transparent border border-cyan-900/50 rounded-2xl">
+        <section className="p-5 md:p-8 bg-transparent border border-cyan-900/50 rounded-2xl">
             <h1 className="text-cyan-300 text-xl md:text-3xl font-black uppercase tracking-[0.2em] mb-6 text-glow">
                 User Profile
             </h1>
@@ -275,7 +275,7 @@ export default function Profile() {
                         <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
                                 <div key={label as string} className="flex items-center gap-2">
-                                    <label className="w-30 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
+                                    <label className="w-18 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
                                     {isEditingProfile ? (
                                         <input
                                             type="text"
