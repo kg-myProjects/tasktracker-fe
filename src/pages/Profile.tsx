@@ -283,7 +283,7 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="flex-1 w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
+                                            className="flex-1 w-full px-1 py-[1px] md:py-1 mr-4 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
