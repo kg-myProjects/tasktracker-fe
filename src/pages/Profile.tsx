@@ -217,7 +217,7 @@ export default function Profile() {
                 {/* Avatar */}
                 <div className="flex flex-col items-center">
                     <div
-                        className="w-26 h-26 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
+                        className="w-28 h-28 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
