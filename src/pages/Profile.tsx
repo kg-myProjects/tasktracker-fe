@@ -283,11 +283,11 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white appearance-none outline-none"
+                                            className="w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
-                                            className="w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
+                                            className="w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300 block">
                                             {value || "Not set"}
                                         </span>
                                     )}
