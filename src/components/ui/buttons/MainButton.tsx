@@ -34,7 +34,7 @@ export default function MainButton({
             "px-4 py-2.5 text-sm",
 
         compact:
-            "px-[15px] py-[8px] text-[11px] md:px-4 md:py-2.5 md:text-sm",
+            "px-[8px] py-[4px] text-[10px] md:px-4 md:py-2.5 md:text-sm",
     };
 
     const classes = `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`;
