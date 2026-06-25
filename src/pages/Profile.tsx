@@ -269,7 +269,7 @@ export default function Profile() {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col overflow-hidden">
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Left info block */}
                         <div className="flex-1 space-y-1 md:space-y-4">
