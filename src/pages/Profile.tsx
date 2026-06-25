@@ -269,12 +269,12 @@ export default function Profile() {
                 </div>
 
                 {/* Info */}
-                <div className="flex-1 flex flex-col gap-1">
+                <div className="flex-1 flex flex-col">
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Left info block */}
                         <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
-                                <div key={label as string} className="flex items-center gap-2">
+                                <div key={label as string} className="flex items-center">
                                     <label className="w-18 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
                                     {isEditingProfile ? (
                                         <input
@@ -283,7 +283,7 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="flex-1 w-full px-1 py-[1px] md:py-1 mr-3 md:mr-0 rounded border border-cyan-300 bg-slate-800 text-white"
+                                            className="flex-1 w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
@@ -302,7 +302,7 @@ export default function Profile() {
                                 <textarea
                                     value={about}
                                     onChange={(e) => setAbout(e.target.value)}
-                                    className="p-2 min-h-[120px] md:h-full rounded border mr-3 md:mr-0 border-cyan-300 bg-slate-800 text-white resize-none"
+                                    className="p-2 min-h-[120px] md:h-full rounded border border-cyan-300 bg-slate-800 text-white resize-none"
                                 />
                             ) : (
                                 <p className="p-2 min-h-[120px] md:h-full text-white border rounded border-cyan-300 bg-transparent">{about || "Not set"}</p>
