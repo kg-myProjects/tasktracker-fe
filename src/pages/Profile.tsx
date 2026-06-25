@@ -217,7 +217,7 @@ export default function Profile() {
                 {/* Avatar */}
                 <div className="flex flex-col items-center">
                     <div
-                        className="w-28 h-28 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
+                        className="w-26 h-26 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
@@ -240,7 +240,7 @@ export default function Profile() {
                     />
 
                     {isEditingAvatar ? (
-                        <div className="flex mt-5 gap-2 justify-center">
+                        <div className="flex flex-col md:flex-row mt-5 gap-2 justify-center">
                             <MainButton size="compact" onClick={handleSaveAvatarUpdate}>
                                 Save
                             </MainButton>
@@ -262,7 +262,7 @@ export default function Profile() {
                     {/* Avatar error message */}
                     {errorMessage && (
                         <div
-                            className="mt-3 w-full text-red-500 text-xs md:text-sm break-words text-center overflow-hidden">
+                            className="mt-3 max-w-[125px] md:max-w-[195px] text-red-500 text-xs md:text-sm break-words text-center overflow-hidden">
                             {errorMessage}
                         </div>
                     )}
