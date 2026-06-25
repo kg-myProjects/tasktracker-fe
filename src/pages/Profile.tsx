@@ -274,7 +274,7 @@ export default function Profile() {
                         {/* Left info block */}
                         <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
-                                <div key={label as string} className="flex items-center gap-2">
+                                <div key={label as string} className="flex items-center gap-4">
                                     <label className="w-18 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
                                     {isEditingProfile ? (
                                         <input
