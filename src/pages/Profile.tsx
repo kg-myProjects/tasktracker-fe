@@ -275,7 +275,7 @@ export default function Profile() {
                         <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
                                 <div key={label as string} className="flex items-center gap-2">
-                                    <label className="w-28 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
+                                    <label className="w-30 md:w-32 text-xs md:text-base font-bold text-cyan-300 whitespace-nowrap">{label}:</label>
                                     {isEditingProfile ? (
                                         <input
                                             type="text"
@@ -283,11 +283,11 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
+                                            className="flex-1 w-full px-1 py-[1px] md:py-1 rounded border border-cyan-300 bg-slate-800 text-white"
                                         />
                                     ) : (
                                         <span
-                                            className="w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300 block">
+                                            className="flex-1 w-full px-1 py-[1px] md:py-1 text-white text-base bg-transparent rounded border border-cyan-300">
                                             {value || "Not set"}
                                         </span>
                                     )}
