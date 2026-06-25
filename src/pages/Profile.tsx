@@ -215,9 +215,9 @@ export default function Profile() {
 
             <div className="flex gap-4 md:gap-20">
                 {/* Avatar */}
-                <div className="flex flex-col w-[130px] md:w-[180px] items-center">
+                <div className="flex flex-col items-center">
                     <div
-                        className="w-22 h-22 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
+                        className="w-28 h-28 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-cyan-300 flex items-center justify-center bg-cyan-500 text-white text-4xl font-bold"
                     >
                         {avatarPreview || avatarUrl ? (
                             <img
