@@ -1,4 +1,4 @@
-import { useLocation, Route, Routes } from "react-router-dom";
+import {useLocation, Route, Routes} from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Layout from "./layouts/Layout";
@@ -18,8 +18,7 @@ function App() {
     const isHomePage = location.pathname === "/";
 
     return (
-        <div className="relative min-h-screen bg-[#020617] overflow-hidden">
-            <div className="fixed inset-0 bg-[url(/background.png)] bg-cover bg-center bg-fixed opacity-50"></div>
+        <div className="relative min-h-screen overflow-hidden">
 
             {isHomePage && (<AnimatedStripes/>)}
 
@@ -36,8 +35,7 @@ function App() {
                         <Route path="/profile" element={
                                 <PrivateRoute>
                                     <Profile />
-                                </PrivateRoute>
-                            }
+                                </PrivateRoute>}
                         />
                         <Route path="/project/:projectId" element={<Kanban/>}/>
                     </Routes>

@@ -24,7 +24,7 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
                  onClick={(e) => e.stopPropagation()}>
                 <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 rounded-xl">
                     <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
-                        Invite collaborator
+                        Add user to board
                     </h2>
                     <PulsedStripe height="2px"></PulsedStripe>
                 </div>
