@@ -72,19 +72,18 @@ export default function ProjectsList() {
     };
     console.log("projectToEdit:", projectToEdit);
     return (
-        <section className="flex-1 p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
-            <div className="flex items-center justify-between mb-10">
-                <h2 className="text-cyan-300 text-3xl font-black uppercase tracking-[0.2em] text-glow">
+        <section className="flex-1 p-4 md:p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
+            <div className="flex justify-between mb-10">
+                <h2 className="text-cyan-400 text-xl md:text-3xl font-black uppercase tracking-[0.2em] text-glow">
                     My boards
                 </h2>
-
-                <MainButton onClick={() => setShowForm(true)}>
+                <MainButton size="compact" onClick={() => setShowForm(true)}>
                     New Board
                 </MainButton>
             </div>
 
             <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 bg-transparent">
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 bg-transparent">
                 {projects?.map((project) => (
                     <div
                         key={project.id}
@@ -127,7 +126,7 @@ export default function ProjectsList() {
             </div>
 
             {showForm && (
-                <ProjectForm onClose={() => setShowForm(false)} />
+                <ProjectForm onClose={() => setShowForm(false)}/>
             )}
 
             {/* ConfirmModal */}

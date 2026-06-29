@@ -10,7 +10,7 @@ const initialState: TasksSliceState = {
     comments: [],
     isLoading: false,
     searchQuery: "",
-    selectedMarkerId: null as string | null,
+    selectedMarkerIds: [] as string[],
 };
 
 export const tasksSlice = createAppSlice({
@@ -278,7 +278,6 @@ export const tasksSlice = createAppSlice({
                 }
             ),
 
-
             setTaskError: create.reducer((state, action: PayloadAction<string>) => {
                 state.createTaskErrorMessage = action.payload;
             }),
@@ -290,8 +289,16 @@ export const tasksSlice = createAppSlice({
                 state.searchQuery = action.payload;
             }),
 
-            setSelectedMarkerId: create.reducer((state, action: PayloadAction<string | null>) => {
-                state.selectedMarkerId = action.payload;
+            toggleMarker: create.reducer<string>((state, action) => {
+                const id = action.payload;
+
+                const exists = state.selectedMarkerIds.includes(id);
+
+                if (exists) {
+                    state.selectedMarkerIds = state.selectedMarkerIds.filter(m => m !== id);
+                } else {
+                    state.selectedMarkerIds.push(id);
+                }
             }),
 
             removeMarkerFromAllTasks: create.reducer(
@@ -302,34 +309,30 @@ export const tasksSlice = createAppSlice({
                         ...task,
                         markers: task.markers?.filter(m => m.id !== markerId) || []
                     }));
-
                 }
             ),
-
-
         }),
 
-
-        // You can define your selectors here. These selectors receive the slice
-        // state as their first argument.
+        // You can define your selectors here. These selectors receive the slice state as their first argument.
         selectors: {
             selectSearchQuery: (state) => state.searchQuery,
             selectFilteredTasks: (state) => {
                 const query = state.searchQuery.toLowerCase().trim();
-                const markerId = state.selectedMarkerId;
+                const selected = state.selectedMarkerIds;
 
                 return state.tasks.filter(task => {
                     const matchesText = !query ||
                         task.title.toLowerCase().includes(query) ||
                         `#${task.taskNumber}`.includes(query);
 
-                    const matchesMarker = !markerId ||
-                        task.markers?.some(m => m.id === markerId);
+                    const matchesMarker =
+                        selected.length === 0 ||
+                        task.markers?.some(m => selected.includes(m.id));
 
                     return matchesText && matchesMarker;
                 });
             },
-            selectSelectedMarkerId: (state) => state.selectedMarkerId,
+            selectSelectedMarkerIds: (state) => state.selectedMarkerIds,
             selectComments: (state) => state.comments,
             selectIsLoading: (state) => state.isLoading,
             selectCreateTaskErrorMessage: (state) => state.createTaskErrorMessage,
@@ -337,8 +340,8 @@ export const tasksSlice = createAppSlice({
     }
 );
 
-// // Action creators are generated for each case reducer function.
-export const {createTask,setSearchQuery,setSelectedMarkerId, removeMarkerFromAllTasks, getTasksByProjectId, updateTask, deleteTask,
+// Action creators are generated for each case reducer function.
+export const {createTask, setSearchQuery, toggleMarker, removeMarkerFromAllTasks, getTasksByProjectId, updateTask, deleteTask,
     clearTaskError, setTaskError, uploadTaskAttachment, deleteTaskAttachment, getComments, addComment, deleteComment, updateComment}
     = tasksSlice.actions;
 
@@ -346,7 +349,7 @@ export const {createTask,setSearchQuery,setSelectedMarkerId, removeMarkerFromAll
 export const {
     selectSearchQuery,
     selectFilteredTasks,
-    selectSelectedMarkerId,
+    selectSelectedMarkerIds,
     selectComments,
     selectIsLoading,
     selectCreateTaskErrorMessage,

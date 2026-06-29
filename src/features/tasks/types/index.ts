@@ -68,7 +68,7 @@ export interface TasksSliceState {
     comments: Comment[];
     isLoading: boolean;
     searchQuery: string,
-    selectedMarkerId: string | null
+    selectedMarkerIds: string[],
 }
 
 export interface MarkerDto {

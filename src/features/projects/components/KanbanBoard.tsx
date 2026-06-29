@@ -1,38 +1,43 @@
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-import { DndContext, DragOverlay } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectFilteredTasks, getTasksByProjectId, setSearchQuery, selectSearchQuery, selectSelectedMarkerId, setSelectedMarkerId } from "../../tasks/slice/tasksSlice";
-import { getProjectById, selectCurrentProject, selectInviteUserErrorMessage } from "../slice/projectsSlice";
+import {useEffect, useMemo, useState} from "react";
+import {useParams} from "react-router-dom";
+import {DndContext, DragOverlay} from "@dnd-kit/core";
+import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {
-    clearStatusError, createTaskStatus,
+    selectFilteredTasks,
+    getTasksByProjectId,
+    setSearchQuery,
+    selectSearchQuery,
+    toggleMarker,
+    selectSelectedMarkerIds
+} from "../../tasks/slice/tasksSlice";
+import {getProjectById, selectCurrentProject, selectInviteUserErrorMessage} from "../slice/projectsSlice";
+import {
+    clearStatusError,
+    createTaskStatus,
     getAllTaskStatuses,
     selectErrorMessage,
     selectIsLoading,
     selectSortedTaskStatuses
 } from "../../statuses/slice/taskStatusSlice";
-import { SortableTask } from "./SortableTask.tsx";
-
-import { BoardHeader } from "./BoardHeader.tsx";
-import { BoardModals } from "./BoardModals.tsx";
-
-import { useKanbanDnd } from "../hooks/useKanbanDnd";
-import { useKanbanActions } from "../hooks/useKanbanActions";
-import { usePageTitle } from "../../../app/customHooks/usePageTitle.ts";
+import {SortableTask} from "./SortableTask.tsx";
+import {BoardHeader} from "./BoardHeader.tsx";
+import {BoardModals} from "./BoardModals.tsx";
+import {useKanbanDnd} from "../hooks/useKanbanDnd";
+import {useKanbanActions} from "../hooks/useKanbanActions";
+import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 import {SortableColumn} from "./SortableColumn.tsx";
 import NotificationModal from "../../../components/ui/NotificationModal.tsx";
 
 export default function KanbanBoard() {
-    const { projectId } = useParams<{ projectId: string }>();
+    const {projectId} = useParams<{ projectId: string }>();
     const dispatch = useAppDispatch();
 
 
     const tasks = useAppSelector(selectFilteredTasks);
     const searchQuery = useAppSelector(selectSearchQuery);
     const project = useAppSelector(selectCurrentProject);
-    const selectedMarkerId = useAppSelector(selectSelectedMarkerId);
+    const selectedMarkerIds = useAppSelector(selectSelectedMarkerIds);
     const projectMarkers = project?.markers || [];
     const statuses = useAppSelector(selectSortedTaskStatuses);
     const allNames = statuses.map(s => s.name);
@@ -45,7 +50,7 @@ export default function KanbanBoard() {
     const [statusModalOpen, setStatusModalOpen] = useState(false);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-    const [statusToDelete, setStatusToDelete] = useState<{id: string, name: string} | null>(null);
+    const [statusToDelete, setStatusToDelete] = useState<{ id: string, name: string } | null>(null);
     const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
     const {
@@ -86,14 +91,15 @@ export default function KanbanBoard() {
     }
 
     return (
-        <div className="h-screen flex flex-col bg-transparent border border-cyan-900/50 rounded-2xl p-4 overflow-hidden">
+        <div
+            className="h-screen flex p-4 md:p-8 flex-col bg-transparent border border-cyan-900/50 rounded-2xl overflow-hidden">
             <BoardHeader
                 title={project?.title}
                 searchQuery={searchQuery}
                 onSearchChange={(val) => dispatch(setSearchQuery(val))}
-                selectedMarkerId={selectedMarkerId}
+                selectedMarkerIds={selectedMarkerIds}
                 projectMarkers={projectMarkers}
-                onMarkerClick={(id) => dispatch(setSelectedMarkerId(id === selectedMarkerId ? null : id))}
+                onMarkerToggle={(id) => dispatch(toggleMarker(id))}
                 onAddStatus={() => setStatusModalOpen(true)}
                 onAddCollab={() => setIsInviteModalOpen(true)}
                 onOpenLogs={() => setIsLogsModalOpen(true)}
@@ -119,7 +125,7 @@ export default function KanbanBoard() {
                                     setModalOpen(true);
                                 }}
                                 canDelete={tasksInStatus.length === 0}
-                                onDelete={() => setStatusToDelete({ id: status.id, name: status.name })}
+                                onDelete={() => setStatusToDelete({id: status.id, name: status.name})}
 
                             >
 
@@ -145,7 +151,8 @@ export default function KanbanBoard() {
 
                 <DragOverlay dropAnimation={dropAnimation}>
                     {activeTask && (
-                        <div className="bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-2xl rotate-3 w-[300px] cursor-grabbing">
+                        <div
+                            className="bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-2xl rotate-3 w-[300px] cursor-grabbing">
                             <div className="font-semibold text-black">{activeTask.title}</div>
                         </div>
                     )}
@@ -187,18 +194,20 @@ export default function KanbanBoard() {
                 }}
                 actions={{
                     onCreateTask: async (title, desc) => {
-                        await  handleCreateTask(title, desc, currentStatusId!);
-                        setModalOpen(false); },
+                        await handleCreateTask(title, desc, currentStatusId!);
+                        setModalOpen(false);
+                    },
                     onCreateStatus: async (name, pos) => {
                         try {
-                            await dispatch(createTaskStatus({ name, position: pos, projectId: projectId! })).unwrap();
+                            await dispatch(createTaskStatus({name, position: pos, projectId: projectId!})).unwrap();
                             setStatusModalOpen(false);
                         } catch (error) {
                             console.error("Status creation failed:", error);
-                        }                    },
+                        }
+                    },
                     onInvite: (email, role) => {
                         handleInvite(projectId!, email, role).then(res => {
-                            if(res.meta.requestStatus === 'fulfilled') setIsInviteModalOpen(false);
+                            if (res.meta.requestStatus === 'fulfilled') setIsInviteModalOpen(false);
                         });
                     },
                     onDeleteStatus: handleDeleteStatus
