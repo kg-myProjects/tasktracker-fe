@@ -99,15 +99,14 @@ export const BoardHeader = ({
             </div>
         </div>
 
-        {/* Board users */}
+        {/* Collaborators */}
         {collaborators && (
             <div className="flex items-center justify-end">
                 <h1 className="text-[10px] md:text-[12px] text-neon font-black uppercase">
-                    Active users:
+                    Collaborators:
                 </h1>
                 <CollaboratorsList
                     collaborators={collaborators}
-                    onInviteClick={onAddCollab}
                 />
             </div>
         )}

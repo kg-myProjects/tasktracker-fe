@@ -211,7 +211,7 @@ export default function Profile() {
             <div className="flex gap-2 md:gap-20">
                 {/* Avatar block*/}
                 <div className="flex min-w-[130px] md:w-[200px] flex-col items-center">
-                    <div className="flex w-28 h-28 md:w-40 md:h-40 items-center justify-center rounded-full overflow-hidden border-2 border-cyan-300 bg-cyan-300 text-white text-4xl">
+                    <div className="flex w-28 h-28 md:w-40 md:h-40 items-center justify-center rounded-full overflow-hidden border-2 border-cyan-500 bg-cyan-300 text-white text-4xl">
                         {avatarPreview || avatarUrl ? (
                             <img
                                 src={avatarPreview || `${API_URL}${avatarUrl}?t=${Date.now()}`}

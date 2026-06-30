@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {useAppSelector} from "../../../app/hooks";
 import {selectIsLoading} from "../../statuses/slice/taskStatusSlice";
-import PulsedStripe from "../../../components/ui/PulsedStripe.tsx";
+import PulsedStripe from "../../../components/ui/effects/PulsedStripe.tsx";
 import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 
 type Props = {

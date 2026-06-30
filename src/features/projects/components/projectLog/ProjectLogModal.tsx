@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../../../../app/hooks.ts";
 import {selectCurrentProjectLogs, getProjectLogs} from "../../slice/projectsSlice.ts";
 import ProjectLogItem from "./ProjectLogItem.tsx";
-import PulsedStripe from "../../../../components/ui/PulsedStripe.tsx";
+import PulsedStripe from "../../../../components/ui/effects/PulsedStripe.tsx";
 
 interface ProjectLogsModalProps {
     isOpen: boolean;

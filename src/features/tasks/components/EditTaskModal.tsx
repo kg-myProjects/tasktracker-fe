@@ -8,7 +8,7 @@ import {TaskAttachments} from "./TaskAttachments.tsx";
 import {TaskComments} from "./TaskComments.tsx";
 import {getComments, setTaskError} from "../slice/tasksSlice";
 import {format, formatDistanceToNow} from 'date-fns';
-import PulsedStripe from "../../../components/ui/PulsedStripe.tsx";
+import PulsedStripe from "../../../components/ui/effects/PulsedStripe.tsx";
 
 interface TaskEditModalProps {
     card: Task;
