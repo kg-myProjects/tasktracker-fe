@@ -6,11 +6,11 @@ import Registration from "./pages/Registration";
 import Login from "./pages/Login";
 import Projects from "./pages/Projects";
 import Profile from "./pages/Profile";
-import PrivateRoute from "./components/PrivateRoute";
+import PrivateRoute from "./app/routing/PrivateRoute.tsx";
 import Kanban from "./pages/Kanban";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
-import AnimatedStripes from "./components/ui/AnimatedStripes.tsx";
+import AnimatedStripes from "./components/ui/effects/AnimatedStripes.tsx";
 
 function App() {
 
@@ -25,19 +25,22 @@ function App() {
             <div className="relative z-10">
                 <Layout>
                     <Routes>
-                        <Route index element={<Home />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/register" element={<Registration />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/projects" element={<Projects />} />
+
+                        {/* PUBLIC ROUTES */}
+                        <Route index element={<Home/>}/>
+                        <Route path="/about" element={<About/>}/>
+                        <Route path="/register" element={<Registration/>}/>
+                        <Route path="/login" element={<Login/>}/>
                         <Route path="/forgot-password" element={<ForgotPassword/>}/>
                         <Route path="/reset-password" element={<ResetPassword/>}/>
-                        <Route path="/profile" element={
-                                <PrivateRoute>
-                                    <Profile />
-                                </PrivateRoute>}
-                        />
-                        <Route path="/project/:projectId" element={<Kanban/>}/>
+
+                        {/* PRIVATE ROUTES (PrivateRoute + Outlet) */}
+                        <Route element={<PrivateRoute/>}>
+                            <Route path="/projects" element={<Projects/>}/>
+                            <Route path="/project/:projectId" element={<Kanban/>}/>
+                            <Route path="/profile" element={<Profile/>}/>
+                        </Route>
+
                     </Routes>
                 </Layout>
             </div>

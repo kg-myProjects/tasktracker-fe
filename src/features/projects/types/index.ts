@@ -18,6 +18,7 @@ export type EditProjectDto = Pick<Project, "id" | "title" | "description">;
 export interface CollaboratorDto {
     id: string;
     email: string;
+    avatarUrl?: string;
     roles: ProjectRole[];
 }
 

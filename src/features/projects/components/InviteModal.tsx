@@ -1,6 +1,6 @@
 import {useState} from "react";
 import type {InviteModalProps, ProjectRole} from "../types";
-import PulsedStripe from "../../../components/ui/PulsedStripe.tsx";
+import PulsedStripe from "../../../components/ui/effects/PulsedStripe.tsx";
 import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 
 export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps) {
