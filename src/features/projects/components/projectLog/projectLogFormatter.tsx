@@ -18,42 +18,42 @@ export const getLogMessage = (
 
     switch (action) {
         case "CREATE":
-            verb = "created";
+            verb = "CREATED";
             verbColor = "text-green-500";
             restText = ` ${entity.toLowerCase()}: ${entityName} ${formatCreateDeleteDiff(difference)}`;
             break;
 
         case "DELETE":
-            verb = "deleted";
+            verb = "DELETED";
             verbColor = "text-red-500";
             restText = ` ${entity.toLowerCase()}: ${entityName} ${formatCreateDeleteDiff(difference)}`;
             break;
 
         case "MOVE":
-            verb = "moved";
+            verb = "MOVED";
             verbColor = "text-purple-500";
             restText = ` ${entity.toLowerCase()}: ${entityName}. ${formatMoveDiff(difference)}.`;
             break;
 
         case "MARKERS":
             if (difference?.startsWith("markerAdded=")) {
-                verb = "added";
+                verb = "ADDED";
                 verbColor = "text-green-500";
             } else if (difference?.startsWith("markerRemoved=")) {
-                verb = "removed";
+                verb = "REMOVED";
                 verbColor = "text-red-500";
             }
             restText = ` marker: ${difference?.replace(/markerAdded=|markerRemoved=/, "")} on ${entity.toLowerCase()}: ${entityName}.`;
             break;
 
         case "TITLE":
-            verb = "changed";
+            verb = "CHANGED";
             verbColor = "text-yellow-400";
             restText = ` title on ${entity.toLowerCase()}: ${formatTitleDiff(difference)}.`;
             break;
 
         case "DESCRIPTION":
-            verb = "changed";
+            verb = "CHANGED";
             verbColor = "text-yellow-400";
             restText = ` description on ${entity.toLowerCase()}: ${entityName}. ${formatDescriptionDiff(difference)}.`;
             break;
@@ -119,7 +119,7 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
         const dateStr = diff.replace("dueDateAdded=", "");
         return (
             <>
-                <span className="text-green-500 font-semibold">set</span>
+                <span className="text-green-500 font-semibold uppercase">set</span>
                 <span className="text-cyan-300">
                     {" "}deadline on {entity?.toLowerCase()}: {entityName} to: {formatDate(dateStr)}.
                 </span>
@@ -131,7 +131,7 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
         const dateStr = diff.replace("dueDateRemoved=", "");
         return (
             <>
-                <span className="text-red-500 font-semibold">removed</span>
+                <span className="text-red-500 font-semibold uppercase">removed</span>
                 <span className="text-cyan-300">
                     {" "}deadline on {entity?.toLowerCase()}: {entityName}. (Deadline was: {formatDate(dateStr)}).
                 </span>
@@ -143,7 +143,7 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
         const [from, to] = diff.replace("dueDateChanged=", "").split("->");
         return (
             <>
-                <span className="text-yellow-400 font-semibold">changed</span>
+                <span className="text-yellow-400 font-semibold uppercase">changed</span>
                 <span className="text-cyan-300">
                     {" "}deadline on {entity?.toLowerCase()}: {entityName}. From: {formatDate(from)} to: {formatDate(to)}.
                 </span>
