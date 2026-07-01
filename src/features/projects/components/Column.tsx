@@ -4,7 +4,7 @@ import {clearStatusError, selectErrorMessage, updateTaskStatus,selectIsLoading a
 import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import type {SortableColumnProps} from "./SortableColumn.tsx";
 import NotificationModal from "../../../components/ui/NotificationModal.tsx";
-import MainButton from "../../../components/ui/buttons/MainButton.tsx";
+import {ActionButton} from "../../../components/ui/buttons/ActionButton.tsx";
 
 export function Column({ status,
                            allStatusNames,
@@ -69,33 +69,35 @@ export function Column({ status,
 
 
     return (
-        <div ref={setNodeRef} className="flex flex-col bg-transparent rounded-2xl border-2 border-cyan-400/20 text-cyan-400 p-4 min-w-[320px] min-h-[500px] transition-all hover:border-cyan-400/40">
-            <h2 className="text-lg font-semibold mb-3 flex justify-between items-center text-cyan-400">
-                <div className="flex-1 mr-2 min-w-0">
+        <div ref={setNodeRef} className="flex flex-col p-1 bg-white/1 backdrop-blur-md rounded-xl border-2 border-cyan-400/20 text-cyan-400 w-[320px] min-h-[700px] transition-all hover:border-cyan-400/40">
+            {/* Top Bar */}
+            <div className="flex text-lg m-1 font-semibold justify-between items-center">
+                <div className="flex-1 flex gap-2">
                     {isEditing ? (
                         <input
                             autoFocus
-                            className="w-full bg-black/40 border border-cyan-400 rounded px-2 py-1 text-sm outline-none shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                            className="w-full px-1 bg-slate-800 border  border-cyan-400 rounded-lg font-semibold text-lg outline-none"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
+                            onFocus={(e) => e.target.select()}
                             onBlur={handleSave}
                             onKeyDown={handleKeyDown}
                         />
                     ) : (
-                        <span
+                        <div
                             onClick={() => setIsEditing(true)}
-                            className="cursor-pointer hover:text-cyan-300 transition-colors truncate block"
-                            title="Click to edit name"
+                            className="flex-1 cursor-pointer px-[6px] py-[1px] min-h-[37px] hover:text-cyan-200 transition-colors truncate"
+                            title="Click to edit status name"
                         >
-                {status.name}
-            </span>
+                            {status.name}
+                        </div>
                     )}
 
                     {validationError && (
                         <NotificationModal
                             title={validationError.title}
                             message={validationError.message}
-                            buttonText="Got it"
+                            buttonText="Back"
                             variant="error"
                             onClose={() => setValidationError(null)}
                         />
@@ -109,33 +111,38 @@ export function Column({ status,
                         />
                     )}
                 </div>
-                <div className="flex gap-2 shrink-0">
-                    <MainButton onClick={onAddTask}>New Task</MainButton>
+
+                <div className="flex shrink-0">
                     {canDelete && onDelete && (
                         <button
                             onClick={onDelete}
                             disabled={isStatusLoading}
-                            title="Delete column"
+                            title="Delete status"
                             className={`p-2 rounded-lg transition-all flex items-center justify-center
-            ${isStatusLoading ? 'text-rose-500 bg-rose-500/10' : 'text-slate-500 hover:text-rose-500 hover:bg-rose-500/10'}`}
+                            ${isStatusLoading ? 'text-rose-500 bg-rose-500/10' : 'text-slate-500 hover:text-rose-500 hover:bg-rose-500/10'}`}
                         >
                             {isStatusLoading ? (
                                 /* Spinner */
-                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                             ) : (
-                                <svg xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
                                 </svg>
                             )}
                         </button>
                     )}
                 </div>
-            </h2>
+            </div>
             <div className={"flex-grow"}>
-            {children}
+                {children}
+            </div>
+
+             {/*Bottom Bar */}
+            <div className="flex">
+                <ActionButton className="flex-1" onClick={onAddTask}>Add Task Card</ActionButton>
             </div>
         </div>
     );

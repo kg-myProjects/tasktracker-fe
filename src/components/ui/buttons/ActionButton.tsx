@@ -13,7 +13,7 @@ export function ActionButton({className, onClick, children}: Props) {
             className={`
                 px-4 py-2
                 bg-white/5 backdrop-blur-md
-                rounded-2xl
+                rounded-lg
                 border border-cyan-400/30
                 text-[10px] md:text-[12px] text-white text-neon font-black uppercase
                 hover:bg-cyan-400/10 hover:border-cyan-400

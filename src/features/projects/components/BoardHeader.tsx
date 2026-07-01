@@ -62,7 +62,7 @@ export const BoardHeader = ({
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder="Search task..."
-                    className="w-full bg-black/40 border border-cyan-400/30 rounded-2xl py-2 pl-10 pr-4 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
+                    className="w-full bg-black/40 border border-cyan-400/30 rounded-lg py-2 pl-10 pr-4 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
                 />
                 {searchQuery && (
                     <button

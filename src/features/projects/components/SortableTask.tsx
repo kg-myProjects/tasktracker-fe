@@ -55,13 +55,13 @@ export const SortableTask = React.memo( function SortableTask({
             ref={setNodeRef}
             style={style}
             onClick={onOpenEdit}
-            className="group relative bg-white rounded-xl p-3 border-2 border-cyan-500 transition-shadow duration-200 cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:shadow-md"
+            className="group relative bg-white rounded-xl p-3 transition-shadow duration-200 border-2 border-white cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:border-cyan-400 hover:shadow-md"
         >
             {/* Область захвата для dnd-kit */}
             <div {...attributes} {...listeners}>
 
                 {task.markers && task.markers.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <div className="flex flex-wrap gap-2 mb-2">
                         {task.markers.map(marker => (
                             <div
                                 key={marker.id}
