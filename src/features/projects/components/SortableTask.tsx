@@ -1,16 +1,13 @@
-import type { Task } from "../../tasks/types";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import type {Task} from "../../tasks/types";
+import {useSortable} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
-import { deleteTask, selectIsLoading } from "../../tasks/slice/tasksSlice";
+import {deleteTask, selectIsLoading} from "../../tasks/slice/tasksSlice";
 import React, {useState} from "react";
+import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
+import {API_URL} from "../../../config/api.ts";
 
-import ConfirmModal from "../../../components/ui/ConfirmModal.tsx"; // Убедись, что экшен создан
-
-export const SortableTask = React.memo( function SortableTask({
-                                 task,
-                                 onOpenEdit
-                             }: {
+export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}: {
     task: Task;
     onOpenEdit: () => void
 }) {
@@ -25,7 +22,7 @@ export const SortableTask = React.memo( function SortableTask({
         transform,
         transition,
         isDragging
-    } = useSortable({ id: task.id });
+    } = useSortable({id: task.id});
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -33,8 +30,6 @@ export const SortableTask = React.memo( function SortableTask({
         opacity: isDragging ? 0.2 : 1,
         willChange: transform ? "transform" : "auto",
     };
-
-
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -55,101 +50,105 @@ export const SortableTask = React.memo( function SortableTask({
             ref={setNodeRef}
             style={style}
             onClick={onOpenEdit}
-            className="group relative bg-white rounded-xl p-3 transition-shadow duration-200 border-2 border-white cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:border-cyan-400 hover:shadow-md"
+            className="relative bg-white rounded-lg p-2 transition-shadow duration-200 border-2 border-white cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:border-cyan-400 hover:shadow-md"
         >
-            {/* Область захвата для dnd-kit */}
+            {/* DRAG AREA */}
             <div {...attributes} {...listeners}>
-
+                {/* TASK MARKERS */}
                 {task.markers && task.markers.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-2">
+                    <div className="flex gap-2 mb-2">
                         {task.markers.map(marker => (
                             <div
                                 key={marker.id}
-                                className={`h-1.5 w-6 rounded-full ${marker.color} shadow-sm transition-all group-hover:w-8`}
+                                className={`p-[2px] rounded-full ${marker.color} text-[8px] text-white shadow-sm transition-all`}
                                 title={marker.name}
-                            />
+                            >{marker.name}</div>
                         ))}
                     </div>
                 )}
-
-                <div className="flex flex-col gap-0.5 mb-1">
-                    <span className="text-[9px] font-black text-cyan-500/60 uppercase tracking-widest leading-none">
-        Task #{task.taskNumber}
-    </span>
-
-                    <div className="font-bold text-slate-800 leading-tight pr-6 truncate">
+                {/* TASK NUMBER */}
+                <div className="flex flex-col gap-1">
+                    <span className="text-[10px] md:text-[12px] font-black text-cyan-800 uppercase tracking-widest leading-none">
+                        Task #{task.taskNumber}
+                    </span>
+                    <div className="text-slate-700 leading-tight pr-6 truncate">
                         {task.title}
                     </div>
                 </div>
-
+                {/* TASK DESCRIPTION */}
                 {task.description && (
-                    <div className="text-sm text-slate-600 mt-1 line-clamp-2">
+                    <div className="text-[10px] md:text-[12px] text-slate-500 mt-1 line-clamp-2">
                         {task.description}
-                     </div>
+                    </div>
                 )}
-
-                <div className="mt-3 flex items-center justify-between">
-
-                    {/* Progress checklist */}
+                {/* TASK CARD BOTTOM BAR */}
+                <div className="flex mt-1 items-center justify-between">
+                    {/* CHECKLIST */}
                     {task.checklist && task.checklist.length > 0 && (
-                        <div className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
-                            <span className={task.checklist.every(i => i.completed) ? "text-emerald-500" : ""}>
+                        <div
+                            className="flex items-center gap-1 text-[10px] md:text-[12px] font-black text-slate-700 uppercase tracking-tighter">
+                            <span className={task.checklist.every(i => i.completed) ? "text-green-500" : ""}>
                                 ✅ {task.checklist.filter(i => i.completed).length}/{task.checklist.length}
                             </span>
                         </div>
                     )}
-
-                    {/* Avatars */}
+                    {/* AVATARS */}
                     {task.executors && task.executors.length > 0 && (
-                        <div className="flex -space-x-1.5 ml-auto">
+                        <div className="flex -space-x-3 ml-auto">
                             {task.executors.map(ex => (
                                 <div
                                     key={ex.id}
-                                    className="w-5 h-5 rounded-full bg-cyan-500 border border-white flex items-center justify-center text-[8px] font-bold text-white uppercase"
+                                    className="flex w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-[12px] font-bold text-white overflow-hidden uppercase"
                                     title={ex.email}
                                 >
-                                    {ex.email.charAt(0).toUpperCase()}
+                                    {ex.avatarUrl ? (
+                                        <img
+                                            src={`${API_URL}${ex.avatarUrl}`}
+                                            alt={ex.email}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        ex.email.charAt(0).toUpperCase()
+                                    )}
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
             </div>
-
-            {/* Кнопка удаления в стиле Trello (появляется при hover) */}
+            {/* DELETE BUTTON */}
             <button
                 onClick={handleDelete}
-                disabled={isLoading} // Блокуємо кнопку під час будь-якої операції
-                title="Delete task"
+                disabled={isLoading}
+                title="Delete this task"
                 className={`absolute top-2 right-2 p-1.5 rounded-md transition-all 
-        ${isLoading ? "opacity-100 bg-slate-100" : "opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-600 hover:bg-red-50"}`}
+                ${isLoading ? "opacity-100 bg-slate-100" : "text-slate-400 hover:text-red-500 hover:bg-red-100"}`}
             >
                 {isLoading ? (
-                    <svg className="animate-spin h-4 w-4 text-cyan-500" xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <svg className="animate-spin h-4 w-4 text-cyan-500" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
                     </svg>
                 ) : (
-                    <svg xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/>
                     </svg>
                 )}
             </button>
 
             {showConfirm && (
                 <div onClick={(e) => e.stopPropagation()}>
-                <ConfirmModal
-                    title="Delete task?"
-                    message={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
-                    confirmText={isLoading ? "Deleting..." : "Delete"}
-                    isLoading={isLoading}
-                    cancelText="Cancel"
-                    onConfirm={handleConfirmDelete}
-                    onCancel={handleCancelDelete}
-                />
+                    <ConfirmModal
+                        title="Delete task?"
+                        message={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
+                        confirmText={isLoading ? "Deleting..." : "Delete"}
+                        isLoading={isLoading}
+                        cancelText="Cancel"
+                        onConfirm={handleConfirmDelete}
+                        onCancel={handleCancelDelete}
+                    />
                 </div>
             )}
-
         </div>
     );
 });

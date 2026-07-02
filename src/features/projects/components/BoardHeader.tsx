@@ -31,12 +31,12 @@ export const BoardHeader = ({
 
     <header className="flex flex-col mb-10 gap-4 text-cyan-400">
 
-        {/* Board name */}
+        {/* BOARD NAME */}
         <h1 className="text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase whitespace-nowrap">
             {title ?? "Loading..."}
         </h1>
 
-        {/* Actions */}
+        {/* ACTIONS */}
         <div className="flex w-full gap-2">
             <ActionButton className="flex-1" onClick={onAddStatus}>
                 Add Status
@@ -49,10 +49,10 @@ export const BoardHeader = ({
             </ActionButton>
         </div>
 
-        {/* Search / Filter */}
+        {/* SEARCH / FILTER */}
         <div className="flex w-full items-center gap-2">
 
-            {/* Search */}
+            {/* SEARCH */}
             <div className="relative flex flex-1">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                     <span className="text-cyan-500/50 text-xs animate-twinkle">🔍</span>
@@ -74,7 +74,7 @@ export const BoardHeader = ({
                 )}
             </div>
 
-            {/* Filter */}
+            {/* FILTER */}
             <div className="flex gap-2 items-center shrink-0">
                 {projectMarkers.map((marker) => {
                     const isSelected = selectedMarkerIds?.includes(marker.id) ?? false;
@@ -99,7 +99,7 @@ export const BoardHeader = ({
             </div>
         </div>
 
-        {/* Collaborators */}
+        {/* COLLABORATORS */}
         {collaborators && (
             <div className="flex items-center justify-end">
                 <h1 className="text-[10px] md:text-[12px] text-neon font-black uppercase">
