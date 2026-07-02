@@ -37,6 +37,9 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
                     />
+                    <label className="block text-sm text-gray-500 mb-1">
+                        Board role:
+                    </label>
                     <select
                         value={role}
                         onChange={(e) => setRole(e.target.value as ProjectRole)}
@@ -53,7 +56,7 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
                             variant="primary"
                             onClick={handleInviteClick}
                         >
-                            Invite
+                            Add
                         </MainButton>
                     </div>
                 </div>

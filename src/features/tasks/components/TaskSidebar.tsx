@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState} from "react";
 import type {Task, MarkerDto, UpdateTaskDto} from "../types";
 import type {CollaboratorDto} from "../../projects/types";
 import { NEON_COLORS } from "../constants/taskConstants.ts";
@@ -6,6 +6,7 @@ import {setTaskError} from "../slice/tasksSlice";
 import {useAppDispatch} from "../../../app/hooks.ts";
 import {AttachmentPicker} from "./AttachmentPicker.tsx";
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
+import {API_URL} from "../../../config/api.ts";
 
 interface TaskSidebarProps {
     task: Task;
@@ -164,10 +165,19 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 actions.handleAddExecutor(member.id);
-                                            }}                                            className="w-full flex items-center gap-3 p-2.5 rounded-2xl hover:bg-cyan-50 transition-all text-left group"
+                                            }}
+                                            className="w-full flex items-center gap-3 p-2.5 rounded-2xl hover:bg-cyan-50 transition-all text-left group"
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-600 shadow-sm group-hover:bg-cyan-500 group-hover:text-white transition-colors">
-                                                {member.email.charAt(0).toUpperCase()}
+                                            <div className="w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 flex items-center justify-center text-[12px] font-black text-white shadow-sm group-hover:bg-cyan-500 group-hover:text-white overflow-hidden transition-colors">
+                                                {member.avatarUrl ? (
+                                                    <img
+                                                        src={`${API_URL}${member.avatarUrl}`}
+                                                        alt={member.email}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                member.email.charAt(0).toUpperCase()
+                                                )}
                                             </div>
                                             <span className="text-[10px] font-bold text-slate-700 truncate flex-1">{member.email}</span>
                                             {task.executors?.some(ex => ex.id === member.id) && <span className="text-cyan-500 font-bold text-xs">✓</span>}
@@ -193,7 +203,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                     className="absolute top-4 right-4 text-slate-300 hover:text-rose-500 transition-colors p-1"
                                     title="Close without saving"
                                 >
-                                    <svg xmlns="http://www.w3.org" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>

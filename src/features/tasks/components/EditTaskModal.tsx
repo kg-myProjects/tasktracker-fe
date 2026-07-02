@@ -9,6 +9,7 @@ import {TaskComments} from "./TaskComments.tsx";
 import {getComments, setTaskError} from "../slice/tasksSlice";
 import {format, formatDistanceToNow} from 'date-fns';
 import PulsedStripe from "../../../components/ui/effects/PulsedStripe.tsx";
+import {API_URL} from "../../../config/api.ts";
 
 interface TaskEditModalProps {
     card: Task;
@@ -90,7 +91,7 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                         </div>
                     </div>
                 </div>
-                <PulsedStripe height="2px"></PulsedStripe>
+                <PulsedStripe height="2px"/>
                 <div className="px-10 pt-12 pb-10 grid grid-cols-1 lg:grid-cols-[1fr_280px] overflow-y-auto gap-10">
                     {/* Left part */}
                     <div className="space-y-8">
@@ -107,8 +108,8 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                 </div>
                             )}
                             {currentTask.markers?.length > 0 && (
-                                <div className="space-y-3">
-                                    <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3"> Labels</h4>
+                                <div className="flex flex-col justify-between space-y-3">
+                                    <h4 className="flex text-sm font-black text-cyan-400 uppercase tracking-[0.2em] items-center gap-3"> Labels</h4>
                                     <div className="flex flex-wrap items-center gap-2">
                                         {currentTask.markers.map(m => (
                                             <span key={m.id}
@@ -123,11 +124,19 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                             {currentTask.executors?.length > 0 && (
                                 <div className="space-y-3">
                                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">Members</h4>
-                                    <div className="flex -space-x-2">
+                                    <div className="flex -space-x-3">
                                         {currentTask.executors.map(ex => (
                                             <div key={ex.id}
-                                                className="w-9 h-9 rounded-xl bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg">
-                                                {ex.email.charAt(0).toUpperCase()}
+                                                className="w-9 h-9 rounded-full bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
+                                                {ex.avatarUrl ? (
+                                                    <img
+                                                        src={`${API_URL}${ex.avatarUrl}`}
+                                                        alt={ex.email}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    ex.email.charAt(0).toUpperCase()
+                                                )}
                                             </div>
                                         ))}
                                     </div>
