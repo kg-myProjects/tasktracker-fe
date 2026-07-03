@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import type {Task, MarkerDto, UpdateTaskDto} from "../types";
 import type {CollaboratorDto} from "../../projects/types";
 import { NEON_COLORS } from "../constants/taskConstants.ts";
@@ -23,24 +23,65 @@ interface TaskSidebarProps {
     };
 }
 
-export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isUpdating }: TaskSidebarProps) => {
-    const [showMembers, setShowMembers] = useState(false);
-    const [showLabels, setShowLabels] = useState(false);
-    const [showDatePicker, setShowDatePicker] = useState(false);
+type ActivePopup = "members" | "labels" | "dates" | "attachment" | null;
+
+export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUpdating}: TaskSidebarProps) => {
+    const [activePopup, setActivePopup] = useState<ActivePopup>(null);
+
     const [newMarkerName, setNewMarkerName] = useState("");
     const [selectedColor, setSelectedColor] = useState("bg-cyan-500");
-    const [showAttachmentPicker, setShowAttachmentPicker] = useState(false);
     const [markerToDelete, setMarkerToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const sidebarRef = useRef<HTMLDivElement>(null);
+
+    const togglePopup = (popup: Exclude<ActivePopup, null>) => {
+        setActivePopup(prev => (prev === popup ? null : popup));
+    };
+
     const actionButtons = [
-        { id: 'members', label: 'Members', icon: '👤', action: () => setShowMembers(!showMembers) },
-        { id: 'labels', label: 'Labels', icon: '🏷', action: () => setShowLabels(!showLabels) },
-        { id: 'checklist', label: 'Checklist', icon: '✅', action: () => actions.setIsCreatingChecklist(true) },
-        { id: 'dates', label: 'Dates', icon: '📅', action: () => setShowDatePicker(!showDatePicker) },
-        { id: 'attachment', label: 'Attachment', icon: '📎',action: () => setShowAttachmentPicker(!showAttachmentPicker) },
+        {
+            id: "members",
+            label: "Members",
+            icon: "👤",
+            action: () => togglePopup("members"),
+        },
+        {
+            id: "labels",
+            label: "Labels",
+            icon: "🏷",
+            action: () => togglePopup("labels"),
+        },
+        {
+            id: 'checklist',
+            label: 'Checklist',
+            icon: '✅',
+            action: () => actions.setIsCreatingChecklist(true) },
+        {
+            id: "dates",
+            label: "Dates",
+            icon: "📅",
+            action: () => togglePopup("dates"),
+        },
+        {
+            id: "attachment",
+            label: "Attachment",
+            icon: "📎",
+            action: () => togglePopup("attachment"),
+        },
     ];
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+                setActivePopup(null);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const [tempDate, setTempDate] = useState(task.dueDate ? task.dueDate.split('T')[0] : "");
     const [tempTime, setTempTime] = useState(task.dueDate ? task.dueDate.split('T')[1]?.substring(0, 5) : "12:00");
@@ -55,17 +96,19 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
         const now = new Date();
 
         if (selectedDate < now) {
-            dispatch(setTaskError("Deadline cannot be in the past! Please select a future date."));
+            dispatch(setTaskError("Deadline cannot be in the past! Please select a future date!"));
             return;
         }
         const backendFormat = selectedDate.toISOString();
 
         actions.patchTask({ dueDate: backendFormat });
-        setShowDatePicker(false);
+        setActivePopup(null);
     };
 
     return (
-        <div className="md:col-span-4 space-y-4 shrink-0 h-auto relative overflow-visible">
+        <div
+            ref={sidebarRef}
+            className="md:col-span-4 space-y-4 shrink-0 h-auto relative overflow-visible">
             <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center justify-center gap-3">Add to task</h4>
 
             <div className="flex flex-col gap-3 relative z-30">
@@ -81,23 +124,18 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                             ) : (
                                 <span className="text-lg group-hover:scale-110 transition-transform">{btn.icon}</span>
                             )}
-
                             <span className={isUpdating ? "opacity-50" : ""}>{btn.label}</span>
-
                             {/* Additional loading bar below the button for style */}
                             {isUpdating && (
                                 <div className="animate-progress-fast shadow-[0_0_10px_#06b6d4]" />
                             )}
                         </button>
-
                         {/* Slide window */}
-
                         {/* MARKERS PICKER */}
-                        {btn.id === 'labels' && showLabels && (
-                            <div className="w-[280px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 relative md:absolute md:top-0 md:right-full md:mr-4 animate-in slide-in-from-right-4">
+                        {btn.id === 'labels' && activePopup === "labels" && (
+                            <div className="w-[280px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
                                     <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Labels</span>
-                                    <button onClick={() => setShowLabels(false)} className="text-slate-400">✕</button>
                                 </div>
                                 <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
                                     {projectMarkers?.map((marker) => {
@@ -149,13 +187,11 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                 </div>
                             </div>
                         )}
-
                         {/* MEMBERS PICKER */}
-                        {btn.id === 'members' && showMembers && (
-                            <div onClick={e => e.stopPropagation()} className="w-[280px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 relative md:absolute md:top-0 md:right-full md:mr-4 animate-in slide-in-from-right-4">
+                        {btn.id === 'members' && activePopup === "members" && (
+                            <div onClick={e => e.stopPropagation()} className="w-[280px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
                                     <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Members</span>
-                                    <button onClick={() => setShowMembers(false)} className="text-slate-400">✕</button>
                                 </div>
                                 <div className="max-h-48 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
                                     {projectMembers?.map((member) => (
@@ -186,28 +222,17 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                 </div>
                             </div>
                         )}
-
                         {/* DATE PICKER */}
-                        {btn.id === 'dates' && showDatePicker && (
+                        {btn.id === 'dates' && activePopup === "dates" && (
                             <>
                             <div
                                 className="fixed inset-0 z-[90]"
-                                onClick={() => setShowDatePicker(false)}
+                                onClick={() => setActivePopup(null)}
                             />
                             <div
                                 onClick={e => e.stopPropagation()}
-                                className="w-[300px] bg-white border-2 border-cyan-500 rounded-3xl shadow-2xl p-5 z-[100] mt-2 relative md:absolute md:top-0 md:right-full md:mr-4 animate-in zoom-in-95"
+                                className="w-[300px] bg-white border-2 border-cyan-500 rounded-3xl shadow-2xl p-5 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in zoom-in-95"
                             >
-                                <button
-                                    onClick={() => setShowDatePicker(false)}
-                                    className="absolute top-4 right-4 text-slate-300 hover:text-rose-500 transition-colors p-1"
-                                    title="Close without saving"
-                                >
-                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-
                                 <p className="text-[10px] font-black text-cyan-600 uppercase mb-4 text-center tracking-widest px-1">Set Deadline</p>
 
                                 <div className="bg-[#f1f2f4] rounded-xl p-4 mb-5 shadow-inner">
@@ -237,7 +262,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                     <button
                                         onClick={() => {
                                             handleSaveDate();
-                                            setShowDatePicker(false);
+                                            setActivePopup(null);
                                         }}
                                         className="w-full bg-cyan-500 text-white text-[10px] font-black py-3 rounded-xl uppercase shadow-lg shadow-cyan-500/30 active:scale-95 transition-all"
                                     >
@@ -247,7 +272,7 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                                         onClick={() => {
                                             setTempDate("");
                                             actions.patchTask({ dueDate: "" });
-                                            setShowDatePicker(false);
+                                            setActivePopup(null);
                                         }}
                                         className="w-full text-rose-500 text-[9px] font-black py-2 uppercase hover:bg-rose-50 rounded-xl transition-all"
                                     >
@@ -257,18 +282,16 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                             </div>
                          </>
                         )}
-
-                        {btn.id === 'attachment' && showAttachmentPicker && (
+                        {/* ATTACHMENT PICKER */}
+                        {btn.id === 'attachment' && activePopup === "attachment" && (
                             <AttachmentPicker
                                 taskId={task.id}
                                 isUpdating={isUpdating}
-                                onClose={() => setShowAttachmentPicker(false)}
+                                onClose={() => setActivePopup(null)}
                                 onPatchTask={actions.patchTask}
                                 currentAttachments={task.attachments || []}
                             />
                         )}
-
-
                     </div>
                 ))}
                 {markerToDelete && (
@@ -287,7 +310,6 @@ export const TaskSidebar = ({ task, projectMembers, projectMarkers, actions, isU
                         onCancel={() => setMarkerToDelete(null)}
                     />
                 )}
-
             </div>
         </div>
     );

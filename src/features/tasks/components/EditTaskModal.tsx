@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import {useTaskActions} from "../hooks/useTaskActions.ts";
 import {TaskChecklist} from "./TaskChecklist.tsx";
@@ -16,7 +16,6 @@ interface TaskEditModalProps {
     onClose: () => void;
 }
 
-
 export function EditTaskModal({card, onClose}: TaskEditModalProps) {
     const project = useAppSelector((state) => state.projects.currentProject);
     const allTasks = useAppSelector(state => state.tasks.tasks);
@@ -26,6 +25,7 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
     const currentStatus = allStatuses.find(s => s.id === currentTask.statusId);
     const statusName = currentStatus ? currentStatus.name : "Unknown Status";
     const error = useAppSelector(state => state.tasks.createTaskErrorMessage);
+    const closeSidebarPopupsRef = useRef<() => void>(() => {});
 
     const {
         handleAddExecutor,
@@ -61,7 +61,11 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
             {/* Main container */}
             <div
                 className="w-full max-h-[95%] max-w-6xl bg-slate-900 border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl flex flex-col relative overflow-hidden custom-scrollbar"
-                onClick={e => e.stopPropagation()}>
+                onClick={(e) => {
+                    closeSidebarPopupsRef.current();
+                    e.stopPropagation();
+                }}
+            >
 
                 {/* 1. Cover */}
                 <div className="h-20 w-full shrink-0 relative bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 overflow-hidden">
@@ -127,7 +131,7 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                     <div className="flex -space-x-3">
                                         {currentTask.executors.map(ex => (
                                             <div key={ex.id}
-                                                className="w-9 h-9 rounded-full bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
+                                                className="w-9 h-9 rounded-full bg-cyan-950 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
                                                 {ex.avatarUrl ? (
                                                     <img
                                                         src={`${API_URL}${ex.avatarUrl}`}
