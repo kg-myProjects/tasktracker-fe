@@ -50,10 +50,10 @@ export const AttachmentPicker = ({ taskId, isUpdating, onClose, onPatchTask, cur
     };
 
     return (
-        <div onClick={e => e.stopPropagation()} className="w-[300px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-6 z-[100] mt-2 relative md:absolute md:top-0 md:right-full md:mr-4 animate-in slide-in-from-right-4">
+        <div onClick={e => e.stopPropagation()} className="w-[300px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-6 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
             <div className="flex justify-between items-center mb-4 text-slate-800">
                 <span className="text-[11px] font-black uppercase tracking-widest">Attach from...</span>
-                <button onClick={onClose} className="text-slate-400 hover:text-slate-600">✕</button>
+                {/*<button onClick={onClose} className="text-slate-400 hover:text-slate-600">✕</button>*/}
             </div>
 
             <button
