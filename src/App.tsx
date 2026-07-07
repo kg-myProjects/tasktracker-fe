@@ -11,6 +11,7 @@ import Kanban from "./pages/Kanban";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
 import AnimatedStripes from "./components/ui/effects/AnimatedStripes.tsx";
+import CheckEmail from "./pages/CheckEmail.tsx";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
                         <Route index element={<Home/>}/>
                         <Route path="/about" element={<About/>}/>
                         <Route path="/register" element={<Registration/>}/>
+                        <Route path="/check-email" element={<CheckEmail/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/forgot-password" element={<ForgotPassword/>}/>
                         <Route path="/reset-password" element={<ResetPassword/>}/>

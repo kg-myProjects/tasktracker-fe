@@ -38,7 +38,7 @@ export function CreateStatusModal({
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+        <div className="flex items-center justify-center fixed inset-0 z-50 bg-black/60"
              onClick={onClose}>
             <div className="bg-slate-900 w-96 text-white border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl"
                  onClick={(e) => e.stopPropagation()}>
@@ -46,7 +46,7 @@ export function CreateStatusModal({
                     <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
                         Add task status
                     </h2>
-                    <PulsedStripe height="2px"></PulsedStripe>
+                    <PulsedStripe height="2px"/>
                 </div>
                 <div className="p-4">
                     <input

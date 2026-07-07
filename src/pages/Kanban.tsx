@@ -1,11 +1,5 @@
 import KanbanBoard from "../features/projects/components/KanbanBoard";
 
-function Kanban() {
-    return (
-        <div>
-            <KanbanBoard/>
-        </div>
-    );
+export default function Kanban() {
+    return <KanbanBoard />;
 }
-
-export default Kanban;

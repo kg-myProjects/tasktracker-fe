@@ -3,5 +3,5 @@ import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 
 export default function Registration() {
     usePageTitle("TrackerApp | Sign Up")
-  return <RegistrationForm />;
+    return <RegistrationForm/>;
 }

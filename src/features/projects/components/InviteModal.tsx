@@ -26,7 +26,7 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
                     <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
                         Add user to board
                     </h2>
-                    <PulsedStripe height="2px"></PulsedStripe>
+                    <PulsedStripe height="2px"/>
                 </div>
 
                 <div className="p-4">

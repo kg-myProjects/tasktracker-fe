@@ -66,21 +66,22 @@ export const authSlice = createAppSlice({
                 } catch (err) {
                     if (isAxiosError(err)) {
                         if (err.response?.status === 409) {
-                            throw new Error("A user with this email is already registered.");
+                            throw new Error("A user with this email is already registered. Please log in or use another email.");
                         }
-                        throw new Error(err.response?.data?.message || "Error during registration");
+                        throw new Error(err.response?.data?.message || "Error during registration!");
                     }
                     throw err;
                 }
-                // The value we return becomes the `fulfilled` action payload
             },
             {
                 pending: (state) => {
                     state.isAuthenticated = false;
+                    state.user = undefined;
                 },
-                fulfilled: (state, action) => {
-                    state.isAuthenticated = true;
-                    state.user = action.payload;
+                fulfilled: (state) => {
+                    state.isAuthenticated = false;
+                    state.user = undefined;
+                    state.registerErrorMessage = undefined;
                 },
                 rejected: (state, action) => {
                     state.isAuthenticated = false;

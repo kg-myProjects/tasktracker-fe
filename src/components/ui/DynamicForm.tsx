@@ -39,8 +39,10 @@ function DynamicForm<T extends FormikValues>({
         validationSchema,
         onSubmit,
     });
-    const [showConfirm, setShowConfirm] = useState(false);
 
+    const navigate = useNavigate();
+
+    const [showConfirm, setShowConfirm] = useState(false);
     const [passwordVisibility, setPasswordVisibility] = useState<Record<string, boolean>>({});
 
     const togglePassword = (fieldName: string) => {
@@ -49,7 +51,6 @@ function DynamicForm<T extends FormikValues>({
             [fieldName]: !prev[fieldName]
         }));
     };
-    const navigate = useNavigate();
 
     const handleClose = () => {
         if (formik.dirty) {
@@ -63,10 +64,10 @@ function DynamicForm<T extends FormikValues>({
         setShowConfirm(false);
         onClose();
     };
+
     const handleCancelDiscard = () => {
         setShowConfirm(false);
     };
-
 
     return (
         <FormContainer
@@ -115,8 +116,7 @@ function DynamicForm<T extends FormikValues>({
                                         : field.type || "text"
                                 }
                                 placeholder={field.placeholder}
-                                className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300
-  autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                                className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300 autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
                                     formik.touched[field.name] && formik.errors[field.name]
                                         ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
                                         : "border-cyan-400/30"
@@ -140,20 +140,26 @@ function DynamicForm<T extends FormikValues>({
                         </p>
                     )}
 
+                    {field.helperText && (
+                        <div>
+                            {field.helperText(String(formik.values[field.name] ?? ""))}
+                        </div>
+                    )}
+
                     {field.name === "password" && title === "Sign In" && (
-                        <div className="flex justify-end pr-1">
+                        <div className="flex justify-end">
                             <button
                                 type="button"
                                 onClick={() => navigate('/forgot-password')}
-                                className="text-[10px] text-cyan-400/50 hover:text-cyan-400 uppercase font-black tracking-tighter transition-all duration-300 hover:tracking-normal active:scale-95"
+                                className="text-[10px] text-cyan-300 uppercase tracking-tighter transition-all duration-300 hover:tracking-normal active:scale-95"
                             >
                                 Forgot password?
                             </button>
                         </div>
                     )}
-
                 </div>
             ))}
+
             {showConfirm && (
                 <ConfirmModal
                     title="Discard changes?"
@@ -166,7 +172,6 @@ function DynamicForm<T extends FormikValues>({
             )}
 
         </FormContainer>
-
     );
 }
 
