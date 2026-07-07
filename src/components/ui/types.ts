@@ -32,6 +32,7 @@ export type FieldConfig = {
     type?: FieldType;
     validation?: Record<string, unknown>;
     rows?: number;
+    helperText?: (value: string) => React.ReactNode;
 };
 
 

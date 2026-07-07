@@ -32,7 +32,7 @@ export const BoardHeader = ({
     <header className="flex flex-col mb-10 gap-4 text-cyan-400">
 
         {/* BOARD NAME */}
-        <h1 className="text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase whitespace-nowrap">
+        <h1 className="text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase">
             {title ?? "Loading..."}
         </h1>
 

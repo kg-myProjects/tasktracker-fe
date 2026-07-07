@@ -3,9 +3,5 @@ import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 
 export default function Projects() {
     usePageTitle("TrackerApp | Projects");
-    return (
-        <div className="flex gap-6">
-            <ProjectsList/>
-        </div>
-    );
+    return <ProjectsList/>;
 }

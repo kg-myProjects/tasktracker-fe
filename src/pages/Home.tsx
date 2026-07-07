@@ -1,8 +1,7 @@
-import { usePageTitle } from "../app/customHooks/usePageTitle.ts";
+import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 
 export default function Home() {
     usePageTitle("TrackerApp");
-
     return (
         <div>
             <h2 className="text-cyan-400 text-2xl font-bold">

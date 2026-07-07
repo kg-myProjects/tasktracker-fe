@@ -4,9 +4,17 @@ import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 
 export default function Login() {
     usePageTitle("TrackerApp | Sign In")
-    const location = useLocation();
-    const params = new URLSearchParams(location.hash.split("?")[1]);
-    const confirmed = params.get("confirm") === "true";
 
-  return <LoginForm emailConfirmed={confirmed} />;
+    const location = useLocation();
+
+    const params = new URLSearchParams(location.search);
+    const confirmed = params.get("confirmed") === "true";
+    const email = params.get("email") ?? "";
+
+    return (
+        <LoginForm
+            emailConfirmed={confirmed}
+            confirmedEmail={email}
+        />
+    );
 }
