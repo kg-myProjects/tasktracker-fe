@@ -51,8 +51,8 @@ export const ProjectLogModal: React.FC<ProjectLogsModalProps> = ({isOpen, onClos
                     {logs.length === 0 ? (
                         <div className="flex h-full items-center justify-center text-cyan-500 text-sm">No logs yet</div>
                     ) : (
-                        currentLogs.map((log, index) => (
-                            <ProjectLogItem key={`${log.createdAt}-${index}`} log={log}/>
+                        currentLogs.map((log) => (
+                            <ProjectLogItem key={log.id} log={log}/>
                         ))
                     )}
                 </div>
