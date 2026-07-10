@@ -93,7 +93,8 @@ export default function Profile() {
 
         try {
             const updatedUser = await dispatch(updateUserAvatar(formData)).unwrap();
-            setAvatarUrl(`${updatedUser.avatarUrl}?t=${Date.now()}`);
+            // setAvatarUrl(`${updatedUser.avatarUrl}?t=${Date.now()}`);
+            setAvatarUrl(updatedUser.avatarUrl);
 
             dispatch(setUser({...updatedUser}));
 
@@ -214,7 +215,10 @@ export default function Profile() {
                     <div className="flex w-28 h-28 md:w-40 md:h-40 items-center justify-center rounded-full overflow-hidden border-2 border-cyan-500 bg-cyan-300 text-white text-4xl">
                         {avatarPreview || avatarUrl ? (
                             <img
-                                src={avatarPreview || `${API_URL}${avatarUrl}?t=${Date.now()}`}
+                                src={
+                                    avatarPreview ||
+                                    `${API_URL}${avatarUrl}${user.avatarUpdatedAt ? `?t=${user.avatarUpdatedAt}` : ""}`
+                                }
                                 alt="user_avatar"
                                 className="w-full h-full object-cover"
                             />

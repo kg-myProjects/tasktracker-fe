@@ -33,7 +33,7 @@ export default function Actions({onOpenMobileMenu}: ActionsProps) {
                             <div className="w-12 h-12 flex rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-xs text-white overflow-hidden">
                                 {user?.avatarUrl ? (
                                     <img
-                                        src={`${API_URL}${user.avatarUrl}?t=${Date.now()}`}
+                                        src={`${API_URL}${user.avatarUrl}${user.avatarUpdatedAt ? `?t=${user.avatarUpdatedAt}` : ""}`}
                                         alt="avatar"
                                         className="w-full h-full object-cover"
                                     />

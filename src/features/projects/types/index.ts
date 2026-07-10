@@ -61,9 +61,10 @@ export interface ProjectLog {
     entityName: string;
     action: ProjectLogAction;
     userEmail: string;
-    userFirstName?: string;
-    userLastName?: string;
-    userAvatar?: string;
+    userFirstName: string | null;
+    userLastName: string | null;
+    userAvatar: string | null;
+    userAvatarUpdatedAt: number | null;
     difference: string;
     createdAt: string;
 }

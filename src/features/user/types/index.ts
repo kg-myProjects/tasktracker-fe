@@ -1,21 +1,23 @@
+import type {CONFIRM_STATUS, ROLE} from "../../auth/types";
+
 export interface UserSliceState {
-    data: UserDetailedDto | null;
+    data: UserDetailsDto | null;
     loading: boolean;
-    error: string | undefined;
+    error: string | null;
 }
 
-export interface UserDetailedDto {
+export interface UserDetailsDto {
     email: string;
-    avatarUrl?: string;
-    roles: string[];
-    emailConfirmed: boolean;
-
-    firstName?: string;
-    lastName?: string;
-    birthDate?: string;
-    city?: string;
-    phone?: string;
-    about?: string;
+    role: ROLE;
+    confirmationStatus: CONFIRM_STATUS;
+    firstName: string | null;
+    lastName: string | null;
+    birthDate: string | null;
+    city: string | null;
+    phone: string | null;
+    about: string | null;
+    avatarUrl: string | null;
+    avatarUpdatedAt: number | null;
 }
 
 export interface UpdateUserPayloadDto {
