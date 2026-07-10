@@ -1,4 +1,4 @@
-import type {UpdateUserPayloadDto, UserSliceState, UserDetailedDto} from "../types";
+import type {UpdateUserPayloadDto, UserSliceState, UserDetailsDto} from "../types";
 import * as api from "../services/api";
 import {createAppSlice} from "../../../app/createAppSlice.ts";
 import {isAxiosError} from "axios";
@@ -7,7 +7,7 @@ import type {PayloadAction} from "@reduxjs/toolkit";
 const initialState: UserSliceState = {
     data: null,
     loading: false,
-    error: undefined,
+    error: null,
 };
 
 export const AVATAR_UPDATE_ERROR = "Failed to update avatar on server";
@@ -30,7 +30,7 @@ export const userSlice = createAppSlice({
             {
                 pending: (state) => {
                     state.loading = true;
-                    state.error = undefined;
+                    state.error = null;
                 },
                 fulfilled: (state, action) => {
                     state.data = action.payload;
@@ -38,7 +38,7 @@ export const userSlice = createAppSlice({
                 },
                 rejected: (state, action) => {
                     state.loading = false;
-                    state.error = action.error.message;
+                    state.error = action.error.message || null;
                 },
             }
         ),
@@ -55,9 +55,9 @@ export const userSlice = createAppSlice({
                 }
             },
             {
-                pending: (state) => { state.loading = true; state.error = undefined; },
+                pending: (state) => { state.loading = true; state.error = null; },
                 fulfilled: (state, action) => { state.data = action.payload; state.loading = false; },
-                rejected: (state, action) => { state.loading = false; state.error = action.error.message; },
+                rejected: (state, action) => { state.loading = false; state.error = action.error.message || null; },
             }
         ),
 
@@ -73,7 +73,7 @@ export const userSlice = createAppSlice({
                 }
             },
             {
-                pending: (state) => {state.loading = true; state.error = undefined;},
+                pending: (state) => {state.loading = true; state.error = null;},
                 fulfilled: (state, action) => {
                     state.data = action.payload; state.loading = false;},
                 rejected: (state, action) => {
@@ -93,12 +93,12 @@ export const userSlice = createAppSlice({
                 }
             },
             {
-                pending: (state) => { state.loading = true; state.error = undefined; },
+                pending: (state) => { state.loading = true; state.error = null; },
                 fulfilled: (state, action) => { state.data = action.payload; state.loading = false; },
-                rejected: (state, action) => { state.loading = false; state.error = action.error.message; },
+                rejected: (state, action) => { state.loading = false; state.error = action.error.message || null; },
             }
         ),
-        setUserDetails: create.reducer((state, action: PayloadAction<UserDetailedDto | undefined>) => {
+        setUserDetails: create.reducer((state, action: PayloadAction<UserDetailsDto | undefined>) => {
             state.data = action.payload ? { ...action.payload } : null;
         })
     }),

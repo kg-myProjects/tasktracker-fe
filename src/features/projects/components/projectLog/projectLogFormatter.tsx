@@ -5,8 +5,8 @@ export const getLogMessage = (
     entity: "Task" | "Status",
     entityName: string,
     userEmail: string,
-    userFirstName?: string,
-    userLastName?: string,
+    userFirstName: string | null,
+    userLastName: string | null,
     difference?: string
 ) => {
     const fullName = [userFirstName, userLastName].filter(Boolean).join(" ");
