@@ -28,7 +28,20 @@ export default function CheckEmail() {
     return (
         <div className="min-h-screen flex items-start justify-center p-4">
             <div className="w-full max-w-lg">
-                <div className="rounded-2xl border-2 border-cyan-900/50 bg-slate-950 p-8 text-center">
+                <div className="
+                        mx-auto p-6 rounded-xl
+                        bg-white/5
+                        backdrop-blur-md
+                        border-2 border-dashed border-cyan-400/30
+                        text-cyan-400
+                        hover:bg-cyan-400/10
+                        hover:border-cyan-400
+                        hover:shadow-[0_0_20px_rgba(6,182,212,0.2)]
+                        transition-all
+                        font-bold
+                        text-center
+                        "
+                >
                     <h2 className="text-cyan-400 text-2xl font-bold mb-4">📧 Check your Email</h2>
                     <p className="text-white">We sent a confirmation link to:</p>
                     {email && (
