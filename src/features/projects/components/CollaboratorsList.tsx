@@ -12,20 +12,20 @@ export const CollaboratorsList = ({collaborators}: CollaboratorsListProps) => {
     return (
         <div className="flex items-center ml-4">
             <div className="flex items-center -space-x-3">
-                {collaborators.map((member) => (
+                {collaborators.map((collaborator) => (
                     <div
-                        key={member.id}
-                        title={`${member.email} (${member.roles?.join(", ") ?? "No roles"})`}
+                        key={collaborator.id}
+                        title={`${collaborator.email} (${collaborator.roles?.join(", ") ?? "No roles"})`}
                         className="w-9 h-9 rounded-full bg-cyan-300 border-2 border-cyan-500 flex items-center justify-center text-sm font-medium text-white cursor-help hover:z-10 transition-all hover:scale-120 shadow-sm overflow-hidden"
                     >
-                        {member.avatarUrl ? (
+                        {collaborator.avatarUrl ? (
                             <img
-                                src={`${API_URL}${member.avatarUrl}`}
-                                alt={member.email}
+                                src={`${API_URL}${collaborator.avatarUrl}${collaborator.avatarUpdatedAt ? `?t=${collaborator.avatarUpdatedAt}` : ""}`}
+                                alt={collaborator.email}
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            member.email?.[0]?.toUpperCase() ?? "?"
+                            collaborator.email?.[0]?.toUpperCase() ?? "?"
                         )}
                     </div>
                 ))}

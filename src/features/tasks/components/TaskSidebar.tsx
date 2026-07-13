@@ -207,7 +207,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                             <div className="w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 flex items-center justify-center text-[12px] font-black text-white shadow-sm group-hover:bg-cyan-500 group-hover:text-white overflow-hidden transition-colors">
                                                 {member.avatarUrl ? (
                                                     <img
-                                                        src={`${API_URL}${member.avatarUrl}`}
+                                                        src={`${API_URL}${member.avatarUrl}${member.avatarUpdatedAt ? `?t=${member.avatarUpdatedAt}` : ""}`}
                                                         alt={member.email}
                                                         className="w-full h-full object-cover"
                                                     />
