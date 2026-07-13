@@ -129,17 +129,17 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                 <div className="space-y-3">
                                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">Members</h4>
                                     <div className="flex -space-x-3">
-                                        {currentTask.executors.map(ex => (
-                                            <div key={ex.id}
+                                        {currentTask.executors.map(executor => (
+                                            <div key={executor.id}
                                                 className="w-9 h-9 rounded-full bg-cyan-950 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
-                                                {ex.avatarUrl ? (
+                                                {executor.avatarUrl ? (
                                                     <img
-                                                        src={`${API_URL}${ex.avatarUrl}`}
-                                                        alt={ex.email}
+                                                        src={`${API_URL}${executor.avatarUrl}${executor.avatarUpdatedAt ? `?t=${executor.avatarUpdatedAt}` : ""}`}
+                                                        alt={executor.email}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 ) : (
-                                                    ex.email.charAt(0).toUpperCase()
+                                                    executor.email.charAt(0).toUpperCase()
                                                 )}
                                             </div>
                                         ))}

@@ -95,20 +95,20 @@ export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}:
                     {/* AVATARS */}
                     {task.executors && task.executors.length > 0 && (
                         <div className="flex -space-x-3 ml-auto">
-                            {task.executors.map(ex => (
+                            {task.executors.map(executor => (
                                 <div
-                                    key={ex.id}
+                                    key={executor.id}
                                     className="flex w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-[12px] font-bold text-white overflow-hidden uppercase"
-                                    title={ex.email}
+                                    title={executor.email}
                                 >
-                                    {ex.avatarUrl ? (
+                                    {executor.avatarUrl ? (
                                         <img
-                                            src={`${API_URL}${ex.avatarUrl}`}
-                                            alt={ex.email}
+                                            src={`${API_URL}${executor.avatarUrl}${executor.avatarUpdatedAt ? `?t=${executor.avatarUpdatedAt}` : ""}`}
+                                            alt={executor.email}
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        ex.email.charAt(0).toUpperCase()
+                                        executor.email.charAt(0).toUpperCase()
                                     )}
                                 </div>
                             ))}

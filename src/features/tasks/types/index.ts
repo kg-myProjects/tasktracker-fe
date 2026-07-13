@@ -15,7 +15,6 @@ export interface Task {
     updatedAt?: string;
     attachments: Attachment[];
     comments: Comment[];
-
 }
 
 export interface CreateTaskDto {
@@ -24,25 +23,6 @@ export interface CreateTaskDto {
     statusId: string;
     projectId: string;
 }
-
-export interface TaskDto{
-    id: string;
-    title: string;
-    taskNumber: number;
-    description: string;
-    statusId: string;
-    projectId: string;
-    executors: CollaboratorDto[];
-    markers: MarkerDto[];
-    checklist: ChecklistItem[];
-    dueDate?: string | null;
-    createdAt?: string;
-    updatedAt?: string;
-    attachments: Attachment[];
-    comments: Comment[];
-}
-
-
 
 export interface UpdateTaskDto {
     title?: string;
@@ -61,7 +41,6 @@ export interface UpdateTaskPayload {
     dto: UpdateTaskDto;
 }
 
-
 export interface TasksSliceState {
     tasks: Task[];
     createTaskErrorMessage?: string;
@@ -76,6 +55,7 @@ export interface MarkerDto {
     name: string;
     color: string;
 }
+
 export interface ChecklistItem {
     id?: string;
     text: string;
@@ -89,6 +69,7 @@ export interface Attachment {
     type: 'IMAGE' | 'PDF' | 'DOC' | 'VIDEO' | 'FILE' | 'LINK';
     createdAt: string;
 }
+
 export interface Comment {
     id: string;
     text: string;

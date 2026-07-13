@@ -1,6 +1,6 @@
-import type {Task, TaskDto} from "../types";
+import type {Task} from "../types";
 
-export function mapTaskFromApi(data: TaskDto): Task {
+export function mapTaskFromApi(data: Task): Task {
     return {
         id: data.id,
         title: data.title,

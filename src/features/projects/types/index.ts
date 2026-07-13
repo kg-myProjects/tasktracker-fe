@@ -10,7 +10,6 @@ export interface Project {
     logs?: ProjectLog[];
 }
 
-
 export type CreateProjectDto = Omit<Project, "id" | "owner" | "projectTeam" | "markers" | "logs">;
 
 export type EditProjectDto = Pick<Project, "id" | "title" | "description">;
@@ -18,7 +17,8 @@ export type EditProjectDto = Pick<Project, "id" | "title" | "description">;
 export interface CollaboratorDto {
     id: string;
     email: string;
-    avatarUrl?: string;
+    avatarUrl: string | null;
+    avatarUpdatedAt: number | null;
     roles: ProjectRole[];
 }
 
@@ -26,7 +26,6 @@ export interface EmployeeDto {
     id: string;
     email: string;
 }
-
 
 export interface ProjectsSliceState {
     projects: Project[];

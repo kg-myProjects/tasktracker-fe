@@ -1,5 +1,5 @@
 import {createAppSlice} from "../../../app/createAppSlice";
-import type {CreateTaskDto, TaskDto, TasksSliceState, UpdateTaskPayload} from "../types";
+import type {CreateTaskDto, Task, TasksSliceState, UpdateTaskPayload} from "../types";
 import * as api from "../services/api";
 import {isAxiosError, type AxiosError} from "axios";
 import {mapTaskFromApi} from "../mapper/mapper.ts";
@@ -31,7 +31,7 @@ export const tasksSlice = createAppSlice({
                     },
                     fulfilled: (state, action) => {
                         state.isLoading = false;
-                        state.tasks = (action.payload as TaskDto[]).map(mapTaskFromApi);                    },
+                        state.tasks = (action.payload as Task[]).map(mapTaskFromApi);                    },
                     rejected: (state, action) => {
                         state.isLoading = false;
                         state.tasks = [];
@@ -39,7 +39,6 @@ export const tasksSlice = createAppSlice({
                     },
                 }
             ),
-
 
             createTask: create.asyncThunk(
                 async (dto: CreateTaskDto) => {
