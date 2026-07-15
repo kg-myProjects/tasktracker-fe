@@ -7,6 +7,7 @@ import {useAppDispatch} from "../../../app/hooks.ts";
 import {AttachmentPicker} from "./AttachmentPicker.tsx";
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 import {API_URL} from "../../../config/api.ts";
+import {sortCollaboratorsByRole} from "../../projects/utils/projectUtils.ts";
 
 interface TaskSidebarProps {
     task: Task;
@@ -194,7 +195,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                     <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Members</span>
                                 </div>
                                 <div className="max-h-48 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                                    {projectMembers?.map((member) => (
+                                    {sortCollaboratorsByRole(projectMembers)?.map((member) => (
                                         <button
                                             key={member.id}
                                             onClick={(e) => {
@@ -202,20 +203,39 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                                 e.stopPropagation();
                                                 actions.handleAddExecutor(member.id);
                                             }}
-                                            className="w-full flex items-center gap-3 p-2.5 rounded-2xl hover:bg-cyan-50 transition-all text-left group"
+                                            className="w-full flex items-center gap-3 p-2.5 rounded-2xl hover:bg-slate-800 group transition-all text-left"
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 flex items-center justify-center text-[12px] font-black text-white shadow-sm group-hover:bg-cyan-500 group-hover:text-white overflow-hidden transition-colors">
-                                                {member.avatarUrl ? (
-                                                    <img
-                                                        src={`${API_URL}${member.avatarUrl}${member.avatarUpdatedAt ? `?t=${member.avatarUpdatedAt}` : ""}`}
-                                                        alt={member.email}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                member.email.charAt(0).toUpperCase()
+                                            <div className="relative shrink-0">
+                                                {member.roles.includes("OWNER") && (
+                                                    <svg
+                                                        className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 text-yellow-400"
+                                                        viewBox="0 0 24 24"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path d="M2 19h20v2H2v-2zM2 6l5 5 5-8 5 8 5-5v11H2V6z"/>
+                                                    </svg>
                                                 )}
+                                                <div className="flex
+                                                items-center
+                                                justify-center
+                                                w-9 h-9 rounded-full
+                                                bg-cyan-300
+                                                border-2 border-cyan-500
+                                                text-[12px] font-black text-white shadow-sm
+                                                transition-colors
+                                                overflow-hidden">
+                                                    {member.avatarUrl ? (
+                                                        <img
+                                                            src={`${API_URL}${member.avatarUrl}${member.avatarUpdatedAt ? `?t=${member.avatarUpdatedAt}` : ""}`}
+                                                            alt={member.email}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        member.email.charAt(0).toUpperCase()
+                                                    )}
+                                                </div>
                                             </div>
-                                            <span className="text-[10px] font-bold text-slate-700 truncate flex-1">{member.email}</span>
+                                            <span className="text-[10px] font-bold text-slate-700 group-hover:text-white truncate flex-1">{member.email}</span>
                                             {task.executors?.some(ex => ex.id === member.id) && <span className="text-cyan-500 font-bold text-xs">✓</span>}
                                         </button>
                                     ))}

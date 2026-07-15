@@ -10,6 +10,7 @@ import {getComments, setTaskError} from "../slice/tasksSlice";
 import {format, formatDistanceToNow} from 'date-fns';
 import PulsedStripe from "../../../components/ui/effects/PulsedStripe.tsx";
 import {API_URL} from "../../../config/api.ts";
+import {sortCollaboratorsByRole} from "../../projects/utils/projectUtils.ts";
 
 interface TaskEditModalProps {
     card: Task;
@@ -129,18 +130,29 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                 <div className="space-y-3">
                                     <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center gap-3">Members</h4>
                                     <div className="flex -space-x-3">
-                                        {currentTask.executors.map(executor => (
-                                            <div key={executor.id}
-                                                className="w-9 h-9 rounded-full bg-cyan-950 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
-                                                {executor.avatarUrl ? (
-                                                    <img
-                                                        src={`${API_URL}${executor.avatarUrl}${executor.avatarUpdatedAt ? `?t=${executor.avatarUpdatedAt}` : ""}`}
-                                                        alt={executor.email}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    executor.email.charAt(0).toUpperCase()
+                                        {sortCollaboratorsByRole(currentTask.executors).map(executor => (
+                                            <div key={executor.id} className="relative">
+                                                {executor.roles.includes("OWNER") && (
+                                                    <svg
+                                                        className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]"
+                                                        viewBox="0 0 24 24"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path d="M2 19h20v2H2v-2zM2 6l5 5 5-8 5 8 5-5v11H2V6z"/>
+                                                    </svg>
                                                 )}
+                                                <div
+                                                    className="w-9 h-9 rounded-full bg-cyan-950 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
+                                                    {executor.avatarUrl ? (
+                                                        <img
+                                                            src={`${API_URL}${executor.avatarUrl}${executor.avatarUpdatedAt ? `?t=${executor.avatarUpdatedAt}` : ""}`}
+                                                            alt={executor.email}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        executor.email.charAt(0).toUpperCase()
+                                                    )}
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
