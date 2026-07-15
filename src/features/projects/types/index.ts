@@ -4,7 +4,6 @@ export interface Project {
     id: string;
     title: string;
     description: string;
-    owner: EmployeeDto;
     projectTeam: CollaboratorDto[];
     markers?: MarkerDto[];
     logs?: ProjectLog[];
@@ -20,11 +19,6 @@ export interface CollaboratorDto {
     avatarUrl: string | null;
     avatarUpdatedAt: number | null;
     roles: ProjectRole[];
-}
-
-export interface EmployeeDto {
-    id: string;
-    email: string;
 }
 
 export interface ProjectsSliceState {
@@ -45,7 +39,6 @@ export interface InviteRequestDto {
     email: string;
     role: ProjectRole;
 }
-
 
 export interface InviteModalProps {
     isOpen: boolean;

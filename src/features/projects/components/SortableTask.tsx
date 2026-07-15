@@ -6,6 +6,7 @@ import {deleteTask, selectIsLoading} from "../../tasks/slice/tasksSlice";
 import React, {useState} from "react";
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 import {API_URL} from "../../../config/api.ts";
+import {sortCollaboratorsByRole} from "../utils/projectUtils.ts";
 
 export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}: {
     task: Task;
@@ -77,7 +78,7 @@ export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}:
                 </div>
                 {/* TASK DESCRIPTION */}
                 {task.description && (
-                    <div className="text-[10px] md:text-[12px] text-slate-500 mt-1 line-clamp-2">
+                    <div className="text-[10px] md:text-[12px] text-slate-500 my-2 line-clamp-2">
                         {task.description}
                     </div>
                 )}
@@ -95,21 +96,31 @@ export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}:
                     {/* AVATARS */}
                     {task.executors && task.executors.length > 0 && (
                         <div className="flex -space-x-3 ml-auto">
-                            {task.executors.map(executor => (
-                                <div
-                                    key={executor.id}
-                                    className="flex w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-[12px] font-bold text-white overflow-hidden uppercase"
-                                    title={executor.email}
-                                >
-                                    {executor.avatarUrl ? (
-                                        <img
-                                            src={`${API_URL}${executor.avatarUrl}${executor.avatarUpdatedAt ? `?t=${executor.avatarUpdatedAt}` : ""}`}
-                                            alt={executor.email}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        executor.email.charAt(0).toUpperCase()
+                            {sortCollaboratorsByRole(task.executors).map(executor => (
+                                <div key={executor.id} className="relative">
+                                    {executor.roles.includes("OWNER") && (
+                                        <svg
+                                            className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                        >
+                                            <path d="M2 19h20v2H2v-2zM2 6l5 5 5-8 5 8 5-5v11H2V6z"/>
+                                        </svg>
                                     )}
+                                    <div
+                                        className="flex w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-[12px] font-bold text-white overflow-hidden uppercase"
+                                        title={executor.email}
+                                    >
+                                        {executor.avatarUrl ? (
+                                            <img
+                                                src={`${API_URL}${executor.avatarUrl}${executor.avatarUpdatedAt ? `?t=${executor.avatarUpdatedAt}` : ""}`}
+                                                alt={executor.email}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            executor.email.charAt(0).toUpperCase()
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
