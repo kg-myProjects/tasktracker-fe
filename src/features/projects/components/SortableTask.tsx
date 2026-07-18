@@ -7,6 +7,7 @@ import React, {useState} from "react";
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 import {API_URL} from "../../../config/api.ts";
 import {sortCollaboratorsByRole} from "../utils/projectUtils.ts";
+import {CrownIcon} from "../../../components/ui/icons/CrownIcon.tsx";
 
 export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}: {
     task: Task;
@@ -99,13 +100,7 @@ export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}:
                             {sortCollaboratorsByRole(task.executors).map(executor => (
                                 <div key={executor.id} className="relative">
                                     {executor.roles.includes("OWNER") && (
-                                        <svg
-                                            className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]"
-                                            viewBox="0 0 24 24"
-                                            fill="currentColor"
-                                        >
-                                            <path d="M2 19h20v2H2v-2zM2 6l5 5 5-8 5 8 5-5v11H2V6z"/>
-                                        </svg>
+                                        <CrownIcon className="absolute -top-3 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
                                     )}
                                     <div
                                         className="flex w-8 h-8 rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-[12px] font-bold text-white overflow-hidden uppercase"

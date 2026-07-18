@@ -1,13 +1,14 @@
 import {useEffect, useRef, useState} from "react";
 import type {Task, MarkerDto, UpdateTaskDto} from "../types";
 import type {CollaboratorDto} from "../../projects/types";
-import { NEON_COLORS } from "../constants/taskConstants.ts";
+import {NEON_COLORS} from "../constants/taskConstants.ts";
 import {setTaskError} from "../slice/tasksSlice";
 import {useAppDispatch} from "../../../app/hooks.ts";
 import {AttachmentPicker} from "./AttachmentPicker.tsx";
 import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 import {API_URL} from "../../../config/api.ts";
 import {sortCollaboratorsByRole} from "../../projects/utils/projectUtils.ts";
+import {CrownIcon} from "../../../components/ui/icons/CrownIcon.tsx";
 
 interface TaskSidebarProps {
     task: Task;
@@ -134,7 +135,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                         {/* Slide window */}
                         {/* MARKERS PICKER */}
                         {btn.id === 'labels' && activePopup === "labels" && (
-                            <div className="w-[280px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
+                            <div className="w-[350px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
                                     <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Labels</span>
                                 </div>
@@ -190,7 +191,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                         )}
                         {/* MEMBERS PICKER */}
                         {btn.id === 'members' && activePopup === "members" && (
-                            <div onClick={e => e.stopPropagation()} className="w-[280px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
+                            <div onClick={e => e.stopPropagation()} className="w-[350px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
                                     <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Members</span>
                                 </div>
@@ -207,13 +208,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                         >
                                             <div className="relative shrink-0">
                                                 {member.roles.includes("OWNER") && (
-                                                    <svg
-                                                        className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 text-yellow-400"
-                                                        viewBox="0 0 24 24"
-                                                        fill="currentColor"
-                                                    >
-                                                        <path d="M2 19h20v2H2v-2zM2 6l5 5 5-8 5 8 5-5v11H2V6z"/>
-                                                    </svg>
+                                                    <CrownIcon className="absolute -top-3 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
                                                 )}
                                                 <div className="flex
                                                 items-center
@@ -244,14 +239,9 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                         )}
                         {/* DATE PICKER */}
                         {btn.id === 'dates' && activePopup === "dates" && (
-                            <>
-                            <div
-                                className="fixed inset-0 z-[90]"
-                                onClick={() => setActivePopup(null)}
-                            />
                             <div
                                 onClick={e => e.stopPropagation()}
-                                className="w-[300px] bg-white border-2 border-cyan-500 rounded-3xl shadow-2xl p-5 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in zoom-in-95"
+                                className="w-[350px] bg-white border-2 border-cyan-500 rounded-3xl shadow-2xl p-5 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in zoom-in-95"
                             >
                                 <p className="text-[10px] font-black text-cyan-600 uppercase mb-4 text-center tracking-widest px-1">Set Deadline</p>
 
@@ -300,7 +290,6 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                     </button>
                                 </div>
                             </div>
-                         </>
                         )}
                         {/* ATTACHMENT PICKER */}
                         {btn.id === 'attachment' && activePopup === "attachment" && (
