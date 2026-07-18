@@ -9,7 +9,7 @@ export interface Project {
     logs?: ProjectLog[];
 }
 
-export type CreateProjectDto = Omit<Project, "id" | "owner" | "projectTeam" | "markers" | "logs">;
+export type CreateProjectDto = Omit<Project, "id" | "projectTeam" | "markers" | "logs">;
 
 export type EditProjectDto = Pick<Project, "id" | "title" | "description">;
 

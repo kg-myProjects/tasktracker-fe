@@ -11,6 +11,7 @@ import {format, formatDistanceToNow} from 'date-fns';
 import PulsedStripe from "../../../components/ui/effects/PulsedStripe.tsx";
 import {API_URL} from "../../../config/api.ts";
 import {sortCollaboratorsByRole} from "../../projects/utils/projectUtils.ts";
+import {CrownIcon} from "../../../components/ui/icons/CrownIcon.tsx";
 
 interface TaskEditModalProps {
     card: Task;
@@ -133,13 +134,7 @@ export function EditTaskModal({card, onClose}: TaskEditModalProps) {
                                         {sortCollaboratorsByRole(currentTask.executors).map(executor => (
                                             <div key={executor.id} className="relative">
                                                 {executor.roles.includes("OWNER") && (
-                                                    <svg
-                                                        className="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]"
-                                                        viewBox="0 0 24 24"
-                                                        fill="currentColor"
-                                                    >
-                                                        <path d="M2 19h20v2H2v-2zM2 6l5 5 5-8 5 8 5-5v11H2V6z"/>
-                                                    </svg>
+                                                    <CrownIcon className="absolute -top-3 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
                                                 )}
                                                 <div
                                                     className="w-9 h-9 rounded-full bg-cyan-950 border-2 border-cyan-500 flex items-center justify-center text-cyan-400 text-xs font-black shadow-lg overflow-hidden">
