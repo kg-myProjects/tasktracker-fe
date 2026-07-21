@@ -13,9 +13,11 @@ export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}:
     task: Task;
     onOpenEdit: () => void
 }) {
+
     const dispatch = useAppDispatch();
-    const [showConfirm, setShowConfirm] = useState(false);
     const isLoading = useAppSelector(selectIsLoading);
+
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const {
         setNodeRef,
@@ -55,7 +57,7 @@ export const SortableTask = React.memo(function SortableTask({task, onOpenEdit}:
             className="relative bg-white rounded-lg p-2 transition-shadow duration-200 border-2 border-white cursor-grab active:cursor-grabbing animate-in zoom-in-95 shadow-sm hover:border-cyan-400 hover:shadow-md"
         >
             {/* DRAG AREA */}
-            <div {...attributes} {...listeners}>
+            <div {...attributes} {...listeners} className="select-none touch-none">
                 {/* TASK MARKERS */}
                 {task.markers && task.markers.length > 0 && (
                     <div className="flex gap-2 mb-2">

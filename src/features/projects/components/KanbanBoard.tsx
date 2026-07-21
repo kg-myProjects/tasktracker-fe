@@ -1,25 +1,12 @@
 import {useEffect, useMemo, useState} from "react";
 import {useParams} from "react-router-dom";
-import {DndContext, DragOverlay} from "@dnd-kit/core";
+import {DndContext, type DragEndEvent, type DragOverEvent, DragOverlay} from "@dnd-kit/core";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {snapCenterToCursor} from "@dnd-kit/modifiers";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
-import {
-    selectFilteredTasks,
-    getTasksByProjectId,
-    setSearchQuery,
-    selectSearchQuery,
-    toggleMarker,
-    selectSelectedMarkerIds
-} from "../../tasks/slice/tasksSlice";
+import {selectFilteredTasks, getTasksByProjectId, setSearchQuery, selectSearchQuery, toggleMarker, selectSelectedMarkerIds} from "../../tasks/slice/tasksSlice";
 import {getProjectById, selectCurrentProject, selectInviteUserErrorMessage} from "../slice/projectsSlice";
-import {
-    clearStatusError,
-    createTaskStatus,
-    getAllTaskStatuses,
-    selectErrorMessage,
-    selectIsLoading,
-    selectSortedTaskStatuses
-} from "../../statuses/slice/taskStatusSlice";
+import {clearStatusError, createTaskStatus, getAllTaskStatuses, selectErrorMessage, selectIsLoading, selectSortedTaskStatuses} from "../../statuses/slice/taskStatusSlice";
 import {SortableTask} from "./SortableTask.tsx";
 import {BoardHeader} from "./BoardHeader.tsx";
 import {BoardModals} from "./BoardModals.tsx";
@@ -28,19 +15,22 @@ import {useKanbanActions} from "../hooks/useKanbanActions";
 import {usePageTitle} from "../../../app/customHooks/usePageTitle.ts";
 import {SortableColumn} from "./SortableColumn.tsx";
 import NotificationModal from "../../../components/ui/NotificationModal.tsx";
+import {MobileColumnArrow} from "./MobileColumnArrow.tsx";
+import {useIsMobile} from "../../../app/customHooks/useIsMobile.tsx";
+import {TaskOverlayCard} from "./TaskOverlayCard.tsx";
+import {ColumnOverlayCard} from "./ColumnOverlayCard.tsx";
+import {DotsPagination} from "../../../components/ui/DotsPagination.tsx";
 
 export default function KanbanBoard() {
+
     const {projectId} = useParams<{ projectId: string }>();
     const dispatch = useAppDispatch();
-
 
     const tasks = useAppSelector(selectFilteredTasks);
     const searchQuery = useAppSelector(selectSearchQuery);
     const project = useAppSelector(selectCurrentProject);
     const selectedMarkerIds = useAppSelector(selectSelectedMarkerIds);
-    const projectMarkers = project?.markers || [];
     const statuses = useAppSelector(selectSortedTaskStatuses);
-    const allNames = statuses.map(s => s.name);
     const inviteError = useAppSelector(selectInviteUserErrorMessage);
     const isLoading = useAppSelector(selectIsLoading);
     const statusesError = useAppSelector(selectErrorMessage);
@@ -52,18 +42,19 @@ export default function KanbanBoard() {
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [statusToDelete, setStatusToDelete] = useState<{ id: string, name: string } | null>(null);
     const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+    const [mobileStatusIndex, setMobileStatusIndex] = useState(0);
+
+    usePageTitle(project ? `TrackerApp | ${project.title}` : "Loading...");
+    const isMobile = useIsMobile(600);
 
     const {
-        sensors, activeTask, handleDragStart, handleDragEnd,
+        sensors, activeTask, activeStatus, handleDragStart, handleDragEnd: handleDragEndFromHook,
         collisionDetection, dropAnimation
     } = useKanbanDnd(tasks, statuses);
 
     const {
-        handleCreateTask,
-        handleDeleteStatus, handleInvite
+        handleCreateTask, handleDeleteStatus, handleInvite
     } = useKanbanActions(projectId);
-
-    usePageTitle(project ? `TrackerApp | ${project.title}` : "Loading...");
 
     useEffect(() => {
         if (projectId) {
@@ -73,12 +64,57 @@ export default function KanbanBoard() {
         }
     }, [projectId, dispatch]);
 
+    const projectMarkers = project?.markers || [];
+    const allNames = statuses.map(s => s.name);
+
     const tasksByStatus = useMemo(() => {
         return statuses.reduce((acc, status) => ({
             ...acc,
             [status.id]: tasks.filter(t => t.statusId === status.id)
         }), {} as Record<string, typeof tasks>);
     }, [tasks, statuses]);
+
+    const handleDragOver = ({over}: DragOverEvent) => {
+        if (!over) return;
+
+        const id = String(over.id);
+
+        // Hovering a dragged task over an arrow on mobile —
+        // just switch the visible column here; the actual drop is handled in handleDragEnd.
+        if (id === "mobile-right") {
+            setMobileStatusIndex(prev =>
+                Math.min(prev + 1, statuses.length - 1)
+            );
+        }
+        if (id === "mobile-left") {
+            setMobileStatusIndex(prev =>
+                Math.max(prev - 1, 0)
+            );
+        }
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        // On mobile, after dropping, "catch up" the view to the column
+        // the task actually landed in — otherwise the drop animation flies toward
+        // a DOM node that doesn't exist (only one column is rendered at a time on mobile)
+        if (isMobile) {
+            const over = event.over;
+            if (over) {
+                const overId = String(over.id);
+                const targetStatusId = statuses.some(s => s.id === overId)
+                    ? overId
+                    : tasks.find(t => t.id === overId)?.statusId;
+
+                if (targetStatusId) {
+                    const targetIndex = statuses.findIndex(s => s.id === targetStatusId);
+                    if (targetIndex !== -1) {
+                        setMobileStatusIndex(targetIndex);
+                    }
+                }
+            }
+        }
+        handleDragEndFromHook(event);
+    };
 
     if (isLoading && statuses.length === 0) {
         return (
@@ -91,8 +127,7 @@ export default function KanbanBoard() {
     }
 
     return (
-        <div
-            className="h-screen flex p-4 md:p-8 flex-col bg-transparent border border-cyan-900/50 rounded-2xl overflow-hidden">
+        <div className="flex px-2 py-4 flex-col bg-transparent border border-cyan-900/50 rounded-2xl">
             <BoardHeader
                 title={project?.title}
                 searchQuery={searchQuery}
@@ -105,60 +140,119 @@ export default function KanbanBoard() {
                 onOpenLogs={() => setIsLogsModalOpen(true)}
                 collaborators={project?.projectTeam}
             />
-
             <DndContext
                 sensors={sensors}
                 collisionDetection={collisionDetection}
                 onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
-                <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
-                    {statuses.map(status => {
-                        const tasksInStatus = tasksByStatus[status.id] || [];
-                        return (
-                            <SortableColumn
-                                key={status.id}
-                                status={status}
-                                allStatusNames={allNames}
-                                onAddTask={() => {
-                                    setCurrentStatusId(status.id);
-                                    setModalOpen(true);
-                                }}
-                                canDelete={tasksInStatus.length === 0}
-                                onDelete={() => setStatusToDelete({id: status.id, name: status.name})}
-
-                            >
-
-
-                                <SortableContext
-                                    items={tasksInStatus.map(t => t.id)}
-                                    strategy={verticalListSortingStrategy}
+                {statuses.length === 0 ? (
+                    // Empty state — shared between mobile and desktop, so the arrows/pagination
+                    // never render with zero columns (otherwise mobileStatusIndex could drift out of bounds)
+                    <div className="flex items-center justify-center w-full py-12 text-cyan-400/60 text-sm">
+                        Add your first task status to get started.
+                    </div>
+                ) : isMobile ? (
+                    <> {/* MOBILE SCREEN BLOCK — only ONE column is rendered at a time (statuses[mobileStatusIndex]).
+                           This is intentional: rendering all columns and just hiding them via CSS
+                           causes dnd-kit to register duplicate ids and produces drag/drop collisions */}
+                        <DotsPagination total={statuses.length} activeIndex={mobileStatusIndex}/>
+                        <div className="flex justify-center gap-2">
+                            <MobileColumnArrow
+                                direction="left"
+                                disabled={mobileStatusIndex === 0}
+                                onChangeColumn={() => setMobileStatusIndex(prev => prev - 1)}
+                            />
+                            {statuses[mobileStatusIndex] && (
+                                <SortableColumn
+                                    dragDisabled={true} // Column reordering is disabled on mobile — nothing to reorder against, only one column is visible.
+                                    status={statuses[mobileStatusIndex]}
+                                    allStatusNames={allNames}
+                                    onAddTask={() => {
+                                        setCurrentStatusId(statuses[mobileStatusIndex].id);
+                                        setModalOpen(true);
+                                    }}
+                                    canDelete={(tasksByStatus[statuses[mobileStatusIndex].id] || []).length === 0}
+                                    onDelete={() =>
+                                        setStatusToDelete({
+                                            id: statuses[mobileStatusIndex].id,
+                                            name: statuses[mobileStatusIndex].name
+                                        })
+                                    }
                                 >
-                                    <div className="flex flex-col gap-2">
-                                        {tasksInStatus.map(task => (
-                                            <SortableTask
-                                                key={task.id}
-                                                task={task}
-                                                onOpenEdit={() => setEditingTaskId(task.id)}
-                                            />
-                                        ))}
-                                    </div>
-                                </SortableContext>
-                            </SortableColumn>
-                        );
-                    })}
-                </div>
-
-                <DragOverlay dropAnimation={dropAnimation}>
-                    {activeTask && (
-                        <div
-                            className="bg-white rounded-xl p-3 border-2 border-cyan-500 shadow-2xl rotate-3 w-[300px] cursor-grabbing">
-                            <div className="font-semibold text-black">{activeTask.title}</div>
+                                    <SortableContext
+                                        items={(tasksByStatus[statuses[mobileStatusIndex].id] || []).map(t => t.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        <div className="flex flex-col gap-2">
+                                            {(tasksByStatus[statuses[mobileStatusIndex].id] || []).map(task => (
+                                                <SortableTask
+                                                    key={task.id}
+                                                    task={task}
+                                                    onOpenEdit={() => setEditingTaskId(task.id)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </SortableContext>
+                                </SortableColumn>
+                            )}
+                            <MobileColumnArrow
+                                direction="right"
+                                disabled={mobileStatusIndex >= statuses.length - 1}
+                                onChangeColumn={() => setMobileStatusIndex(prev => prev + 1)}
+                            />
                         </div>
+                    </>
+                ) : (
+                    // DESKTOP SCREEN BLOCK
+                        <div className="flex gap-2 overflow-x-auto">
+                            {statuses.map(status => {
+                                const tasksInStatus = tasksByStatus[status.id] || [];
+                                return (
+                                    <SortableColumn
+                                        key={status.id}
+                                        status={status}
+                                        allStatusNames={allNames}
+                                        onAddTask={() => {
+                                            setCurrentStatusId(status.id);
+                                            setModalOpen(true);
+                                        }}
+                                        canDelete={tasksInStatus.length === 0}
+                                        onDelete={() => setStatusToDelete({id: status.id, name: status.name})}
+                                    >
+                                        <SortableContext
+                                            items={tasksInStatus.map(t => t.id)}
+                                            strategy={verticalListSortingStrategy}
+                                        >
+                                            <div className="flex flex-col gap-2">
+                                                {tasksInStatus.map(task => (
+                                                    <SortableTask
+                                                        key={task.id}
+                                                        task={task}
+                                                        onOpenEdit={() => setEditingTaskId(task.id)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </SortableContext>
+                                    </SortableColumn>
+                                );
+                            })}
+                        </div>
+                )}
+                <DragOverlay dropAnimation={dropAnimation} modifiers={[snapCenterToCursor]}>
+                    {/* snapCenterToCursor pins the overlay to the pointer/finger every frame,
+                        instead of relying on a one-time measured position — without it the overlay
+                        would occasionally "fly off" on touch devices */}
+                    {activeTask && <TaskOverlayCard task={activeTask}/>}
+                    {activeStatus && (
+                        <ColumnOverlayCard
+                            status={activeStatus}
+                            tasks={tasksByStatus[activeStatus.id] || []}
+                        />
                     )}
                 </DragOverlay>
             </DndContext>
-
             <BoardModals
                 modals={{
                     task: {

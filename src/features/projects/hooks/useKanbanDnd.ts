@@ -1,6 +1,8 @@
 import { useState } from "react";
-import {useSensor, useSensors,
-    PointerSensor, closestCorners, defaultDropAnimationSideEffects
+import {
+    useSensor, useSensors,
+    PointerSensor, defaultDropAnimationSideEffects, type CollisionDetection, pointerWithin,
+    rectIntersection
 } from "@dnd-kit/core";
 import type {DragStartEvent, DragEndEvent}from "@dnd-kit/core";
 import { useAppDispatch } from "../../../app/hooks";
@@ -10,15 +12,34 @@ import type { TaskStatus } from "../../statuses/types";
 import {updateTaskStatusesOrder} from "../../statuses/slice/taskStatusSlice.ts";
 import {arrayMove} from "@dnd-kit/sortable";
 
+const collisionDetectionStrategy: CollisionDetection = (args) => {
+    const pointerCollisions = pointerWithin(args);
+    if (pointerCollisions.length > 0) {
+        return pointerCollisions;
+    }
+    return rectIntersection(args);
+};
+
 export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
     const dispatch = useAppDispatch();
     const [activeTask, setActiveTask] = useState<Task | null>(null);
+    const [activeStatus, setActiveStatus] = useState<TaskStatus | null>(null);
 
     const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                delay: 200,
+                tolerance: 8,
+            },
+        })
     );
 
     const handleDragStart = (event: DragStartEvent) => {
+        if (event.active.data.current?.type === 'Status') {
+            const status = statuses.find(s => s.id === event.active.id);
+            if (status) setActiveStatus(status);
+            return;
+        }
         const task = tasks.find(t => t.id === event.active.id);
         if (task) setActiveTask(task);
     };
@@ -26,6 +47,7 @@ export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         setActiveTask(null);
+        setActiveStatus(null);
         if (!over) return;
 
         const activeId = String(active.id);
@@ -45,7 +67,6 @@ export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
             return;
         }
 
-
         const task = tasks.find(t => t.id === activeId);
         if (!task) return;
 
@@ -58,7 +79,6 @@ export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
         }
 
         if (task.statusId !== newStatusId) {
-            // ВИПРАВЛЕНО: Явно вказуємо тип для DTO, щоб TS не вимагав attachments
             const updateDto: Partial<UpdateTaskDto> = { statusId: newStatusId };
             dispatch(updateTask({ id: activeId, dto: updateDto as UpdateTaskDto }));
         }
@@ -73,9 +93,10 @@ export const useKanbanDnd = (tasks: Task[], statuses: TaskStatus[]) => {
     return {
         sensors,
         activeTask,
+        activeStatus,
         handleDragStart,
         handleDragEnd,
-        collisionDetection: closestCorners,
+        collisionDetection: collisionDetectionStrategy,
         dropAnimation
     };
 };

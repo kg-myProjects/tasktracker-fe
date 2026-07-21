@@ -93,13 +93,12 @@ function DynamicForm<T extends FormikValues>({
                     <label className="block text-sm font-medium text-cyan-300 text-neon">
                         {field.label}
                     </label>
-
                     {field.type === "textarea" ? (
                         <textarea
                             {...formik.getFieldProps(field.name)}
                             rows={field.rows || 4}
                             placeholder={field.placeholder}
-                            className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                            className={`w-full px-3 py-2 text-base rounded-md border bg-black text-cyan-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
                                 formik.touched[field.name] && formik.errors[field.name]
                                     ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
                                     : "border-cyan-400/30"
@@ -109,14 +108,13 @@ function DynamicForm<T extends FormikValues>({
                         <div className="relative">
                             <input
                                 {...formik.getFieldProps(field.name)}
-
                                 type={
                                     field.type === "password"
                                         ? (passwordVisibility[field.name] ? "text" : "password")
                                         : field.type || "text"
                                 }
                                 placeholder={field.placeholder}
-                                className={`w-full px-3 py-2 text-sm rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300 autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                                className={`w-full px-3 py-2 text-base rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300 autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
                                     formik.touched[field.name] && formik.errors[field.name]
                                         ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
                                         : "border-cyan-400/30"
@@ -133,19 +131,16 @@ function DynamicForm<T extends FormikValues>({
                             )}
                         </div>
                     )}
-
                     {formik.touched[field.name] && formik.errors[field.name] && (
                         <p className="text-sm text-red-500">
                             {getErrorMessage(formik.errors[field.name])}
                         </p>
                     )}
-
                     {field.helperText && (
                         <div>
                             {field.helperText(String(formik.values[field.name] ?? ""))}
                         </div>
                     )}
-
                     {field.name === "password" && title === "Sign In" && (
                         <div className="flex justify-end">
                             <button
@@ -159,7 +154,6 @@ function DynamicForm<T extends FormikValues>({
                     )}
                 </div>
             ))}
-
             {showConfirm && (
                 <ConfirmModal
                     title="Discard changes?"
@@ -170,7 +164,6 @@ function DynamicForm<T extends FormikValues>({
                     onCancel={handleCancelDiscard}
                 />
             )}
-
         </FormContainer>
     );
 }

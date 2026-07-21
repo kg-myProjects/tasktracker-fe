@@ -1,8 +1,8 @@
-import { useSortable } from "@dnd-kit/sortable";
-import type { ReactNode } from 'react';
-import { CSS } from "@dnd-kit/utilities";
-import { Column } from "./Column";
-import type { TaskStatus } from "../../statuses/types";
+import type {ReactNode} from 'react';
+import {useSortable} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
+import {Column} from "./Column";
+import type {TaskStatus} from "../../statuses/types";
 
 export interface SortableColumnProps {
     status: TaskStatus;
@@ -11,6 +11,7 @@ export interface SortableColumnProps {
     onAddTask: () => void;
     onDelete?: () => void;
     canDelete?: boolean;
+    dragDisabled?: boolean;
 }
 
 export function SortableColumn(props: SortableColumnProps) {
@@ -20,18 +21,16 @@ export function SortableColumn(props: SortableColumnProps) {
         setNodeRef,
         transform,
         transition,
-        isDragging,
+        isDragging
     } = useSortable({
         id: props.status.id,
-        data: {
-            type: "Status",
-        },
+        data: {type: "Status"},
+        disabled: props.dragDisabled
     });
 
-    const style = {
-        transform: CSS.Translate.toString(transform),
-        transition,
-    };
+    const style = {transform: CSS.Translate.toString(transform), transition,};
+
+    const dragProps = props.dragDisabled ? {} : { ...attributes, ...listeners };
 
     return (
         <div
@@ -39,8 +38,7 @@ export function SortableColumn(props: SortableColumnProps) {
             style={style}
             className={`${isDragging ? "opacity-30" : "opacity-100"} transition-opacity`}
         >
-            {/* listeners та attributes  */}
-            <div {...attributes} {...listeners}>
+            <div {...dragProps}>
                 <Column {...props} />
             </div>
         </div>

@@ -30,12 +30,10 @@ export const BoardHeader = ({
                             }: BoardHeaderProps) => (
 
     <header className="flex flex-col mb-10 gap-4 text-cyan-400">
-
         {/* BOARD NAME */}
         <h1 className="text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase">
             {title ?? "Loading..."}
         </h1>
-
         {/* ACTIONS */}
         <div className="flex w-full gap-2">
             <ActionButton className="flex-1" onClick={onAddStatus}>
@@ -48,10 +46,8 @@ export const BoardHeader = ({
                 Board Logs
             </ActionButton>
         </div>
-
         {/* SEARCH / FILTER */}
         <div className="flex w-full items-center gap-2">
-
             {/* SEARCH */}
             <div className="relative flex flex-1">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -73,7 +69,6 @@ export const BoardHeader = ({
                     </button>
                 )}
             </div>
-
             {/* FILTER */}
             <div className="flex gap-2 items-center shrink-0">
                 {projectMarkers.map((marker) => {
@@ -98,12 +93,11 @@ export const BoardHeader = ({
                 })}
             </div>
         </div>
-
         {/* COLLABORATORS */}
         {collaborators && (
             <div className="flex items-center justify-end">
                 <h1 className="text-[10px] md:text-[12px] text-neon font-black uppercase">
-                    Collaborators:
+                    Board members:
                 </h1>
                 <CollaboratorsList
                     collaborators={collaborators}
