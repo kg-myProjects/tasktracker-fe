@@ -1,5 +1,4 @@
 import {type KeyboardEvent, useEffect, useState} from 'react';
-import { useDroppable } from "@dnd-kit/core";
 import {clearStatusError, selectErrorMessage, updateTaskStatus,selectIsLoading as selectStatusLoading} from "../../statuses/slice/taskStatusSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks.ts";
 import type {SortableColumnProps} from "./SortableColumn.tsx";
@@ -13,13 +12,14 @@ export function Column({ status,
                            onDelete,
                            canDelete,
 }: SortableColumnProps) {
-    const { setNodeRef } = useDroppable({ id: status.id });
+
     const dispatch = useAppDispatch();
+    const serverError = useAppSelector(selectErrorMessage);
+    const isStatusLoading = useAppSelector(selectStatusLoading);
+
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(status.name);
     const [validationError, setValidationError] = useState<{title: string, message: string} | null>(null);
-    const serverError = useAppSelector(selectErrorMessage);
-    const isStatusLoading = useAppSelector(selectStatusLoading);
 
     useEffect(() => {
         setNewName(status.name);
@@ -66,17 +66,15 @@ export function Column({ status,
         }
     };
 
-
-
     return (
-        <div ref={setNodeRef} className="flex flex-col p-1 bg-white/1 backdrop-blur-md rounded-xl border-2 border-cyan-400/20 text-cyan-400 w-[320px] min-h-[700px] transition-all hover:border-cyan-400/40">
-            {/* Top Bar */}
+        <div className="flex flex-col p-1 bg-white/1 backdrop-blur-md rounded-xl border-2 border-cyan-400/20 text-cyan-400 w-[320px] min-h-[700px] transition-all hover:border-cyan-400/40">
+            {/* TOP BAR */}
             <div className="flex text-lg m-1 font-semibold justify-between items-center">
                 <div className="flex-1 flex gap-2">
                     {isEditing ? (
                         <input
                             autoFocus
-                            className="w-full px-1 bg-slate-800 border  border-cyan-400 rounded-lg font-semibold text-lg outline-none"
+                            className="w-full px-1 bg-slate-800 border border-cyan-400 rounded-lg font-semibold text-lg outline-none"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
                             onFocus={(e) => e.target.select()}
@@ -92,7 +90,6 @@ export function Column({ status,
                             {status.name}
                         </div>
                     )}
-
                     {validationError && (
                         <NotificationModal
                             title={validationError.title}
@@ -111,7 +108,6 @@ export function Column({ status,
                         />
                     )}
                 </div>
-
                 <div className="flex shrink-0">
                     {canDelete && onDelete && (
                         <button
@@ -122,7 +118,7 @@ export function Column({ status,
                             ${isStatusLoading ? 'text-rose-500 bg-rose-500/10' : 'text-slate-500 hover:text-rose-500 hover:bg-rose-500/10'}`}
                         >
                             {isStatusLoading ? (
-                                /* Spinner */
+                                /* SPINNER */
                                 <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -136,15 +132,14 @@ export function Column({ status,
                     )}
                 </div>
             </div>
-            <div className={"flex-grow"}>
+            {/* CONTENT */}
+            <div className="flex-grow touch-none">
                 {children}
             </div>
-
-             {/*Bottom Bar */}
-            <div className="flex">
-                <ActionButton className="flex-1" onClick={onAddTask}>Add Task Card</ActionButton>
+            {/* BOTTOM BAR */}
+            <div className="flex mt-2">
+                <ActionButton className="flex-1" onClick={onAddTask}>Add Task</ActionButton>
             </div>
         </div>
     );
 }
-
