@@ -1,24 +1,20 @@
 import {usePageTitle} from "../app/customHooks/usePageTitle.ts";
 import {useAppDispatch, useAppSelector} from "../app/hooks.ts";
 import React, {type Dispatch, type SetStateAction, useEffect, useState} from "react";
-import {
-    AVATAR_UPDATE_ERROR,
-    getUserDetails,
-    selectUserData,
-    setUserDetails,
-    updateUserAvatar,
-    updateUserDetails
-} from "../features/user/slice/userSlice.ts";
-import {selectIsAuthenticated, selectIsInitialized, setUser} from "../features/auth/slice/authSlice.ts";
+import {AVATAR_UPDATE_ERROR, getUserDetails, selectUserData, selectUserDefaultAvatar, setUserDetails, updateUserAvatar, updateUserDetails} from "../features/user/slice/userSlice.ts";
+import {selectIsAuthenticated, selectIsInitialized, setUserAvatar} from "../features/auth/slice/authSlice.ts";
 import type {UpdateUserPayloadDto} from "../features/user/types";
 import MainButton from "../components/ui/buttons/MainButton.tsx";
 import {API_URL} from "../config/api.ts";
 
 export default function Profile() {
+
     const dispatch = useAppDispatch();
     const user = useAppSelector(selectUserData);
+    const userDefaultAvatar = useAppSelector(selectUserDefaultAvatar);
     const isAuthInitialized = useAppSelector(selectIsInitialized);
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
     usePageTitle(user ? `TrackerApp | ${user.email}` : "Loading...");
 
     useEffect(() => {
@@ -32,7 +28,6 @@ export default function Profile() {
         if (!user) return;
 
         setEmail(user.email || "");
-        setAvatarUrl(user.avatarUrl || null);
         setFirstName(user.firstName || "");
         setLastName(user.lastName || "");
         setBirthDate(user.birthDate || "");
@@ -47,9 +42,9 @@ export default function Profile() {
 
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
     const [email, setEmail] = useState(user?.email || "");
     const [firstName, setFirstName] = useState(user?.firstName || "");
     const [lastName, setLastName] = useState(user?.lastName || "");
@@ -92,11 +87,12 @@ export default function Profile() {
         formData.append("file", selectedFile);
 
         try {
-            const updatedUser = await dispatch(updateUserAvatar(formData)).unwrap();
-            // setAvatarUrl(`${updatedUser.avatarUrl}?t=${Date.now()}`);
-            setAvatarUrl(updatedUser.avatarUrl);
+            const result = await dispatch(updateUserAvatar(formData)).unwrap();
 
-            dispatch(setUser({...updatedUser}));
+            dispatch(setUserAvatar({
+                avatarUrl: result.avatarUrl,
+                avatarUpdatedAt: result.avatarUpdatedAt
+            }));
 
             if (avatarPreview) URL.revokeObjectURL(avatarPreview);
             setAvatarPreview(null);
@@ -105,7 +101,6 @@ export default function Profile() {
 
             const input = document.getElementById("avatarInput") as HTMLInputElement | null;
             if (input) input.value = "";
-
         } catch (error: unknown) {
             setErrorMessage(typeof error === "string" ? error : AVATAR_UPDATE_ERROR);
         }
@@ -114,7 +109,6 @@ export default function Profile() {
     const handleCancelAvatarUpdate = () => {
         setAvatarPreview(null);
         setSelectedFile(null);
-        setAvatarUrl(user?.avatarUrl || null);
         setIsEditingAvatar(false);
 
         const input = document.getElementById("avatarInput") as HTMLInputElement | null;
@@ -145,7 +139,6 @@ export default function Profile() {
 
     const handleCancelProfileChanges = () => {
         setIsEditingProfile(false);
-        setAvatarUrl(user?.avatarUrl || null);
         setFirstName(user?.firstName || "");
         setLastName(user?.lastName || "");
         setBirthDate(user?.birthDate || "");
@@ -213,17 +206,17 @@ export default function Profile() {
                 {/* Avatar block*/}
                 <div className="flex min-w-[130px] md:w-[200px] flex-col items-center">
                     <div className="flex w-28 h-28 md:w-40 md:h-40 items-center justify-center rounded-full overflow-hidden border-2 border-cyan-500 bg-cyan-300 text-white text-4xl">
-                        {avatarPreview || avatarUrl ? (
+                        {avatarPreview || user.avatarUrl ? (
                             <img
                                 src={
                                     avatarPreview ||
-                                    `${API_URL}${avatarUrl}${user.avatarUpdatedAt ? `?t=${user.avatarUpdatedAt}` : ""}`
+                                    `${API_URL}${user.avatarUrl}${user.avatarUpdatedAt ? `?t=${user.avatarUpdatedAt}` : ""}`
                                 }
                                 alt="user_avatar"
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            email?.[0]?.toUpperCase() || "?"
+                            userDefaultAvatar
                         )}
                     </div>
                     {/* Hidden input for file selection */}

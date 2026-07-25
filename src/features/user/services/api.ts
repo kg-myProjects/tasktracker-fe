@@ -1,4 +1,4 @@
-import type {UpdateUserPayloadDto, UserDetailsDto} from "../types";
+import type {UpdateAvatarResponseDto, UpdateUserPayloadDto, UserDetailsDto} from "../types";
 import axiosInstance from "../../../lib/axiosInstance.ts";
 
 const GET_USER_DETAILS_PATH = "/users/me-details";
@@ -17,7 +17,7 @@ export const fetchUpdateUserDetails = async (payload: UpdateUserPayloadDto): Pro
     return response.data;
 };
 
-export const fetchUpdateUserAvatar = async (formData: FormData): Promise<UserDetailsDto> => {
+export const fetchUpdateUserAvatar = async (formData: FormData): Promise<UpdateAvatarResponseDto> => {
     const response = await axiosInstance.patch(UPDATE_USER_AVATAR_PATH, formData, {
         headers: { "Content-Type": "multipart/form-data" }
     });

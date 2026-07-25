@@ -28,3 +28,8 @@ export interface UpdateUserPayloadDto {
     phone?: string;
     about?: string;
 }
+
+export interface UpdateAvatarResponseDto {
+    avatarUrl: string | null;
+    avatarUpdatedAt: number | null;
+}

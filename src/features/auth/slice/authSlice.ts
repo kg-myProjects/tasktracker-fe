@@ -112,7 +112,15 @@ export const authSlice = createAppSlice({
 
         setUser: create.reducer((state, action: PayloadAction<UserResponseDto | undefined>) => {
             state.user = action.payload ? {...action.payload} : undefined;
-        })
+        }),
+        setUserAvatar: create.reducer(
+            (state, action: PayloadAction<{avatarUrl: string | null; avatarUpdatedAt: number | null}>) => {
+                if (state.user) {
+                    state.user.avatarUrl = action.payload.avatarUrl;
+                    state.user.avatarUpdatedAt = action.payload.avatarUpdatedAt;
+                }
+            }
+        ),
 
     }),
     // You can define your selectors here. These selectors receive the slice
@@ -124,11 +132,12 @@ export const authSlice = createAppSlice({
         selectRole: (state) => state.user?.role,
         selectLoginError: (state) => state?.loginErrorMessage,
         selectRegisterError: (state) => state?.registerErrorMessage,
+        selectUserDefaultAvatar: (state) => state.user?.email?.[0]?.toUpperCase() ?? "?"
     },
 });
 
-// // Action creators are generated for each case reducer function.
-export const {login, register, checkAuth, setUser, logout} = authSlice.actions;
+// Action creators are generated for each case reducer function.
+export const {login, register, checkAuth, setUser, logout, setUserAvatar} = authSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
@@ -138,4 +147,5 @@ export const {
     selectRole,
     selectLoginError,
     selectRegisterError,
+    selectUserDefaultAvatar
 } = authSlice.selectors;

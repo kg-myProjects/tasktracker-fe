@@ -1,4 +1,4 @@
-import type {UpdateUserPayloadDto, UserSliceState, UserDetailsDto} from "../types";
+import type {UpdateUserPayloadDto, UserSliceState, UserDetailsDto, UpdateAvatarResponseDto} from "../types";
 import * as api from "../services/api";
 import {createAppSlice} from "../../../app/createAppSlice.ts";
 import {isAxiosError} from "axios";
@@ -61,7 +61,11 @@ export const userSlice = createAppSlice({
             }
         ),
 
-        updateUserAvatar: create.asyncThunk(
+        updateUserAvatar: create.asyncThunk<
+            UpdateAvatarResponseDto,
+            FormData,
+            {rejectValue: string}
+        >(
             async (formData: FormData, {rejectWithValue}) => {
                 try {
                     return await api.fetchUpdateUserAvatar(formData);
@@ -73,11 +77,20 @@ export const userSlice = createAppSlice({
                 }
             },
             {
-                pending: (state) => {state.loading = true; state.error = null;},
+                pending: (state) => {
+                    state.loading = true;
+                    state.error = null;
+                },
                 fulfilled: (state, action) => {
-                    state.data = action.payload; state.loading = false;},
+                    if (state.data) {
+                        state.data.avatarUrl = action.payload.avatarUrl;
+                        state.data.avatarUpdatedAt = action.payload.avatarUpdatedAt;
+                    }
+                    state.loading = false;
+                },
                 rejected: (state, action) => {
-                    state.loading = false; state.error = (action.payload as string) || AVATAR_UPDATE_ERROR;},
+                    state.loading = false;
+                    state.error = (action.payload as string) || AVATAR_UPDATE_ERROR;},
             }
         ),
 
@@ -106,6 +119,7 @@ export const userSlice = createAppSlice({
         selectUserData: (state) => state.data,
         selectUserLoading: (state) => state.loading,
         selectUserError: (state) => state.error,
+        selectUserDefaultAvatar: (state) => state.data?.email?.[0]?.toUpperCase() ?? "?"
     },
 });
 
@@ -114,11 +128,12 @@ export const {
     setUserDetails,
     updateUserDetails,
     updateUserAvatar,
-    updateUserEmail,
+    updateUserEmail
 } = userSlice.actions;
 
 export const {
     selectUserData,
     selectUserLoading,
     selectUserError,
+    selectUserDefaultAvatar
 } = userSlice.selectors;

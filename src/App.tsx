@@ -26,7 +26,6 @@ function App() {
             <div className="relative z-10">
                 <Layout>
                     <Routes>
-
                         {/* PUBLIC ROUTES */}
                         <Route index element={<Home/>}/>
                         <Route path="/about" element={<About/>}/>
@@ -42,7 +41,6 @@ function App() {
                             <Route path="/project/:projectId" element={<Kanban/>}/>
                             <Route path="/profile" element={<Profile/>}/>
                         </Route>
-
                     </Routes>
                 </Layout>
             </div>
