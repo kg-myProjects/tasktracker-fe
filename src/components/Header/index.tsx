@@ -2,16 +2,24 @@ import {Link} from "react-router-dom";
 import {useAppSelector} from "../../app/hooks.ts";
 import {selectIsAuthenticated} from "../../features/auth/slice/authSlice.ts";
 import MainLogo from "./MainLogo.tsx";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import MobileMenu from "./MobileMenu.tsx";
 import NavigationLink from "./NavigationLink.tsx";
 import Actions from "./Actions.tsx";
 
 export default function Header() {
 
+    const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
     const [mobileOpen, setMobileOpen] = useState(false);
 
-    const isAuthenticated = useAppSelector(selectIsAuthenticated);
+    const openMobileMenu = useCallback(() => {
+        setMobileOpen(true);
+    }, []);
+
+    const closeMobileMenu = useCallback(() => {
+        setMobileOpen(false);
+    }, []);
 
     return (
         <header className="w-full sticky top-0 z-50 px-2 py-6">
@@ -41,12 +49,12 @@ export default function Header() {
 
                     {/* RIGHT BLOCK */}
                     <div className="flex items-center justify-end gap-3 md:gap-6 ml-auto flex-shrink-0">
-                        <Actions onOpenMobileMenu={() => setMobileOpen(true)}/>
+                        <Actions onOpenMobileMenu={openMobileMenu}/>
                     </div>
                 </div>
             </div>
             {/* MOBILE MENU */}
-            <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)}/>
+            <MobileMenu open={mobileOpen} onClose={closeMobileMenu}/>
         </header>
     );
 }

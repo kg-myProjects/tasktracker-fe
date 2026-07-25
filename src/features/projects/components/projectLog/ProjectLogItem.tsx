@@ -15,7 +15,7 @@ const ProjectLogItem = ({log}: ProjectLogsItemProps) => {
                     <img
                         src={`${API_URL}${log.userAvatar}${log.userAvatarUpdatedAt ? `?t=${log.userAvatarUpdatedAt}` : ""}`}
                         alt="avatar"
-                        className="h-7 w-7 rounded-full object-cover"
+                        className="h-7 w-7 shrink-0 rounded-full object-cover"
                     />
                 ) : (
                     <div className="h-7 w-7 shrink-0 rounded-full bg-cyan-400 flex items-center justify-center text-white font-semibold">

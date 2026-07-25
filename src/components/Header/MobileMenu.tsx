@@ -1,7 +1,5 @@
-import MainButton from "../ui/buttons/MainButton";
-import {useAppDispatch} from "../../app/hooks";
-import {logout} from "../../features/auth/slice/authSlice";
 import NavigationLink from "./NavigationLink.tsx";
+import LogoutAction from "./LogoutAction.tsx";
 
 type Props = {
     open: boolean;
@@ -9,12 +7,6 @@ type Props = {
 };
 
 export default function MobileMenu({open, onClose}: Props) {
-    const dispatch = useAppDispatch();
-
-    const handleLogout = async () => {
-        await dispatch(logout());
-        onClose();
-    };
 
     return (
         <div className={`fixed inset-0 z-50 transition-all duration-300 ${open ? "visible opacity-100" : "invisible opacity-0"}`}>
@@ -29,9 +21,7 @@ export default function MobileMenu({open, onClose}: Props) {
                     <NavigationLink to="/projects" onClick={onClose}>My boards</NavigationLink>
                     <NavigationLink to="/profile" onClick={onClose}>Profile</NavigationLink>
                     <hr className="border-cyan-500/20"/>
-                    <MainButton onClick={handleLogout}>
-                        Logout
-                    </MainButton>
+                    <LogoutAction onAfterLogout={onClose}/>
                 </div>
             </div>
         </div>

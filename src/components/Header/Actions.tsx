@@ -1,27 +1,23 @@
-import {Link, useNavigate} from "react-router-dom";
-import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
-import {logout, selectIsAuthenticated, selectIsInitialized, selectUser} from "../../features/auth/slice/authSlice.ts";
+import {Link} from "react-router-dom";
+import {useAppSelector} from "../../app/hooks.ts";
+import {selectIsAuthenticated, selectIsInitialized, selectUser, selectUserDefaultAvatar} from "../../features/auth/slice/authSlice.ts";
 import MainButton from "../ui/buttons/MainButton.tsx";
 import {API_URL} from "../../config/api.ts";
 import NavigationLink from "./NavigationLink.tsx";
+import {BurgerMenuIcon} from "../ui/icons/BurgerMenuIcon.tsx";
+import {memo} from "react";
+import LogoutAction from "./LogoutAction.tsx";
 
 type ActionsProps = {
     onOpenMobileMenu: () => void;
 };
 
-export default function Actions({onOpenMobileMenu}: ActionsProps) {
+function Actions({onOpenMobileMenu}: ActionsProps) {
 
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate();
-
+    const isInitialized = useAppSelector(selectIsInitialized);
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
     const user = useAppSelector(selectUser);
-    const isInitialized = useAppSelector(selectIsInitialized);
-
-    const handleLogout = async () => {
-        await dispatch(logout());
-        navigate("/login");
-    };
+    const userDefaultAvatar = useAppSelector(selectUserDefaultAvatar);
 
     return (
         <>
@@ -38,35 +34,21 @@ export default function Actions({onOpenMobileMenu}: ActionsProps) {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    user?.email?.[0].toUpperCase()
+                                    userDefaultAvatar
                                 )}
                             </div>
                         </Link>
                         {/* LOGOUT */}
                         <div className="hidden md:block">
-                            <MainButton onClick={handleLogout}>
-                                Logout
-                            </MainButton>
+                            <LogoutAction/>
                         </div>
-                        {/* MOBILE MENU ICON */}
+                        {/* MOBILE MENU */}
                         <button
                             type="button"
                             onClick={onOpenMobileMenu}
                             className="md:hidden w-12 h-12 flex items-center justify-center rounded-full border-2 border-cyan-500 text-white transition-all duration-300 ease-in-out hover:scale-[1.20] hover:border-cyan-400 hover:shadow-[0_0_25px_rgba(6,182,212,0.8)]"
                         >
-                            <svg
-                                className="w-5 h-5 text-white transition-all duration-300"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                strokeWidth={3}
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M4 6h16M4 12h16M4 18h16"
-                                />
-                            </svg>
+                            <BurgerMenuIcon className="w-5 h-5 transition-all duration-300" />
                         </button>
                     </>
                 ) : (
@@ -90,3 +72,5 @@ export default function Actions({onOpenMobileMenu}: ActionsProps) {
         </>
     );
 }
+
+export default memo(Actions);
