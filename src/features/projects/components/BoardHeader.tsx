@@ -14,6 +14,7 @@ interface BoardHeaderProps {
     selectedMarkerIds: string[];
     projectMarkers: MarkerDto[];
     onMarkerToggle: (id: string) => void;
+    onDeleteBoard: () => void;
 }
 
 export const BoardHeader = ({
@@ -26,10 +27,11 @@ export const BoardHeader = ({
                                 onSearchChange,
                                 projectMarkers,
                                 selectedMarkerIds,
-                                onMarkerToggle
+                                onMarkerToggle,
+                                onDeleteBoard
                             }: BoardHeaderProps) => (
 
-    <header className="flex flex-col mb-10 gap-4 text-cyan-400">
+    <header className="flex flex-col gap-2 text-cyan-400">
         {/* BOARD NAME */}
         <h1 className="text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase">
             {title ?? "Loading..."}
@@ -44,6 +46,12 @@ export const BoardHeader = ({
             </ActionButton>
             <ActionButton className="flex-1" onClick={onOpenLogs}>
                 Board Logs
+            </ActionButton>
+            <ActionButton
+                className="flex-1"
+                onClick={onDeleteBoard}
+            >
+                Delete Board
             </ActionButton>
         </div>
         {/* SEARCH / FILTER */}
@@ -95,13 +103,11 @@ export const BoardHeader = ({
         </div>
         {/* COLLABORATORS */}
         {collaborators && (
-            <div className="flex items-center justify-end">
+            <div className="my-4 flex items-center justify-end">
                 <h1 className="text-[10px] md:text-[12px] text-neon font-black uppercase">
                     Board members:
                 </h1>
-                <CollaboratorsList
-                    collaborators={collaborators}
-                />
+                <CollaboratorsList collaborators={collaborators}/>
             </div>
         )}
     </header>
