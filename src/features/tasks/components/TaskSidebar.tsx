@@ -9,6 +9,8 @@ import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 import {API_URL} from "../../../config/api.ts";
 import {sortCollaboratorsByRole} from "../../projects/utils/projectUtils.ts";
 import {CrownIcon} from "../../../components/ui/icons/CrownIcon.tsx";
+import {TrashIcon} from "../../../components/ui/icons/TrashIcon.tsx";
+import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 
 interface TaskSidebarProps {
     task: Task;
@@ -28,12 +30,16 @@ interface TaskSidebarProps {
 type ActivePopup = "members" | "labels" | "dates" | "attachment" | null;
 
 export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUpdating}: TaskSidebarProps) => {
-    const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
+    const dispatch = useAppDispatch();
+
+    const [activePopup, setActivePopup] = useState<ActivePopup>(null);
     const [newMarkerName, setNewMarkerName] = useState("");
     const [selectedColor, setSelectedColor] = useState("bg-cyan-500");
     const [markerToDelete, setMarkerToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [tempDate, setTempDate] = useState(task.dueDate ? task.dueDate.split('T')[0] : "");
+    const [tempTime, setTempTime] = useState(task.dueDate ? task.dueDate.split('T')[1]?.substring(0, 5) : "12:00");
 
     const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -75,6 +81,9 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            if (markerToDelete) {
+                return;
+            }
             if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
                 setActivePopup(null);
             }
@@ -83,12 +92,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
-
-    const [tempDate, setTempDate] = useState(task.dueDate ? task.dueDate.split('T')[0] : "");
-    const [tempTime, setTempTime] = useState(task.dueDate ? task.dueDate.split('T')[1]?.substring(0, 5) : "12:00");
-
-    const dispatch = useAppDispatch();
+    }, [markerToDelete]);
 
     const handleSaveDate = () => {
         if (!tempDate) return;
@@ -112,7 +116,6 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
             ref={sidebarRef}
             className="md:col-span-4 space-y-4 shrink-0 h-auto relative overflow-visible">
             <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center justify-center gap-3">Add to task</h4>
-
             <div className="flex flex-col gap-3 relative z-30">
                 {actionButtons.map((btn) => (
                     <div key={btn.id} className="relative flex flex-col">
@@ -132,60 +135,87 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                 <div className="animate-progress-fast shadow-[0_0_10px_#06b6d4]" />
                             )}
                         </button>
-                        {/* Slide window */}
                         {/* MARKERS PICKER */}
                         {btn.id === 'labels' && activePopup === "labels" && (
                             <div className="w-[350px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
                                     <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Labels</span>
                                 </div>
-                                <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
+                                <div className="max-h-48 space-y-1.5 pr-1 custom-scrollbar">
                                     {projectMarkers?.map((marker) => {
                                         const isSelected = task.markers?.some(m => m.id === marker.id);
                                         return (
-                                            <div key={marker.id} className="group/marker relative flex items-center gap-1.5">
+                                            <div key={marker.id} className="flex items-center">
                                                 <button
                                                     onClick={() => actions.handleAddMarker(marker.id)}
-                                                    className={`flex-1 h-8 rounded-lg flex items-center px-3 text-[9px] font-black text-white uppercase transition-all ${marker.color} ${isSelected ? 'ring-2 ring-slate-900 ring-offset-1' : 'opacity-90 hover:opacity-100'}`}
+                                                    className={`
+                                                    flex-1 h-8 rounded-md flex items-center px-1
+                                                    text-[9px] font-black text-white uppercase
+                                                    transition-all ${marker.color}
+                                                        ${isSelected
+                                                            ? "shadow-md scale-[1.05]"
+                                                            : "opacity-90 hover:opacity-100"
+                                                        }
+                                                    `}
                                                 >
-                                                    {marker.name}
-                                                    {isSelected && <span className="ml-auto text-xs">✓</span>}
+                                                    {/* CHECKBOX */}
+                                                    <span
+                                                        className={`
+                                                            w-3.5 h-3.5 mr-2 rounded-sm border 
+                                                            flex items-center justify-center
+                                                            ${isSelected
+                                                            ? "bg-white/90 border-white"
+                                                            : "border-white/70 bg-transparent"
+                                                            }
+                                                        `}
+                                                    >
+                                                    {isSelected && (
+                                                        <span className="text-cyan-600 text-[10px] font-black">
+                                                            ✓
+                                                        </span>
+                                                    )}
+                                                    </span>
+                                                    {/* NAME */}
+                                                    <span className="truncate">
+                                                        {marker.name}
+                                                    </span>
+                                                    {/* DELETE MARKER */}
+                                                    <span
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setMarkerToDelete(marker.id);
+                                                        }}
+                                                        title="Delete this marker"
+                                                        className="ml-auto p-1 rounded-md text-white/70 hover:text-white hover:bg-black/20 transition-all"
+                                                    >
+                                                    <TrashIcon className="w-3.5 h-3.5"/>
+                                                </span>
                                                 </button>
-
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setMarkerToDelete(marker.id);
-                                                    }}
-                                                    className="w-8 h-8 flex items-center justify-center rounded-lg bg-rose-50 text-rose-400 opacity-0 group-hover/marker:opacity-100 hover:bg-rose-500 hover:text-white transition-all border border-rose-100 shadow-sm"
-                                                >
-                                                    <span className="text-[10px]">🗑</span>
-                                                </button>
-                                            </div>                                        );
+                                            </div>
+                                        );
                                     })}
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-slate-100 space-y-3">
+                                <div className="mt-4 pt-4 flex flex-col items-center justify-center border-t border-slate-100 space-y-3">
                                     <input
                                         value={newMarkerName}
                                         onChange={(e) => setNewMarkerName(e.target.value)}
                                         placeholder="Create new label..."
                                         className="w-full bg-[#f1f2f4] border-2 border-transparent rounded-xl px-3 py-2 text-[10px] outline-none focus:bg-white focus:border-cyan-400 font-bold text-black"
                                     />
-                                    <div className="flex flex-wrap gap-1.5 justify-center">
+                                    <div className="flex flex-wrap gap-2 mb-5 justify-center">
                                         {NEON_COLORS.slice(0, 10).map(color => (
                                             <button
                                                 key={color}
                                                 onClick={() => setSelectedColor(color)}
-                                                className={`${color} w-5 h-5 rounded-full transition-all ${selectedColor === color ? 'ring-2 ring-slate-900 ring-offset-1 scale-110' : 'hover:scale-105'}`}
+                                                className={`${color} w-5 h-5 rounded-full transition-all ${selectedColor === color ? 'scale-115' : 'hover:scale-115'}`}
                                             />
                                         ))}
                                     </div>
-                                    <button
+                                    <MainButton size="compact"
                                         onClick={() => { actions.handleCreateAndAddMarker(newMarkerName, selectedColor); setNewMarkerName(""); }}
-                                        className="w-full bg-cyan-500 text-white text-[9px] font-black py-2.5 rounded-xl uppercase shadow-md hover:bg-cyan-400 transition-all"
                                     >
                                         Create & Add
-                                    </button>
+                                    </MainButton>
                                 </div>
                             </div>
                         )}
@@ -267,27 +297,19 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                         className="w-full bg-[#f1f2f4] border-none rounded-xl px-4 py-2 text-xs font-bold text-slate-800 outline-none focus:ring-2 ring-cyan-500/20"
                                     />
                                 </div>
-
-                                <div className="space-y-2">
-                                    <button
-                                        onClick={() => {
-                                            handleSaveDate();
-                                            setActivePopup(null);
-                                        }}
-                                        className="w-full bg-cyan-500 text-white text-[10px] font-black py-3 rounded-xl uppercase shadow-lg shadow-cyan-500/30 active:scale-95 transition-all"
-                                    >
-                                        Save Deadline
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            setTempDate("");
-                                            actions.patchTask({ dueDate: "" });
-                                            setActivePopup(null);
-                                        }}
-                                        className="w-full text-rose-500 text-[9px] font-black py-2 uppercase hover:bg-rose-50 rounded-xl transition-all"
+                                <div className="flex justify-end gap-2">
+                                    <MainButton size="compact" onClick={() => {handleSaveDate(); setActivePopup(null);}}>
+                                        Save
+                                    </MainButton>
+                                    <MainButton size="compact" variant="danger" onClick={() => {
+                                        setTempDate("");
+                                        actions.patchTask({ dueDate: "" });
+                                        setActivePopup(null);
+                                        }
+                                    }
                                     >
                                         Remove
-                                    </button>
+                                    </MainButton>
                                 </div>
                             </div>
                         )}

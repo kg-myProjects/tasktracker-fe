@@ -1,11 +1,16 @@
 import {useEffect, useMemo, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {DndContext, type DragEndEvent, type DragOverEvent, DragOverlay} from "@dnd-kit/core";
 import {SortableContext, verticalListSortingStrategy} from "@dnd-kit/sortable";
 import {snapCenterToCursor} from "@dnd-kit/modifiers";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {selectFilteredTasks, getTasksByProjectId, setSearchQuery, selectSearchQuery, toggleMarker, selectSelectedMarkerIds} from "../../tasks/slice/tasksSlice";
-import {getProjectById, selectCurrentProject, selectInviteUserErrorMessage} from "../slice/projectsSlice";
+import {
+    deleteProject,
+    getProjectById,
+    selectCurrentProject,
+    selectInviteUserErrorMessage
+} from "../slice/projectsSlice";
 import {clearStatusError, createTaskStatus, getAllTaskStatuses, selectErrorMessage, selectIsLoading, selectSortedTaskStatuses} from "../../statuses/slice/taskStatusSlice";
 import {SortableTask} from "./SortableTask.tsx";
 import {BoardHeader} from "./BoardHeader.tsx";
@@ -20,11 +25,13 @@ import {useIsMobile} from "../../../app/customHooks/useIsMobile.tsx";
 import {TaskOverlayCard} from "./TaskOverlayCard.tsx";
 import {ColumnOverlayCard} from "./ColumnOverlayCard.tsx";
 import {DotsPagination} from "../../../components/ui/DotsPagination.tsx";
+import ConfirmModal from "../../../components/ui/ConfirmModal.tsx";
 
 export default function KanbanBoard() {
 
     const {projectId} = useParams<{ projectId: string }>();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const tasks = useAppSelector(selectFilteredTasks);
     const searchQuery = useAppSelector(selectSearchQuery);
@@ -42,6 +49,7 @@ export default function KanbanBoard() {
     const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
     const [statusToDelete, setStatusToDelete] = useState<{ id: string, name: string } | null>(null);
     const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+    const [projectDeleteOpen, setProjectDeleteOpen] = useState(false);
     const [mobileStatusIndex, setMobileStatusIndex] = useState(0);
 
     usePageTitle(project ? `TrackerApp | ${project.title}` : "Loading...");
@@ -139,6 +147,7 @@ export default function KanbanBoard() {
                 onAddCollab={() => setIsInviteModalOpen(true)}
                 onOpenLogs={() => setIsLogsModalOpen(true)}
                 collaborators={project?.projectTeam}
+                onDeleteBoard={() => setProjectDeleteOpen(true)}
             />
             <DndContext
                 sensors={sensors}
@@ -312,6 +321,26 @@ export default function KanbanBoard() {
                     title="Access Denied"
                     message={statusesError}
                     onClose={() => dispatch(clearStatusError())}
+                />
+            )}
+            {projectDeleteOpen && (
+                <ConfirmModal
+                    title="Delete board?"
+                    message={`Are you sure you want to delete "${project?.title}"? All tasks and data will be permanently removed.`}
+                    confirmText="Delete"
+                    cancelText="Cancel"
+                    onConfirm={async () => {
+                        if (!projectId) return;
+
+                        try {
+                            await dispatch(deleteProject(projectId)).unwrap();
+
+                            navigate("/projects");
+                        } catch (error) {
+                            console.error("Failed to delete project:", error);
+                        }
+                    }}
+                    onCancel={() => setProjectDeleteOpen(false)}
                 />
             )}
         </div>

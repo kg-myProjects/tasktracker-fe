@@ -39,9 +39,9 @@ export default function ProjectsList() {
         setProjectToEdit(project);
     };
 
-    const openConfirm = (id: string, title: string) => {
-        setProjectToDelete({id, title});
-    };
+    // const openConfirm = (id: string, title: string) => {
+    //     setProjectToDelete({id, title});
+    // };
 
     const handleConfirmDelete = async () => {
         if (!projectToDelete) return;
@@ -87,11 +87,11 @@ export default function ProjectsList() {
                 {projects?.map((project) => (
                     <div
                         key={project.id}
-                        className="group relative bg-black/60 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
+                        className="relative flex flex-col bg-black/60 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
                     >
                         <Link to={`/project/${project.id}`} className="absolute inset-0 z-10"
                               aria-label={`Open ${project.title}`}/>
-                        <div className="relative z-0 mb-6">
+                        <div className="relative z-0 flex-1">
                             <h3 className="text-cyan-400 text-xl font-black uppercase mb-2 group-hover:text-cyan-200 transition-colors line-clamp-2">
                                 {project.title}
                             </h3>
@@ -104,22 +104,22 @@ export default function ProjectsList() {
                             <NeonButton
                                 size="sm"
                                 variant="primary"
-                                className="relative z-20 opacity-0 group-hover:opacity-100"
+                                className="relative z-20"
                                 onClick={() => openEdit(project)}
                             >
                                 Edit
                             </NeonButton>
 
-                            <NeonButton
-                                size="sm"
-                                variant="primary"
-                                className="  relative z-20 opacity-0 group-hover:opacity-100 border-rose-500/50 text-rose-500"
-                                onClick={() => {
-                                    openConfirm(project.id, project.title);
-                                }}
-                            >
-                                Delete
-                            </NeonButton>
+                            {/*<NeonButton*/}
+                            {/*    size="sm"*/}
+                            {/*    variant="primary"*/}
+                            {/*    className="  relative z-20 border-rose-500/50 text-rose-500"*/}
+                            {/*    onClick={() => {*/}
+                            {/*        openConfirm(project.id, project.title);*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Delete*/}
+                            {/*</NeonButton>*/}
                         </div>
                     </div>
                 ))}
