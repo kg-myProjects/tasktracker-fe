@@ -11,7 +11,14 @@ export interface Project {
 
 export type CreateProjectDto = Omit<Project, "id" | "projectTeam" | "markers" | "logs">;
 
-export type EditProjectDto = Pick<Project, "id" | "title" | "description">;
+export type EditableProject = Pick<
+    Project,
+    "id" | "title" | "description">;
+
+export interface UpdateProjectDto {
+    title: string;
+    description: string;
+}
 
 export interface CollaboratorDto {
     id: string;

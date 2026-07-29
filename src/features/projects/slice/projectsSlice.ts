@@ -1,4 +1,4 @@
-import { createAppSlice } from "../../../app/createAppSlice";
+import {createAppSlice} from "../../../app/createAppSlice";
 import type {CreateProjectDto, Project, InviteRequestDto, ProjectsSliceState, ProjectLog} from "../types";
 import * as api from "../services/api";
 import { isAxiosError, type AxiosError } from "axios";
@@ -42,7 +42,6 @@ export const projectsSlice = createAppSlice({
                 },
             }
         ),
-
         getMyProjects: create.asyncThunk(
             async () => {
                 return api
@@ -65,7 +64,6 @@ export const projectsSlice = createAppSlice({
                     console.log(action.error);
                 },
             }),
-
         createProject: create.asyncThunk(
             async (dto: CreateProjectDto) => {
                 return api.fetchCreateProject(dto).catch((err) => {
@@ -133,8 +131,6 @@ export const projectsSlice = createAppSlice({
                 },
             }
         ),
-
-
         getProjectById: create.asyncThunk(
             async (id: string):Promise<Project> => {
                 return api.fetchProjectById(id).catch(
@@ -192,7 +188,6 @@ export const projectsSlice = createAppSlice({
                 },
             }
         ),
-
         addMarkerToCurrentProject: create.reducer(
             (state, action: PayloadAction<MarkerDto>) => {
                 const newMarker = action.payload;
@@ -211,7 +206,6 @@ export const projectsSlice = createAppSlice({
                 }
             }
         ),
-
         removeMarkerFromProject: create.reducer(
             (state, action: PayloadAction<string>) => {
                 const markerId = action.payload;
@@ -233,7 +227,6 @@ export const projectsSlice = createAppSlice({
                 }
             }
         ),
-
         getProjectLogs: create.asyncThunk(
             async (projectId: string): Promise<ProjectLog[]> => {
                 return fetchProjectLogs(projectId).catch((error) => {
@@ -259,7 +252,6 @@ export const projectsSlice = createAppSlice({
                 },
             }
         ),
-
         deleteProject: create.asyncThunk(
             async (id: string) => {
                 try {
@@ -292,8 +284,6 @@ export const projectsSlice = createAppSlice({
         clearDeleteError: create.reducer((state) => {
             state.deleteProjectErrorMessage = undefined;
         }),
-
-
     }),
     // You can define your selectors here. These selectors receive the slice
     // state as their first argument.
@@ -301,6 +291,7 @@ export const projectsSlice = createAppSlice({
         selectProjects: (state) => state.projects,
         selectAdminProjects: (state) => state.adminProjects,
         selectCurrentProject: state => state.currentProject,
+        selectIsUpdatingProject: (state) => state.isUpdatingProject,
         selectIsLoading: (state) => state.isLoading,
         selectCreateProjectErrorMessage: (state) => state.createProjectErrorMessage,
         selectUpdateProjectErrorMessage: (state) => state.updateProjectErrorMessage,
@@ -310,18 +301,18 @@ export const projectsSlice = createAppSlice({
             (state: ProjectsSliceState) => state.currentProject?.logs,
             (logs) => logs ?? []
         ),
-
     },
 });
 
-// // Action creators are generated for each case reducer function.
-export const { createProject, updateProject, getAllProjects,getMyProjects, getProjectById, inviteUser,
+// Action creators are generated for each case reducer function.
+export const {createProject, updateProject, getAllProjects,getMyProjects, getProjectById, inviteUser,
     addMarkerToCurrentProject, removeMarkerFromProject,
-    deleteProject, getProjectLogs,clearDeleteError } = projectsSlice.actions;
+    deleteProject, getProjectLogs,clearDeleteError} = projectsSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
 export const {
     selectProjects,
+    selectIsUpdatingProject,
     selectAdminProjects,
     selectIsLoading,
     selectCurrentProject,

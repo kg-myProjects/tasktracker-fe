@@ -15,7 +15,7 @@ export function ActionButton({className, onClick, children}: Props) {
                 bg-white/5 backdrop-blur-md
                 rounded-lg
                 border border-cyan-400/30
-                text-[10px] md:text-[12px] text-white text-neon font-black uppercase
+                text-[8px] md:text-[13px] text-white text-neon font-black uppercase
                 hover:bg-cyan-400/10 hover:border-cyan-400
                 transition-all
                 ${className}

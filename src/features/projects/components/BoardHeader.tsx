@@ -37,7 +37,7 @@ export const BoardHeader = ({
             {title ?? "Loading..."}
         </h1>
         {/* ACTIONS */}
-        <div className="flex w-full gap-2">
+        <div className="flex w-full gap-1">
             <ActionButton className="flex-1" onClick={onAddStatus}>
                 Add Status
             </ActionButton>
@@ -45,13 +45,10 @@ export const BoardHeader = ({
                 Add User
             </ActionButton>
             <ActionButton className="flex-1" onClick={onOpenLogs}>
-                Board Logs
+                Logs
             </ActionButton>
-            <ActionButton
-                className="flex-1"
-                onClick={onDeleteBoard}
-            >
-                Delete Board
+            <ActionButton className="flex-1" onClick={onDeleteBoard}>
+                Delete
             </ActionButton>
         </div>
         {/* SEARCH / FILTER */}
@@ -66,7 +63,7 @@ export const BoardHeader = ({
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder="Search task..."
-                    className="w-full bg-black/40 border border-cyan-400/30 rounded-lg py-2 pl-10 pr-4 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
+                    className="w-full bg-black/40 border border-cyan-400/30 rounded-lg py-2 px-10 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
                 />
                 {searchQuery && (
                     <button
@@ -78,28 +75,30 @@ export const BoardHeader = ({
                 )}
             </div>
             {/* FILTER */}
-            <div className="flex gap-2 items-center shrink-0">
-                {projectMarkers.map((marker) => {
-                    const isSelected = selectedMarkerIds?.includes(marker.id) ?? false;
-                    return (
-                        <button
-                            key={marker.id}
-                            onClick={() => onMarkerToggle(marker.id)}
-                            title={marker.name}
+            {projectMarkers.length > 0 && (
+                <div className="flex gap-2 items-center shrink-0">
+                    {projectMarkers.map((marker) => {
+                        const isSelected = selectedMarkerIds?.includes(marker.id) ?? false;
+                        return (
+                            <button
+                                key={marker.id}
+                                onClick={() => onMarkerToggle(marker.id)}
+                                title={marker.name}
 
-                            className={`relative w-5 h-5 rounded-md border-2 transition-all hover:scale-120
+                                className={`relative w-5 h-5 rounded-md border-2 transition-all hover:scale-120
                             ${marker.color}
                             ${
-                                isSelected
-                                    ? "border-white scale-120 shadow-[0_0_12px_rgba(34,211,238,0.4)]"
-                                    : "border-transparent opacity-40 hover:opacity-100"
-                            }
+                                    isSelected
+                                        ? "border-white scale-120 shadow-[0_0_12px_rgba(34,211,238,0.4)]"
+                                        : "border-transparent opacity-40 hover:opacity-100"
+                                }
                         `}
-                        >
-                        </button>
-                    );
-                })}
-            </div>
+                            >
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
         </div>
         {/* COLLABORATORS */}
         {collaborators && (

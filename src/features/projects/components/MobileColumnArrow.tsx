@@ -36,11 +36,12 @@ export function MobileColumnArrow({
             disabled={disabled}
             onClick={handleClick}
             className={`
-                w-8 py-2
+                w-[28px] py-2
                 flex flex-col justify-between items-center
+                shrink-0
                 rounded-xl shadow-md
                 cursor-pointer
-                transition-colors duration-150
+                transition-all duration-150
                 disabled:opacity-40
                 disabled:cursor-not-allowed
                 ${bgClass}
