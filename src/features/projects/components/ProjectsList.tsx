@@ -4,89 +4,66 @@ import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {
     getMyProjects,
     selectProjects,
-    deleteProject,
-    selectDeleteProjectErrorMessage,
-    clearDeleteError,
     updateProject,
     selectUpdateProjectErrorMessage,
+    selectIsUpdatingProject,
 } from "../slice/projectsSlice";
 import NeonButton from "../../../components/ui/buttons/NeonButton.tsx";
-import ConfirmModal from "../../../components/ui/ConfirmModal";
-import NotificationModal from "../../../components/ui/NotificationModal";
 import ProjectEditModal from "./ProjectEditModal.tsx";
-import type {EditProjectDto} from "../types";
+import type {EditableProject, UpdateProjectDto} from "../types";
 import MainButton from "../../../components/ui/buttons/MainButton.tsx";
 import ProjectForm from "./ProjectForm.tsx";
 
 export default function ProjectsList() {
+
     const dispatch = useAppDispatch();
+
     const projects = useAppSelector(selectProjects);
-    const deleteError = useAppSelector(selectDeleteProjectErrorMessage);
-    const isUpdating = useAppSelector(state => state.projects.isUpdatingProject);
+    const isUpdating = useAppSelector(selectIsUpdatingProject);
     const updateError = useAppSelector(selectUpdateProjectErrorMessage);
-    const [projectToEdit, setProjectToEdit] = useState<EditProjectDto | null>(null);
-    const [projectToDelete, setProjectToDelete] = useState<{ id: string, title: string } | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [showForm, setShowForm] = useState<boolean>(false);
+
+    const [projectToEdit, setProjectToEdit] = useState<EditableProject | null>(null);
+    const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
         dispatch(getMyProjects());
     }, [dispatch]);
 
+    const handleOpenCreate = () => setShowForm(true);
 
-    const openEdit = (project: { id: string; title: string; description: string }) => {
-        console.log("OPEN EDIT");
+    const handleCloseCreate = () => setShowForm(false);
+
+    const handleOpenEdit = (project: EditableProject) => {
         setProjectToEdit(project);
     };
 
-    // const openConfirm = (id: string, title: string) => {
-    //     setProjectToDelete({id, title});
-    // };
+    const handleCloseEdit = () => setProjectToEdit(null);
 
-    const handleConfirmDelete = async () => {
-        if (!projectToDelete) return;
-
-        setIsDeleting(true);
-        await dispatch(deleteProject(projectToDelete.id));
-
-        setIsDeleting(false);
-        if (!deleteError) {
-            setProjectToDelete(null);
-        }
-    };
-
-    const handleUpdate = (values: {
-        title: string;
-        description: string;
-    }) => {
+    const handleUpdate = (values: UpdateProjectDto) => {
         if (!projectToEdit) return;
-
         dispatch(
             updateProject({
                 id: projectToEdit.id,
                 dto: values,
-            })
-        )
+            }))
             .unwrap()
             .then(() => setProjectToEdit(null));
     };
-    console.log("projectToEdit:", projectToEdit);
+
     return (
         <section className="flex-1 p-4 md:p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
             <div className="flex justify-between mb-10">
                 <h2 className="text-cyan-400 text-xl md:text-3xl font-black uppercase tracking-[0.2em] text-glow">
                     My boards
                 </h2>
-                <MainButton size="compact" onClick={() => setShowForm(true)}>
+                <MainButton size="compact" onClick={handleOpenCreate}>
                     New Board
                 </MainButton>
             </div>
-
             <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 bg-transparent">
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 bg-transparent">
                 {projects?.map((project) => (
-                    <div
-                        key={project.id}
+                    <div key={project.id}
                         className="relative flex flex-col bg-black/60 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
                     >
                         <Link to={`/project/${project.id}`} className="absolute inset-0 z-10"
@@ -99,64 +76,26 @@ export default function ProjectsList() {
                                 {project.description}
                             </p>
                         </div>
-
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end">
                             <NeonButton
                                 size="sm"
                                 variant="primary"
                                 className="relative z-20"
-                                onClick={() => openEdit(project)}
+                                onClick={() => handleOpenEdit(project)}
                             >
                                 Edit
                             </NeonButton>
-
-                            {/*<NeonButton*/}
-                            {/*    size="sm"*/}
-                            {/*    variant="primary"*/}
-                            {/*    className="  relative z-20 border-rose-500/50 text-rose-500"*/}
-                            {/*    onClick={() => {*/}
-                            {/*        openConfirm(project.id, project.title);*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    Delete*/}
-                            {/*</NeonButton>*/}
                         </div>
                     </div>
                 ))}
             </div>
-
             {showForm && (
-                <ProjectForm onClose={() => setShowForm(false)}/>
+                <ProjectForm onClose={handleCloseCreate}/>
             )}
-
-            {/* ConfirmModal */}
-            {projectToDelete && (
-                <ConfirmModal
-                    title="Delete board?"
-                    message={`Are you sure you want to delete "${projectToDelete.title}"? All data will be wiped from the grid.`}
-                    confirmText={isDeleting ? "Deleting..." : "Delete"}
-                    cancelText="Cancel"
-                    onConfirm={handleConfirmDelete}
-                    onCancel={() => setProjectToDelete(null)}
-                />
-            )}
-
-            {deleteError && (
-                <NotificationModal
-                    title="ACCESS_DENIED"
-                    message={deleteError}
-                    variant="error"
-                    onClose={() => {
-                        dispatch(clearDeleteError());
-                        setProjectToDelete(null);
-                    }}
-                />
-            )}
-
             {projectToEdit && (
                 <ProjectEditModal
                     project={projectToEdit}
-                    onClose={() => setProjectToEdit(null)}
+                    onClose={handleCloseEdit}
                     onSubmit={handleUpdate}
                     isLoading={isUpdating}
                     errorMessage={updateError}

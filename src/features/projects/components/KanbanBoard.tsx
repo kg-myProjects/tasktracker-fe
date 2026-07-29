@@ -6,9 +6,10 @@ import {snapCenterToCursor} from "@dnd-kit/modifiers";
 import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {selectFilteredTasks, getTasksByProjectId, setSearchQuery, selectSearchQuery, toggleMarker, selectSelectedMarkerIds} from "../../tasks/slice/tasksSlice";
 import {
+    clearDeleteError,
     deleteProject,
     getProjectById,
-    selectCurrentProject,
+    selectCurrentProject, selectDeleteProjectErrorMessage,
     selectInviteUserErrorMessage
 } from "../slice/projectsSlice";
 import {clearStatusError, createTaskStatus, getAllTaskStatuses, selectErrorMessage, selectIsLoading, selectSortedTaskStatuses} from "../../statuses/slice/taskStatusSlice";
@@ -41,6 +42,7 @@ export default function KanbanBoard() {
     const inviteError = useAppSelector(selectInviteUserErrorMessage);
     const isLoading = useAppSelector(selectIsLoading);
     const statusesError = useAppSelector(selectErrorMessage);
+    const deleteError = useAppSelector(selectDeleteProjectErrorMessage);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [currentStatusId, setCurrentStatusId] = useState<string | null>(null);
@@ -334,13 +336,23 @@ export default function KanbanBoard() {
 
                         try {
                             await dispatch(deleteProject(projectId)).unwrap();
-
                             navigate("/projects");
-                        } catch (error) {
-                            console.error("Failed to delete project:", error);
+                        } catch {
+                            setProjectDeleteOpen(false);
                         }
                     }}
                     onCancel={() => setProjectDeleteOpen(false)}
+                />
+            )}
+            {deleteError && (
+                <NotificationModal
+                    title="ACCESS DENIED"
+                    message={deleteError}
+                    variant="error"
+                    onClose={() => {
+                        dispatch(clearDeleteError());
+                        setProjectDeleteOpen(false);
+                    }}
                 />
             )}
         </div>
