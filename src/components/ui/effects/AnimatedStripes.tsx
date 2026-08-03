@@ -1,8 +1,8 @@
 const stripes = [
 
-    {top: "35%", color: "via-cyan-400", delay: "0.5s"},
-    {top: "55%", color: "via-green-700", delay: "1s"},
-    {top: "75%", color: "via-blue-500", delay: "1.5s"},
+    {top: "25%", color: "via-cyan-400/40", delay: "1.2s"},
+    {top: "75%", color: "via-cyan-400/30", delay: "1.6s"},
+    {top: "90%", color: "via-cyan-400/20", delay: "2s"},
 
 ];
 

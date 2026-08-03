@@ -2,7 +2,7 @@ export default function MainLogo() {
     return (
         <div className="flex items-center gap-2">
             {/* ANIMATED ICON */}
-            <div className="relative flex items-center justify-center w-8 h-8 md:w-16 md:h-16 transition-all duration-500 hover:scale-[1.2]">
+            <div className="relative flex items-center justify-center w-8 h-8 md:w-16 md:h-16 transition-all duration-500 hover:scale-[1.1]">
                 <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -22,7 +22,7 @@ export default function MainLogo() {
             </div>
 
             {/* TEXT */}
-            <span className="flex items-baseline text-xl md:text-4xl tracking-tighter drop-shadow-[0_0_10px_rgba(6,182,212,1)] transition-all duration-500 hover:scale-[1.2]">
+            <span className="flex items-baseline text-xl md:text-4xl tracking-tighter drop-shadow-[0_0_10px_rgba(6,182,212,1)] transition-all duration-500 hover:scale-[1.1]">
                 <span className="logo-wave-text font-black tracking-wider">
                     Tracker
                 </span>

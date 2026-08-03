@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+    --font-inter: "Inter", sans-serif;
+    /* Project color palette */
+    --color-main-dark: #0D1117;
+    --color-secondary-dark: #161B22;
+    --color-surface-dark: #1F2937;
+    --color-accent: #22D3EE;
+    --color-text-muted: #9CA3AF;
+}
+
 html {
     height: 100%;
     overflow: hidden;
@@ -128,7 +138,8 @@ body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background: url("/background.png") center/cover no-repeat;
+    /*background: url("/background.png") center/cover no-repeat;*/
+    background-color: #0D1117;
     opacity: 1;
     z-index: -1;
     pointer-events: none;
@@ -139,7 +150,6 @@ body::after {
     content: "";
     position: fixed;
     inset: 0;
-    background: rgba(2, 6, 23, 0.75);
     z-index: -1;
     pointer-events: none;
 }

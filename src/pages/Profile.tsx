@@ -177,10 +177,10 @@ export default function Profile() {
                                 className="w-full px-1 py-[5px] md:py-1 text-white text-base rounded border border-cyan-300 bg-slate-800"
                             />
                             <div className="flex gap-2">
-                                <MainButton size="compact" onClick={() => {alert("email_saved!");setIsEditingEmail(false);}}>
+                                <MainButton compactOnMobile={true} onClick={() => {alert("email_saved!");setIsEditingEmail(false);}}>
                                     Save
                                 </MainButton>
-                                <MainButton size="compact" variant="danger" onClick={() => {setIsEditingEmail(false);setEmail(user.email || "");}}>
+                                <MainButton compactOnMobile={true} variant="danger" onClick={() => {setIsEditingEmail(false);setEmail(user.email || "");}}>
                                     Cancel
                                 </MainButton>
                             </div>
@@ -191,7 +191,7 @@ export default function Profile() {
                                 className="w-full px-1 py-[5px] md:py-1 text-white text-base rounded border border-cyan-300 bg-transparent">
                                 {email}
                             </div>
-                            <MainButton size="compact" onClick={() => setIsEditingEmail(true)}>
+                            <MainButton compactOnMobile={true} onClick={() => setIsEditingEmail(true)}>
                                 Edit E-mail
                             </MainButton>
                         </>
@@ -229,16 +229,16 @@ export default function Profile() {
                     />
                     {isEditingAvatar ? (
                         <div className="flex mt-2 gap-2">
-                            <MainButton size="compact" onClick={handleSaveAvatarUpdate}>
+                            <MainButton compactOnMobile={true} onClick={handleSaveAvatarUpdate}>
                                 Save
                             </MainButton>
-                            <MainButton size="compact" variant="danger" onClick={handleCancelAvatarUpdate}>
+                            <MainButton compactOnMobile={true} variant="danger" onClick={handleCancelAvatarUpdate}>
                                 Cancel
                             </MainButton>
                         </div>
                     ) : (
                         <div className="mt-2">
-                            <MainButton size="compact" onClick={() => {setErrorMessage("");document.getElementById("avatarInput")?.click()}}>
+                            <MainButton compactOnMobile={true} onClick={() => {setErrorMessage("");document.getElementById("avatarInput")?.click()}}>
                                 Change Avatar
                             </MainButton>
                         </div>
@@ -299,15 +299,15 @@ export default function Profile() {
                     <div className="flex justify-end gap-2">
                         {isEditingProfile ? (
                             <>
-                                <MainButton size="compact" onClick={handleSaveProfileChanges}>
+                                <MainButton compactOnMobile={true} onClick={handleSaveProfileChanges}>
                                     Save
                                 </MainButton>
-                                <MainButton variant="danger" size="compact" onClick={handleCancelProfileChanges}>
+                                <MainButton compactOnMobile={true} variant="danger" onClick={handleCancelProfileChanges}>
                                     Cancel
                                 </MainButton>
                             </>
                         ) : (
-                            <MainButton size="compact" onClick={() => setIsEditingProfile(true)}>
+                            <MainButton compactOnMobile={true} onClick={() => setIsEditingProfile(true)}>
                                 Edit Profile
                             </MainButton>
                         )}
