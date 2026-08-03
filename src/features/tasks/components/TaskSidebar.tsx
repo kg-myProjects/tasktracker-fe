@@ -127,7 +127,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                             {isUpdating ? (
                                 <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
                             ) : (
-                                <span className="text-lg group-hover:scale-110 transition-transform">{btn.icon}</span>
+                                <span className="text-lg group-hover:scale-[1.1] transition-transform">{btn.icon}</span>
                             )}
                             <span className={isUpdating ? "opacity-50" : ""}>{btn.label}</span>
                             {/* Additional loading bar below the button for style */}
@@ -207,11 +207,11 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                             <button
                                                 key={color}
                                                 onClick={() => setSelectedColor(color)}
-                                                className={`${color} w-5 h-5 rounded-full transition-all ${selectedColor === color ? 'scale-115' : 'hover:scale-115'}`}
+                                                className={`${color} w-5 h-5 rounded-full transition-all ${selectedColor === color ? 'scale-115' : 'hover:scale-[1.15]'}`}
                                             />
                                         ))}
                                     </div>
-                                    <MainButton size="compact"
+                                    <MainButton compactOnMobile={true}
                                         onClick={() => { actions.handleCreateAndAddMarker(newMarkerName, selectedColor); setNewMarkerName(""); }}
                                     >
                                         Create & Add
@@ -298,10 +298,10 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                     />
                                 </div>
                                 <div className="flex justify-end gap-2">
-                                    <MainButton size="compact" onClick={() => {handleSaveDate(); setActivePopup(null);}}>
+                                    <MainButton compactOnMobile={true} onClick={() => {handleSaveDate(); setActivePopup(null);}}>
                                         Save
                                     </MainButton>
-                                    <MainButton size="compact" variant="danger" onClick={() => {
+                                    <MainButton compactOnMobile={true} variant="danger" onClick={() => {
                                         setTempDate("");
                                         actions.patchTask({ dueDate: "" });
                                         setActivePopup(null);

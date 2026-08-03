@@ -15,7 +15,7 @@ export const CollaboratorsList = ({collaborators}: CollaboratorsListProps) => {
         <div className="flex items-center ml-4">
             <div className="flex items-center -space-x-3">
                 {sortCollaboratorsByRole(collaborators).map((collaborator) => (
-                    <div key={collaborator.id} className="relative hover:scale-120 hover:z-10 transition-all">
+                    <div key={collaborator.id} className="relative hover:scale-[1.2] hover:z-10 transition-all">
                         {collaborator.roles.includes("OWNER") && (
                             <CrownIcon className="absolute -top-3 left-1/2 -translate-x-1/2 text-yellow-400 drop-shadow-[0_0_4px_rgba(250,204,21,0.8)]" />
                         )}

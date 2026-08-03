@@ -2,11 +2,10 @@ import React from "react";
 import {Link} from "react-router-dom";
 
 type ButtonVariant = "primary" | "danger";
-type ButtonSize = "default" | "compact";
 
 type MainButtonProps = {
     variant?: ButtonVariant;
-    size?: ButtonSize;
+    compactOnMobile?: boolean;
     to?: string;
     className?: string;
     children: React.ReactNode;
@@ -14,30 +13,26 @@ type MainButtonProps = {
 
 export default function MainButton({
                                        variant = "primary",
-                                       size = "default",
+                                       compactOnMobile = false,
                                        to,
                                        className = "",
                                        children,
                                        ...props}: MainButtonProps) {
 
-    const baseStyles = "rounded-xl font-black text-white transition-all duration-300 ease-in-out hover:scale-[1.20]";
+    const baseStyles = "rounded-[5px] font-inter font-medium text-white transition-all duration-300 ease-in-out hover:scale-[1.1]";
+
+    const sizeStyles = compactOnMobile
+        ? "px-[8px] py-[4px] text-[10px] md:px-[20px] md:py-[12px] md:text-sm"
+        : "px-[20px] py-[12px] text-sm";
 
     const variantStyles = {
         primary:
-            "bg-cyan-500 border border-cyan-300/50 shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:bg-cyan-400 hover:shadow-[0_0_35px_rgba(6,182,212,0.9)]",
+            "bg-cyan-700 shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:shadow-[0_0_35px_rgba(6,182,212,0.9)]",
         danger:
-            "bg-red-500 border border-red-300/50 shadow-[0_0_20px_rgba(239,68,68,0.6)] hover:bg-red-700 hover:shadow-[0_0_35px_rgba(239,68,68,0.9)]",
+            "bg-red-900 shadow-[0_0_20px_rgba(239,68,68,0.6)] hover:shadow-[0_0_35px_rgba(239,68,68,0.9)]",
     };
 
-    const sizeStyles = {
-        default:
-            "px-4 py-2.5 text-sm",
-
-        compact:
-            "px-[8px] py-[4px] text-[10px] md:px-4 md:py-2.5 md:text-sm",
-    };
-
-    const classes = `${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`;
+    const classes = `${baseStyles} ${sizeStyles} ${variantStyles[variant]} ${className}`;
 
     if (to) {
         return (

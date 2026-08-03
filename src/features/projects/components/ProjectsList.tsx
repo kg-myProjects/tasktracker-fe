@@ -56,7 +56,7 @@ export default function ProjectsList() {
                 <h2 className="text-cyan-400 text-xl md:text-3xl font-black uppercase tracking-[0.2em] text-glow">
                     My boards
                 </h2>
-                <MainButton size="compact" onClick={handleOpenCreate}>
+                <MainButton compactOnMobile={true} onClick={handleOpenCreate}>
                     New Board
                 </MainButton>
             </div>

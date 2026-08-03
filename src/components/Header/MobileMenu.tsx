@@ -12,7 +12,7 @@ export default function MobileMenu({open, onClose}: Props) {
         <div className={`fixed inset-0 z-50 transition-all duration-300 ${open ? "visible opacity-100" : "invisible opacity-0"}`}>
             <div className="absolute inset-0 bg-black/60" onClick={onClose}/>
             <div
-                className={`absolute right-0 top-0 h-full w-50 bg-slate-900 border-l-2 border-cyan-500/20 p-11 transform transition-transform duration-300 ${
+                className={`absolute right-0 top-0 h-full w-50 bg-secondary-dark border-l-2 border-cyan-700/30 p-11 transform transition-transform duration-300 ${
                     open ? "translate-x-0" : "translate-x-full"
                 }`}
             >

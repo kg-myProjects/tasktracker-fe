@@ -85,7 +85,7 @@ export const BoardHeader = ({
                                 onClick={() => onMarkerToggle(marker.id)}
                                 title={marker.name}
 
-                                className={`relative w-5 h-5 rounded-md border-2 transition-all hover:scale-120
+                                className={`relative w-5 h-5 rounded-md border-2 transition-all hover:scale-[1.2]
                             ${marker.color}
                             ${
                                     isSelected
