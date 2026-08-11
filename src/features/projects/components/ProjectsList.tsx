@@ -51,9 +51,9 @@ export default function ProjectsList() {
     };
 
     return (
-        <section className="flex-1 p-4 md:p-8 min-h-screen border border-cyan-900/50 rounded-2xl bg-transparent">
+        <section className="flex-1 py-4 px-2 md:px-4 min-h-screen border border-dark-accent/30 rounded-2xl bg-secondary-dark">
             <div className="flex justify-between mb-10">
-                <h2 className="text-cyan-400 text-xl md:text-3xl font-black uppercase tracking-[0.2em] text-glow">
+                <h2 className="text-dark-accent text-xl md:text-2xl font-black uppercase tracking-[0.2em]">
                     My boards
                 </h2>
                 <MainButton compactOnMobile={true} onClick={handleOpenCreate}>
@@ -61,18 +61,18 @@ export default function ProjectsList() {
                 </MainButton>
             </div>
             <div
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 bg-transparent">
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
                 {projects?.map((project) => (
                     <div key={project.id}
-                        className="relative flex flex-col bg-black/60 border border-cyan-900/50 rounded-2xl p-6 transition-all duration-500 hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
+                        className="relative flex flex-col bg-surface-dark border border-dark-accent/30 rounded-2xl p-6 transition-all duration-500 hover:border-accent hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]"
                     >
                         <Link to={`/project/${project.id}`} className="absolute inset-0 z-10"
                               aria-label={`Open ${project.title}`}/>
                         <div className="relative z-0 flex-1">
-                            <h3 className="text-cyan-400 text-xl font-black uppercase mb-2 group-hover:text-cyan-200 transition-colors line-clamp-2">
+                            <h3 className="text-accent text-xl font-black uppercase mb-1 transition-colors line-clamp-2">
                                 {project.title}
                             </h3>
-                            <p className="text-slate-500 text-sm line-clamp-2">
+                            <p className="text-text-muted text-sm line-clamp-2">
                                 {project.description}
                             </p>
                         </div>

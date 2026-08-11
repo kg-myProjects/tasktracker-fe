@@ -27,9 +27,9 @@ export default function MainButton({
 
     const variantStyles = {
         primary:
-            "bg-cyan-700 shadow-[0_0_20px_rgba(6,182,212,0.6)] hover:shadow-[0_0_35px_rgba(6,182,212,0.9)]",
+            "bg-dark-accent hover:shadow-[0_0_20px_rgba(6,182,212,0.6)]",
         danger:
-            "bg-red-900 shadow-[0_0_20px_rgba(239,68,68,0.6)] hover:shadow-[0_0_35px_rgba(239,68,68,0.9)]",
+            "bg-danger-red hover:shadow-[0_0_20px_rgba(239,68,68,0.6)]",
     };
 
     const classes = `${baseStyles} ${sizeStyles} ${variantStyles[variant]} ${className}`;

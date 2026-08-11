@@ -24,7 +24,7 @@ export default function Header() {
     return (
         <header className="w-full sticky top-0 z-50 px-2 py-6">
             <div className="mx-auto max-w-7xl relative">
-                <div className="relative flex z-10 items-center px-4 py-4 rounded-2xl border-2 border-cyan-900/50 bg-secondary-dark backdrop-blur-2xl shadow-[0_5px_15px_rgba(0,0,0,0.8),0_0_25px_rgba(6,182,212,0.8)] transition-all duration-500 ease-in-out hover:shadow-[0_10px_80px_rgba(6,182,212,0.6)]">
+                <div className="relative flex z-10 items-center px-4 py-4 rounded-2xl border-2 border-dark-accent/30 bg-secondary-dark backdrop-blur-2xl shadow-[0_5px_15px_rgba(0,0,0,0.8),0_0_25px_rgba(6,182,212,0.8)] transition-all duration-500 ease-in-out hover:shadow-[0_10px_80px_rgba(6,182,212,0.6)]">
 
                     {/* LEFT BLOCK */}
                     <div className="flex items-center">

@@ -26,7 +26,7 @@ function Actions({onOpenMobileMenu}: ActionsProps) {
                     <>
                         {/* USER AVATAR */}
                         <Link to="/profile" className="flex items-center font-semibold text-white hover:scale-[1.1] hover:drop-shadow-[0_0_15px_rgba(6,182,212,1)] hover:text-shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-300 ease-in-out">
-                            <div className="w-12 h-12 flex rounded-full bg-cyan-300 border-2 border-cyan-500 items-center justify-center text-xs text-white overflow-hidden">
+                            <div className="w-12 h-12 flex rounded-full bg-surface-dark border-2 border-dark-accent items-center justify-center text-xs text-white overflow-hidden">
                                 {user?.avatarUrl ? (
                                     <img
                                         src={`${API_URL}${user.avatarUrl}${user.avatarUpdatedAt ? `?t=${user.avatarUpdatedAt}` : ""}`}
@@ -46,7 +46,7 @@ function Actions({onOpenMobileMenu}: ActionsProps) {
                         <button
                             type="button"
                             onClick={onOpenMobileMenu}
-                            className="md:hidden w-12 h-12 flex items-center justify-center rounded-full bg-surface-dark border-2 border-cyan-500 text-white transition-all duration-300 ease-in-out hover:scale-[1.2] hover:border-cyan-400 hover:shadow-[0_0_25px_rgba(6,182,212,0.8)]"
+                            className="md:hidden w-12 h-12 flex items-center justify-center rounded-full bg-surface-dark border-2 border-dark-accent text-white transition-all duration-300 ease-in-out hover:scale-[1.2] hover:border-cyan-400 hover:shadow-[0_0_25px_rgba(6,182,212,0.8)]"
                         >
                             <BurgerMenuIcon className="w-5 h-5 transition-all duration-300" />
                         </button>
@@ -65,8 +65,8 @@ function Actions({onOpenMobileMenu}: ActionsProps) {
             ) : (
                 <>
                     {/* PLACEHOLDERS */}
-                    <div className="h-10 w-20 bg-slate-950/90"></div>
-                    <div className="h-10 w-20 bg-slate-950/90"></div>
+                    <div className="h-12 w-12 bg-secondary-dark"></div>
+                    <div className="h-10 w-20 bg-secondary-dark"></div>
                 </>
             )}
         </>
