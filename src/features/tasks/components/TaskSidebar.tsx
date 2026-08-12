@@ -35,7 +35,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
 
     const [activePopup, setActivePopup] = useState<ActivePopup>(null);
     const [newMarkerName, setNewMarkerName] = useState("");
-    const [selectedColor, setSelectedColor] = useState("bg-cyan-500");
+    const [selectedColor, setSelectedColor] = useState("bg-accent");
     const [markerToDelete, setMarkerToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [tempDate, setTempDate] = useState(task.dueDate ? task.dueDate.split('T')[0] : "");
@@ -115,17 +115,17 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
         <div
             ref={sidebarRef}
             className="md:col-span-4 space-y-4 shrink-0 h-auto relative overflow-visible">
-            <h4 className="text-sm font-black text-cyan-400 uppercase tracking-[0.2em] flex items-center justify-center gap-3">Add to task</h4>
+            <h4 className="text-sm font-black text-accent uppercase tracking-[0.2em] flex items-center justify-center gap-3">Add to task</h4>
             <div className="flex flex-col gap-3 relative z-30">
                 {actionButtons.map((btn) => (
                     <div key={btn.id} className="relative flex flex-col">
                         <button
                             onClick={btn.action}
                             disabled={isUpdating}
-                            className="w-full text-left px-4 py-3 bg-cyan-500 text-white hover:bg-cyan-700 rounded-2xl text-[15px] font-black  flex items-center gap-3 transition-all group shadow-sm relative overflow-hidden"
+                            className="w-full text-left px-4 py-3 bg-dark-accent text-white hover:bg-accent rounded-2xl text-[15px] font-black flex items-center gap-3 transition-all group shadow-sm relative overflow-hidden"
                         >
                             {isUpdating ? (
-                                <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                                <div className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                             ) : (
                                 <span className="text-lg group-hover:scale-[1.1] transition-transform">{btn.icon}</span>
                             )}
@@ -137,9 +137,9 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                         </button>
                         {/* MARKERS PICKER */}
                         {btn.id === 'labels' && activePopup === "labels" && (
-                            <div className="w-[350px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
+                            <div className="w-[350px] bg-surface-dark border-2 border-accent rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
-                                    <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Labels</span>
+                                    <span className="text-[11px] font-black text-text-muted uppercase tracking-widest">Labels</span>
                                 </div>
                                 <div className="max-h-48 space-y-1.5 pr-1 custom-scrollbar">
                                     {projectMarkers?.map((marker) => {
@@ -186,7 +186,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                                             setMarkerToDelete(marker.id);
                                                         }}
                                                         title="Delete this marker"
-                                                        className="ml-auto p-1 rounded-md text-white/70 hover:text-white hover:bg-black/20 transition-all"
+                                                        className="ml-auto p-1 rounded-md text-white hover:bg-black/20 transition-all"
                                                     >
                                                     <TrashIcon className="w-3.5 h-3.5"/>
                                                 </span>
@@ -221,9 +221,9 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                         )}
                         {/* MEMBERS PICKER */}
                         {btn.id === 'members' && activePopup === "members" && (
-                            <div onClick={e => e.stopPropagation()} className="w-[350px] bg-white border-2 border-cyan-400 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
+                            <div onClick={e => e.stopPropagation()} className="w-[350px] bg-surface-dark border-2 border-dark-accent/30 rounded-3xl shadow-2xl p-4 z-[100] mt-2 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-in slide-in-from-right-4">
                                 <div className="flex justify-between items-center mb-3">
-                                    <span className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Members</span>
+                                    <span className="text-[11px] font-black text-text-muted uppercase tracking-widest">Members</span>
                                 </div>
                                 <div className="max-h-48 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
                                     {sortCollaboratorsByRole(projectMembers)?.map((member) => (
@@ -244,7 +244,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                                 items-center
                                                 justify-center
                                                 w-9 h-9 rounded-full
-                                                bg-cyan-300
+                                                bg-accent
                                                 border-2 border-cyan-500
                                                 text-[12px] font-black text-white shadow-sm
                                                 transition-colors
@@ -260,7 +260,7 @@ export const TaskSidebar = ({task, projectMembers, projectMarkers, actions, isUp
                                                     )}
                                                 </div>
                                             </div>
-                                            <span className="text-[10px] font-bold text-slate-700 group-hover:text-white truncate flex-1">{member.email}</span>
+                                            <span className="text-[10px] font-bold text-text-muted group-hover:text-white truncate flex-1">{member.email}</span>
                                             {task.executors?.some(ex => ex.id === member.id) && <span className="text-cyan-500 font-bold text-xs">✓</span>}
                                         </button>
                                     ))}

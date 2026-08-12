@@ -31,9 +31,9 @@ export const BoardHeader = ({
                                 onDeleteBoard
                             }: BoardHeaderProps) => (
 
-    <header className="flex flex-col gap-2 text-cyan-400">
+    <header className="flex flex-col gap-2">
         {/* BOARD NAME */}
-        <h1 className="text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase">
+        <h1 className="text-white text-xl md:text-3xl font-black tracking-[0.2em] uppercase">
             {title ?? "Loading..."}
         </h1>
         {/* ACTIONS */}
@@ -56,19 +56,19 @@ export const BoardHeader = ({
             {/* SEARCH */}
             <div className="relative flex flex-1">
                 <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <span className="text-cyan-500/50 text-xs animate-twinkle">🔍</span>
+                    <span className="text-xs animate-twinkle">🔍</span>
                 </div>
                 <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => onSearchChange(e.target.value)}
                     placeholder="Search task..."
-                    className="w-full bg-black/40 border border-cyan-400/30 rounded-lg py-2 px-10 text-[10px] font-black text-cyan-100 placeholder:text-cyan-400 outline-none focus:border-cyan-400 focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
+                    className="w-full bg-surface-dark border border-dark-accent/30 hover:border-dark-accent rounded-lg py-2 px-10 text-[10px] font-black text-cyan-100 placeholder:text-textx-muted outline-none focus:border-accent focus:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all uppercase tracking-widest"
                 />
                 {searchQuery && (
                     <button
                         onClick={() => onSearchChange("")}
-                        className="absolute inset-y-0 right-3 flex items-center text-slate-500 hover:text-red-500 transition-colors"
+                        className="absolute inset-y-0 right-3 flex items-center text-text-muted hover:text-red-500 transition-colors"
                     >
                         ✕
                     </button>
@@ -89,7 +89,7 @@ export const BoardHeader = ({
                             ${marker.color}
                             ${
                                     isSelected
-                                        ? "border-white scale-120 shadow-[0_0_12px_rgba(34,211,238,0.4)]"
+                                        ? "border-accent scale-120 shadow-[0_0_12px_rgba(34,211,238,0.4)]"
                                         : "border-transparent opacity-40 hover:opacity-100"
                                 }
                         `}
