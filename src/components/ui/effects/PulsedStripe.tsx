@@ -5,7 +5,12 @@ interface PulsedStripeProps {
     opacity?: number;
 }
 
-export default function PulsedStripe({className = "", color = "#06b6d4", height = "2px", opacity = 0.5}: PulsedStripeProps) {
+const PulsedStripe = ({
+                          className = "",
+                          color = "var(--color-accent)",
+                          height = "2px",
+                          opacity = 0.5
+                      }: PulsedStripeProps) => {
     return (
         <div className={`relative overflow-hidden ${className}`} style={{height}} aria-hidden="true">
             <div
@@ -19,3 +24,5 @@ export default function PulsedStripe({className = "", color = "#06b6d4", height 
         </div>
     );
 }
+
+export default PulsedStripe;

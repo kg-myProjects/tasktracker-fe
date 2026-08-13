@@ -90,7 +90,7 @@ function DynamicForm<T extends FormikValues>({
         >
             {fields.map((field) => (
                 <div className="space-y-2" key={field.name}>
-                    <label className="block text-sm font-medium text-cyan-300 text-neon">
+                    <label className="block text-sm font-medium text-accent text-neon">
                         {field.label}
                     </label>
                     {field.type === "textarea" ? (
@@ -98,10 +98,10 @@ function DynamicForm<T extends FormikValues>({
                             {...formik.getFieldProps(field.name)}
                             rows={field.rows || 4}
                             placeholder={field.placeholder}
-                            className={`w-full px-3 py-2 text-base rounded-md border bg-black text-cyan-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                            className={`w-full px-3 py-2 text-base rounded-md border bg-black text-accent placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
                                 formik.touched[field.name] && formik.errors[field.name]
                                     ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
-                                    : "border-cyan-400/30"
+                                    : "border-dark-accent/30"
                             }`}
                         />
                     ) : (
@@ -114,17 +114,17 @@ function DynamicForm<T extends FormikValues>({
                                         : field.type || "text"
                                 }
                                 placeholder={field.placeholder}
-                                className={`w-full px-3 py-2 text-base rounded-md border bg-black text-cyan-300 caret-cyan-300 placeholder-gray-500 autofill:text-cyan-300 autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
+                                className={`w-full px-3 py-2 text-base rounded-md border bg-black text-accent caret-cyan-300 placeholder-text-muted autofill:text-cyan-300 autofill:bg-black focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-shadow shadow-neon ${
                                     formik.touched[field.name] && formik.errors[field.name]
-                                        ? "border-red-500 focus:ring-red-500 shadow-red-500/40"
-                                        : "border-cyan-400/30"
+                                        ? "border-danger-red focus:ring-red-500 shadow-red-500/40"
+                                        : "border-dark-accent/30"
                                 }`}
                             />
                             {field.type === "password" && (
                                 <button
                                     type="button"
                                     onClick={() => togglePassword(field.name)}
-                                    className="absolute inset-y-0 right-3 flex items-center text-cyan-400/60 hover:text-cyan-400 transition-colors"
+                                    className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
                                 >
                                     {passwordVisibility[field.name] ? "🔒" : "👁️"}
                                 </button>
@@ -132,7 +132,7 @@ function DynamicForm<T extends FormikValues>({
                         </div>
                     )}
                     {formik.touched[field.name] && formik.errors[field.name] && (
-                        <p className="text-sm text-red-500">
+                        <p className="text-sm text-danger-red">
                             {getErrorMessage(formik.errors[field.name])}
                         </p>
                     )}
@@ -146,7 +146,7 @@ function DynamicForm<T extends FormikValues>({
                             <button
                                 type="button"
                                 onClick={() => navigate('/forgot-password')}
-                                className="text-[10px] text-cyan-300 uppercase tracking-tighter transition-all duration-300 hover:tracking-normal active:scale-95"
+                                className="text-[10px] text-cyan-300 uppercase tracking-tighter transition-all duration-300 hover:tracking-normal active:scale-95 cursor-pointer"
                             >
                                 Forgot password?
                             </button>

@@ -19,8 +19,8 @@ const ArrowButton = ({direction, disabled, onClick}: ArrowButtonProps) => (
         disabled={disabled}
         className="w-10 h-10
         flex items-center justify-center
-        rounded bg-slate-800 shadow-md
-        hover:bg-slate-700
+        rounded bg-secondary-dark shadow-md
+        hover:bg-surface-dark
         hover:shadow-lg
         active:scale-95
         active:shadow-sm
@@ -32,7 +32,7 @@ const ArrowButton = ({direction, disabled, onClick}: ArrowButtonProps) => (
     >
         <ArrowIcon
             direction={direction}
-            className="text-cyan-400"
+            className="text-accent"
         />
     </button>
 );
@@ -43,13 +43,13 @@ const Pagination = ({currentPage, totalPages, onPageChange}: PaginationProps) =>
 
     return (
         <div
-            className="flex items-center justify-center gap-2 px-6 py-4 border-t border-cyan-500/20 hover:border-cyan-500/40">
+            className="flex items-center justify-center gap-2 px-6 py-4 border-t border-dark-accent/30 hover:border-dark-accent">
             <ArrowButton
                 direction="left"
                 disabled={currentPage === 1}
                 onClick={() => onPageChange(currentPage - 1)}
             />
-            <div className="w-[100px] flex items-center justify-center text-cyan-400 tabular-nums">
+            <div className="w-[100px] flex items-center justify-center text-accent tabular-nums">
                 {currentPage} of {totalPages}
             </div>
             <ArrowButton

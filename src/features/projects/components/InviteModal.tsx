@@ -18,15 +18,15 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
              onClick={onClose}>
-            <div className="bg-secondary-dark w-96 text-text-muted border border-dark-accent/30 hover:border-dark-accent rounded-xl"
+            <div className="w-96 bg-main-dark text-text-muted border border-dark-accent/30 hover:border-dark-accent rounded-xl"
                  onClick={(e) => e.stopPropagation()}>
                 <div className="bg-gradient-to-r from-main-dark via-dark-accent to-main-dark rounded-t-xl">
                     <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
                         Add user to board
                     </h2>
-                    <PulsedStripe height="2px"/>
+                    <PulsedStripe height="3px"/>
                 </div>
                 <div className="p-4">
                     <input
@@ -44,9 +44,9 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
                         onChange={(e) => setRole(e.target.value as ProjectRole)}
                         className="w-full px-3 py-2 mb-3 border border-dark-accent/30 hover:border-dark-accent focus:outline-none focus:border-accent rounded-xl"
                     >
-                        <option value="MEMBER" className="bg-secondary-dark text-white">Member</option>
-                        <option value="ADMIN" className="bg-secondary-dark text-white">Admin</option>
-                        <option value="VIEWER" className="bg-secondary-dark text-white">Viewer</option>
+                        <option value="MEMBER" className="bg-main-dark text-white">Member</option>
+                        <option value="ADMIN" className="bg-main-dark text-white">Admin</option>
+                        <option value="VIEWER" className="bg-main-dark text-white">Viewer</option>
                     </select>
                     {error && <p className="text-danger-red text-sm mb-4 font-medium">{error}</p>}
                     <div className="flex justify-end">
