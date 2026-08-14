@@ -18,38 +18,37 @@ export function InviteModal({isOpen, onClose, onInvite, error}: InviteModalProps
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
              onClick={onClose}>
-            <div className="bg-slate-900 w-96 text-white border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl"
+            <div className="w-96 bg-main-dark text-text-muted border border-dark-accent/30 hover:border-dark-accent rounded-xl"
                  onClick={(e) => e.stopPropagation()}>
-                <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 rounded-xl">
+                <div className="bg-gradient-to-r from-main-dark via-dark-accent to-main-dark rounded-t-xl">
                     <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
                         Add user to board
                     </h2>
-                    <PulsedStripe height="2px"/>
+                    <PulsedStripe height="3px"/>
                 </div>
-
                 <div className="p-4">
                     <input
                         type="email"
                         placeholder="User email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
+                        className="w-full px-3 py-2 mb-3 border border-dark-accent/30 hover:border-dark-accent focus:outline-none focus:border-accent rounded-xl"
                     />
-                    <label className="block text-sm text-gray-500 mb-1">
+                    <label className="block text-sm text-text-muted mb-1">
                         Board role:
                     </label>
                     <select
                         value={role}
                         onChange={(e) => setRole(e.target.value as ProjectRole)}
-                        className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
+                        className="w-full px-3 py-2 mb-3 border border-dark-accent/30 hover:border-dark-accent focus:outline-none focus:border-accent rounded-xl"
                     >
-                        <option value="MEMBER" className="bg-slate-900 text-white">Member</option>
-                        <option value="ADMIN" className="bg-slate-900 text-white">Admin</option>
-                        <option value="VIEWER" className="bg-slate-900 text-white">Viewer</option>
+                        <option value="MEMBER" className="bg-main-dark text-white">Member</option>
+                        <option value="ADMIN" className="bg-main-dark text-white">Admin</option>
+                        <option value="VIEWER" className="bg-main-dark text-white">Viewer</option>
                     </select>
-                    {error && <p className="text-red-500 text-sm mb-4 font-medium">{error}</p>}
+                    {error && <p className="text-danger-red text-sm mb-4 font-medium">{error}</p>}
                     <div className="flex justify-end">
                         <MainButton
                             type="button"

@@ -40,13 +40,13 @@ export function CreateStatusModal({
     return (
         <div className="flex items-center justify-center fixed inset-0 z-50 bg-black/60"
              onClick={onClose}>
-            <div className="bg-slate-900 w-96 text-white border border-cyan-500/20 hover:border-cyan-500/40 rounded-xl"
+            <div className="bg-main-dark w-96 text-white border border-dark-accent/30 hover:border-dark-accent rounded-xl"
                  onClick={(e) => e.stopPropagation()}>
-                <div className="bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900 rounded-xl">
+                <div className="bg-gradient-to-r from-main-dark via-dark-accent to-main-dark rounded-t-xl">
                     <h2 className="h-20 flex items-center justify-center text-xl font-bold text-white text-neon-strong uppercase">
                         Add task status
                     </h2>
-                    <PulsedStripe height="2px"/>
+                    <PulsedStripe height="3px"/>
                 </div>
                 <div className="p-4">
                     <input
@@ -54,9 +54,9 @@ export function CreateStatusModal({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Status title"
-                        className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
+                        className="w-full px-3 py-2 mb-3 border border-dark-accent/30 hover:border-dark-accent focus:outline-none focus:border-accent rounded-xl placeholder-text-muted"
                     />
-                    <label className="block text-sm text-gray-500 mb-1">
+                    <label className="block text-sm text-text-muted mb-1">
                         Status position (0 – {maxPosition}):
                     </label>
                     <input
@@ -65,7 +65,7 @@ export function CreateStatusModal({
                         max={maxPosition}
                         value={position}
                         onChange={(e) => setPosition(Number(e.target.value))}
-                        className="w-full px-3 py-2 mb-3 border border-cyan-500/20 hover:border-cyan-500/40 focus:outline-none focus:border-cyan-500/40 rounded-xl"
+                        className="w-full px-3 py-2 mb-3 border text-text-muted border-dark-accent/30 hover:border-dark-accent focus:outline-none focus:border-accent rounded-xl"
                     />
                     <div className="flex justify-end">
                         <MainButton

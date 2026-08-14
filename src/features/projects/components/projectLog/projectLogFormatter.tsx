@@ -19,29 +19,29 @@ export const getLogMessage = (
     switch (action) {
         case "CREATE":
             verb = "CREATED";
-            verbColor = "text-green-500";
+            verbColor = "text-green-900";
             restText = ` ${entity.toLowerCase()}: ${entityName} ${formatCreateDeleteDiff(difference)}`;
             break;
 
         case "DELETE":
             verb = "DELETED";
-            verbColor = "text-red-500";
+            verbColor = "text-danger-red";
             restText = ` ${entity.toLowerCase()}: ${entityName} ${formatCreateDeleteDiff(difference)}`;
             break;
 
         case "MOVE":
             verb = "MOVED";
-            verbColor = "text-purple-500";
+            verbColor = "text-purple-900";
             restText = ` ${entity.toLowerCase()}: ${entityName}. ${formatMoveDiff(difference)}.`;
             break;
 
         case "MARKERS":
             if (difference?.startsWith("markerAdded=")) {
                 verb = "ADDED";
-                verbColor = "text-green-500";
+                verbColor = "text-green-900";
             } else if (difference?.startsWith("markerRemoved=")) {
                 verb = "REMOVED";
-                verbColor = "text-red-500";
+                verbColor = "text-danger-red";
             }
             restText = ` marker: ${difference?.replace(/markerAdded=|markerRemoved=/, "")} on ${entity.toLowerCase()}: ${entityName}.`;
             break;
@@ -75,7 +75,7 @@ export const getLogMessage = (
         <>
             <span className="font-medium">{displayUser}</span>{" "}
             <span className={`${verbColor} font-semibold`}>{verb}</span>
-            <span className="text-cyan-400">{restText}</span>
+            <span className="text-text-muted">{restText}</span>
         </>
     );
 };
@@ -119,8 +119,8 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
         const dateStr = diff.replace("dueDateAdded=", "");
         return (
             <>
-                <span className="text-green-500 font-semibold uppercase">set</span>
-                <span className="text-cyan-300">
+                <span className="text-green-900 font-semibold uppercase">set</span>
+                <span className="text-text-muted">
                     {" "}deadline on {entity?.toLowerCase()}: {entityName} to: {formatDate(dateStr)}.
                 </span>
             </>
@@ -131,8 +131,8 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
         const dateStr = diff.replace("dueDateRemoved=", "");
         return (
             <>
-                <span className="text-red-500 font-semibold uppercase">removed</span>
-                <span className="text-cyan-300">
+                <span className="text-danger-red font-semibold uppercase">removed</span>
+                <span className="text-text-muted">
                     {" "}deadline on {entity?.toLowerCase()}: {entityName}. (Deadline was: {formatDate(dateStr)}).
                 </span>
             </>
@@ -144,14 +144,14 @@ function formatDueDateDiff(diff?: string, entity?: string, entityName?: string) 
         return (
             <>
                 <span className="text-yellow-400 font-semibold uppercase">changed</span>
-                <span className="text-cyan-300">
+                <span className="text-text-muted">
                     {" "}deadline on {entity?.toLowerCase()}: {entityName}. From: {formatDate(from)} to: {formatDate(to)}.
                 </span>
             </>
         );
     }
 
-    return <span className="text-cyan-300">{diff}</span>;
+    return <span className="text-text-muted">{diff}</span>;
 }
 
 function formatCreateDeleteDiff(diff?: string) {

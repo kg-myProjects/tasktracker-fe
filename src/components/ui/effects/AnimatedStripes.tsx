@@ -1,9 +1,7 @@
 const stripes = [
-
-    {top: "25%", color: "via-cyan-400/40", delay: "1.2s"},
-    {top: "75%", color: "via-cyan-400/30", delay: "1.6s"},
-    {top: "90%", color: "via-cyan-400/20", delay: "2s"},
-
+    {top: "25%", color: "via-dark-accent/35", delay: "1.2s"},
+    {top: "75%", color: "via-dark-accent/25", delay: "1.6s"},
+    {top: "90%", color: "via-dark-accent/15", delay: "2s"},
 ];
 
 const AnimatedStripes = () => {

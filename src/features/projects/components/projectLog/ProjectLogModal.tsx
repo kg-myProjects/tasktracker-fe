@@ -32,24 +32,24 @@ export const ProjectLogModal: React.FC<ProjectLogsModalProps> = ({isOpen, onClos
     const currentLogs = logs.slice((currentPage - 1) * LOGS_PER_PAGE, currentPage * LOGS_PER_PAGE);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6"
              onClick={onClose}>
             <div
-                className="bg-slate-900 w-full max-w-5xl rounded-xl shadow-xl overflow-hidden border border-cyan-500/20 hover:border-cyan-500/40"
+                className="bg-main-dark w-full max-w-5xl rounded-xl shadow-xl overflow-hidden border border-dark-accent/30 hover:border-dark-accent"
                 onClick={e => e.stopPropagation()}>
                 {/* HEADER */}
                 <div className="relative w-full">
                     <div
-                        className="absolute w-full h-full bg-gradient-to-r from-slate-900 via-cyan-950 to-slate-900"></div>
+                        className="absolute w-full h-full bg-gradient-to-r from-main-dark via-dark-accent to-main-dark"></div>
                     <div className="flex relative h-20 items-center justify-center">
                         <h2 className="text-xl font-bold text-white text-neon-strong uppercase">Board Logs</h2>
                     </div>
-                    <PulsedStripe height="2px"/>
+                    <PulsedStripe height="3px"/>
                 </div>
                 {/* LOGS */}
                 <div className="h-[45vh] overflow-y-auto px-2 py-2 space-y-2">
                     {logs.length === 0 ? (
-                        <div className="flex h-full items-center justify-center text-cyan-500 text-sm">No logs yet</div>
+                        <div className="flex h-full items-center justify-center text-text-muted text-sm">No logs yet</div>
                     ) : (
                         currentLogs.map((log) => (
                             <ProjectLogItem key={log.id} log={log}/>

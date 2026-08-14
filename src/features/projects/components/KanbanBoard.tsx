@@ -129,7 +129,7 @@ export default function KanbanBoard() {
     if (isLoading && statuses.length === 0) {
         return (
             <div className="h-screen flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                <div className="text-cyan-400 animate-pulse font-black uppercase tracking-widest">
+                <div className="text-text-muted animate-pulse font-black uppercase tracking-widest">
                     Loading project column...
                 </div>
             </div>
@@ -137,7 +137,7 @@ export default function KanbanBoard() {
     }
 
     return (
-        <div className="flex px-2 py-4 flex-col bg-transparent border border-cyan-900/50 rounded-2xl">
+        <div className="flex px-2 py-4 flex-col bg-secondary-dark border border-dark-accent/30 rounded-2xl">
             <BoardHeader
                 title={project?.title}
                 searchQuery={searchQuery}
@@ -161,7 +161,7 @@ export default function KanbanBoard() {
                 {statuses.length === 0 ? (
                     // Empty state — shared between mobile and desktop, so the arrows/pagination
                     // never render with zero columns (otherwise mobileStatusIndex could drift out of bounds)
-                    <div className="flex items-center justify-center w-full py-12 text-cyan-400/60 text-sm">
+                    <div className="flex items-center justify-center w-full py-12 text-text-muted text-sm">
                         Add your first task status to get started.
                     </div>
                 ) : isMobile ? (

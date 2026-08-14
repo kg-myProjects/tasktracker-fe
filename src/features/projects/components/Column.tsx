@@ -68,14 +68,14 @@ export function Column({ status,
     };
 
     return (
-        <div className="flex flex-col p-1 bg-white/1 backdrop-blur-md rounded-xl border-2 border-cyan-400/20 text-cyan-400 w-[300px] min-h-[700px] transition-all hover:border-cyan-400/40">
+        <div className="flex flex-col p-1 bg-surface-dark backdrop-blur-md rounded-xl border border-dark-accent/30 text-white w-[300px] min-h-[700px] transition-all hover:border-cyan-400/40">
             {/* TOP BAR */}
             <div className="flex text-lg m-1 font-semibold justify-between items-center">
                 <div className="flex-1 flex gap-2">
                     {isEditing ? (
                         <input
                             autoFocus
-                            className="w-full px-1 bg-slate-800 border border-cyan-400 rounded-lg font-semibold text-lg outline-none"
+                            className="w-full px-1 bg-secondary-dark border border-dark-accent/30 rounded-lg font-semibold text-lg outline-none"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
                             onFocus={(e) => e.target.select()}
@@ -85,7 +85,7 @@ export function Column({ status,
                     ) : (
                         <div
                             onClick={() => setIsEditing(true)}
-                            className="flex-1 cursor-pointer px-[6px] py-[1px] min-h-[37px] hover:text-cyan-200 transition-colors truncate"
+                            className="flex-1 cursor-pointer px-[6px] py-[1px] min-h-[37px] hover:text-accent transition-colors truncate"
                             title="Click to edit status name"
                         >
                             {status.name}
@@ -116,7 +116,7 @@ export function Column({ status,
                             disabled={isStatusLoading}
                             title="Delete status"
                             className={`p-2 rounded-lg transition-all flex items-center justify-center
-                            ${isStatusLoading ? 'text-rose-500 bg-rose-500/10' : 'text-slate-500 hover:text-rose-500 hover:bg-rose-500/10'}`}
+                            ${isStatusLoading ? 'text-danger-red bg-danger-red/30' : 'text-text-muted hover:text-danger-red hover:bg-main-dark'}`}
                         >
                             {isStatusLoading ? (
                                 /* SPINNER */
