@@ -156,15 +156,15 @@ export default function Profile() {
     }
 
     return (
-        <section className="p-4 md:p-8 border rounded-2xl border-cyan-900/50 bg-transparent">
+        <section className="p-4 md:p-8 border rounded-2xl border-dark-accent/30 bg-secondary-dark">
 
-            <h1 className="mb-6 text-cyan-400 text-xl md:text-3xl font-black tracking-[0.2em] uppercase">
+            <h1 className="mb-6 text-dark-accent text-xl md:text-2xl font-black tracking-[0.2em] uppercase">
                 User Profile
             </h1>
 
             {/* E-mail / Login */}
             <div className="flex mb-8 gap-2 md:gap-10 items-baseline">
-                <div className="text-xs md:text-base font-bold text-cyan-400 whitespace-nowrap">
+                <div className="text-xs md:text-base font-bold text-dark-accent whitespace-nowrap">
                     E-mail / Login:
                 </div>
                 <div className="flex-1 flex flex-col gap-2 items-end">
@@ -174,7 +174,7 @@ export default function Profile() {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-1 py-[5px] md:py-1 text-white text-base rounded border border-cyan-300 bg-slate-800"
+                                className="w-full px-1 py-[5px] md:py-1 text-white text-base rounded border border-dark-accent bg-surface-dark"
                             />
                             <div className="flex gap-2">
                                 <MainButton compactOnMobile={true} onClick={() => {alert("email_saved!");setIsEditingEmail(false);}}>
@@ -188,7 +188,7 @@ export default function Profile() {
                     ) : (
                         <>
                             <div
-                                className="w-full px-1 py-[5px] md:py-1 text-white text-base rounded border border-cyan-300 bg-transparent">
+                                className="w-full px-1 py-[5px] md:py-1 text-white text-base rounded border border-dark-accent/30 bg-main-dark">
                                 {email}
                             </div>
                             <MainButton compactOnMobile={true} onClick={() => setIsEditingEmail(true)}>
@@ -199,13 +199,13 @@ export default function Profile() {
                 </div>
             </div>
 
-            <hr className="border-cyan-900/50 mb-6"/>
+            <hr className="border-dark-accent/30 mb-6"/>
 
-            {/* Main info block */}
+            {/* MAIN INFO BLOCK */}
             <div className="flex gap-2 md:gap-20">
-                {/* Avatar block*/}
+                {/* AVATAR */}
                 <div className="flex min-w-[130px] md:w-[200px] flex-col items-center">
-                    <div className="flex w-28 h-28 md:w-40 md:h-40 items-center justify-center rounded-full overflow-hidden border-2 border-cyan-500 bg-cyan-300 text-white text-4xl">
+                    <div className="flex w-28 h-28 md:w-40 md:h-40 items-center justify-center rounded-full overflow-hidden border-2 border-dark-accent/30 bg-surface-dark text-white text-4xl">
                         {avatarPreview || user.avatarUrl ? (
                             <img
                                 src={
@@ -246,7 +246,7 @@ export default function Profile() {
                     {/* Avatar error message */}
                     {errorMessage && (
                         <div
-                            className="mt-5 max-w-[130px] md:max-w-[200px] text-red-500 text-xs break-words text-center overflow-hidden">
+                            className="mt-5 max-w-[130px] md:max-w-[200px] text-danger-red text-xs break-words text-center overflow-hidden">
                             {errorMessage}
                         </div>
                     )}
@@ -259,7 +259,7 @@ export default function Profile() {
                         <div className="flex-1 space-y-1 md:space-y-4">
                             {fields.map(([label, value, setter]) => (
                                 <div key={label as string} className="flex items-center gap-2">
-                                    <label className="min-w-[80px] md:min-w-[115px] text-xs md:text-base font-bold text-cyan-400 whitespace-nowrap">{label}:</label>
+                                    <label className="min-w-[80px] md:min-w-[115px] text-xs md:text-base font-bold text-dark-accent whitespace-nowrap">{label}:</label>
                                     {isEditingProfile ? (
                                         <input
                                             type="text"
@@ -267,11 +267,11 @@ export default function Profile() {
                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                                 setter(e.target.value)
                                             }
-                                            className="w-full px-1 py-[1px] md:py-1 text-white rounded whitespace-nowrap border border-cyan-300 bg-slate-800"
+                                            className="w-full px-1 py-[1px] md:py-1 text-white rounded whitespace-nowrap border border-dark-accent bg-surface-dark"
                                         />
                                     ) : (
                                         <div
-                                            className="w-full px-1 py-[1px] md:py-1 text-white text-base whitespace-nowrap bg-transparent rounded border border-cyan-300">
+                                            className="w-full px-1 py-[1px] md:py-1 text-white text-base whitespace-nowrap bg-main-dark rounded border border-dark-accent/30">
                                             {value || "Not set"}
                                         </div>
                                     )}
@@ -280,16 +280,16 @@ export default function Profile() {
                         </div>
                         {/* About block */}
                         <div className="flex-1 flex flex-col">
-                            <label className="text-xs md:text-base font-bold text-cyan-400 mb-2">About:</label>
+                            <label className="text-xs md:text-base font-bold text-dark-accent mb-2">About:</label>
                             {isEditingProfile ? (
                                 <textarea
                                     value={about}
                                     onChange={(e) => setAbout(e.target.value)}
-                                    className="flex-1 p-1 min-h-[120px] text-white border rounded border-cyan-300 bg-slate-800 resize-none"
+                                    className="flex-1 p-1 min-h-[120px] text-white border rounded border-dark-accent bg-surface-dark resize-none"
                                 />
                             ) : (
                                 <div
-                                    className="flex-1 p-1 min-h-[120px] text-white border rounded border-cyan-300 bg-transparent">
+                                    className="flex-1 p-1 min-h-[120px] text-white border rounded border-dark-accent/30 bg-main-dark">
                                     {about || "Not set"}
                                 </div>
                             )}

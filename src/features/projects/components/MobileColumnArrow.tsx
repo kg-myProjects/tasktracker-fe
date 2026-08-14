@@ -25,7 +25,7 @@ export function MobileColumnArrow({
         onChangeColumn();
     };
 
-    let bgClass = "bg-slate-800 text-cyan-400 hover:bg-slate-700";
+    let bgClass = "bg-surface-dark text-accent hover:bg-dark-accent";
     if (isPressed) bgClass = "bg-slate-600 text-cyan-300";
     if (isOver) bgClass = "bg-cyan-500 text-black scale-110";
 

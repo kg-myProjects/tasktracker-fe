@@ -32,7 +32,7 @@ export const ProjectLogModal: React.FC<ProjectLogsModalProps> = ({isOpen, onClos
     const currentLogs = logs.slice((currentPage - 1) * LOGS_PER_PAGE, currentPage * LOGS_PER_PAGE);
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6"
              onClick={onClose}>
             <div
                 className="bg-main-dark w-full max-w-5xl rounded-xl shadow-xl overflow-hidden border border-dark-accent/30 hover:border-dark-accent"
