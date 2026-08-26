@@ -27,7 +27,7 @@ export function MobileColumnArrow({
 
     let bgClass = "bg-surface-dark text-accent hover:bg-dark-accent";
     if (isPressed) bgClass = "bg-slate-600 text-cyan-300";
-    if (isOver) bgClass = "bg-cyan-500 text-black scale-110";
+    if (isOver) bgClass = "bg-cyan-500 text-black scale-105";
 
     return (
         <button
