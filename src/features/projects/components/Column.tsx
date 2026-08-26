@@ -68,7 +68,7 @@ export function Column({ status,
     };
 
     return (
-        <div className="flex flex-col p-1 bg-surface-dark backdrop-blur-md rounded-xl border border-dark-accent/30 text-white w-[300px] min-h-[700px] transition-all hover:border-cyan-400/40">
+        <div className="flex flex-col p-1 bg-surface-dark backdrop-blur-md rounded-xl border border-dark-accent/30 text-white w-full min-[600px]:w-[300px] min-h-[700px] transition-all hover:border-cyan-400/40">
             {/* TOP BAR */}
             <div className="flex text-lg m-1 font-semibold justify-between items-center">
                 <div className="flex-1 flex gap-2">

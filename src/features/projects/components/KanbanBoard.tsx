@@ -137,7 +137,7 @@ export default function KanbanBoard() {
     }
 
     return (
-        <div className="flex px-2 py-4 flex-col bg-secondary-dark border border-dark-accent/30 rounded-2xl">
+        <div className="flex px-2 py-4 flex-col bg-secondary-dark border border-dark-accent/30 rounded-2xl overflow-x-hidden min-w-0">
             <BoardHeader
                 title={project?.title}
                 searchQuery={searchQuery}
@@ -169,44 +169,46 @@ export default function KanbanBoard() {
                            This is intentional: rendering all columns and just hiding them via CSS
                            causes dnd-kit to register duplicate ids and produces drag/drop collisions */}
                         <DotsPagination total={statuses.length} activeIndex={mobileStatusIndex}/>
-                        <div className="flex justify-center gap-2">
+                        <div className="flex justify-center gap-2 w-full min-w-0">
                             <MobileColumnArrow
                                 direction="left"
                                 disabled={mobileStatusIndex === 0}
                                 onChangeColumn={() => setMobileStatusIndex(prev => prev - 1)}
                             />
                             {statuses[mobileStatusIndex] && (
-                                <SortableColumn
-                                    dragDisabled={true} // Column reordering is disabled on mobile — nothing to reorder against, only one column is visible.
-                                    status={statuses[mobileStatusIndex]}
-                                    allStatusNames={allNames}
-                                    onAddTask={() => {
-                                        setCurrentStatusId(statuses[mobileStatusIndex].id);
-                                        setModalOpen(true);
-                                    }}
-                                    canDelete={(tasksByStatus[statuses[mobileStatusIndex].id] || []).length === 0}
-                                    onDelete={() =>
-                                        setStatusToDelete({
-                                            id: statuses[mobileStatusIndex].id,
-                                            name: statuses[mobileStatusIndex].name
-                                        })
-                                    }
-                                >
-                                    <SortableContext
-                                        items={(tasksByStatus[statuses[mobileStatusIndex].id] || []).map(t => t.id)}
-                                        strategy={verticalListSortingStrategy}
+                                <div className="flex-1 min-w-0">
+                                    <SortableColumn
+                                        dragDisabled={true} // Column reordering is disabled on mobile — nothing to reorder against, only one column is visible.
+                                        status={statuses[mobileStatusIndex]}
+                                        allStatusNames={allNames}
+                                        onAddTask={() => {
+                                            setCurrentStatusId(statuses[mobileStatusIndex].id);
+                                            setModalOpen(true);
+                                        }}
+                                        canDelete={(tasksByStatus[statuses[mobileStatusIndex].id] || []).length === 0}
+                                        onDelete={() =>
+                                            setStatusToDelete({
+                                                id: statuses[mobileStatusIndex].id,
+                                                name: statuses[mobileStatusIndex].name
+                                            })
+                                        }
                                     >
-                                        <div className="flex flex-col gap-2">
-                                            {(tasksByStatus[statuses[mobileStatusIndex].id] || []).map(task => (
-                                                <SortableTask
-                                                    key={task.id}
-                                                    task={task}
-                                                    onOpenEdit={() => setEditingTaskId(task.id)}
-                                                />
-                                            ))}
-                                        </div>
-                                    </SortableContext>
-                                </SortableColumn>
+                                        <SortableContext
+                                            items={(tasksByStatus[statuses[mobileStatusIndex].id] || []).map(t => t.id)}
+                                            strategy={verticalListSortingStrategy}
+                                        >
+                                            <div className="flex flex-col gap-2">
+                                                {(tasksByStatus[statuses[mobileStatusIndex].id] || []).map(task => (
+                                                    <SortableTask
+                                                        key={task.id}
+                                                        task={task}
+                                                        onOpenEdit={() => setEditingTaskId(task.id)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </SortableContext>
+                                    </SortableColumn>
+                                </div>
                             )}
                             <MobileColumnArrow
                                 direction="right"
